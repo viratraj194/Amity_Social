@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'accounts.User'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -126,6 +129,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'amity_social_main/static/'),
 ]
 
+
+STATIC_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
