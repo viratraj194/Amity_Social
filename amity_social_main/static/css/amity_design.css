@@ -350,6 +350,10 @@ footer {
     .agree_to_terms{
         width: 1010px;
     }
+    .agree_to_terms input{
+        width: 123px;
+        height: 20px;
+    }
     .user_gender{
         width:1010px;
     }

@@ -35,12 +35,12 @@
             </div>
             <div class="id_prove  colum">
                 <label>ID Image</label>
-                <input type="file" name="id_card_image" >
+                <input type="file" name="id_card_image">
             </div>
         </div>
         <div class="user_gender colum ">
             <label for="gender">Gender</label>
-            <select name="gender" >
+            <select name="gender">
                 <option>Select your gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -49,20 +49,30 @@
         <div class="passwords flex space_around">
             <div class="password colum">
                 <label>Password</label>
-                <input type="password" name="password" >
+                <input type="password" name="password">
             </div>
             <div class="conf_password colum">
                 <label>Conform Password</label>
                 <input type="password" name="conform_password" id="">
             </div>
         </div>
-        <div class="agree_to_terms flex" >
+        <div class="agree_to_terms flex">
             <label>Agree to terms and conditons</label>
             <input type="checkbox" name="agree_to_terms" id="">
         </div>
+        {% for field in form %}
+        {% if field.errors%}
+        {% for error in field.errors%}
+        <li style="color: red;">{{error}}</li>
+        {%endfor%}
+        {%endif%}
+        {% endfor%}
+        <li style="color:red;"> {{form.non_field_errors}}</li>
         <div class="form_submit_btn">
             <button type="submit">Submit</button>
         </div>
+
+
     </form>
 </div>
 {% endblock %}
