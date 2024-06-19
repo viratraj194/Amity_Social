@@ -8,6 +8,7 @@ body {
 li{
     list-style: none;
 }
+
 * {
     font-family: "Nunito", sans-serif;
     font-optical-sizing: auto;
@@ -20,12 +21,19 @@ a {
     text-decoration: none;
     color: white;
 }
+.space_around{
+    justify-content: space-around;
+}
 
 .flex {
     display: flex;
     flex-wrap: wrap;
 }
 
+.colum{
+    display: flex;
+    flex-direction: column;
+}
 .space_between {
     justify-content: space-between;
 }
@@ -300,3 +308,73 @@ footer {
 
 
 /* footer  */
+
+/* REGISTRATION PAGE STARTS  */
+    .registration_form_cover_photo{
+        width: 1200px;
+        height: 300px;
+        margin: 20px auto;
+        overflow: hidden;
+        border-radius: 15px;
+    }
+    .registration_form_cover_photo img{
+        width: 100%;
+        height: 100%;
+    }
+    .registration_form{
+        padding: 20px;
+        border-radius: 15px;
+        width: 1200px;
+        margin: 20px auto;
+    }
+    .registration_form input{
+        width: 400px;
+        height: 30px;
+        /* border-radius: 10px; */
+        border: 1px solid black;
+        font-size: 20px;
+        padding: 5px;
+        outline: none;
+        color: #7d7c7d;
+        background-color: black;
+        border-bottom-color: white;
+    }
+    .registration_form input::placeholder{
+        font-size: 40px;
+        font-weight: bolder;
+        color: #636264;
+    }
+    .registration_form div{
+        margin: 10px auto;
+    }
+    .agree_to_terms{
+        width: 1010px;
+    }
+    .user_gender{
+        width:1010px;
+    }
+    .user_gender select{
+        width:200px;
+        height: 30px;
+        background-color: transparent;
+        border: 1px solid black;
+        color:  #7a797a;
+        font-size: large;
+        font-weight: bold;
+    }
+    .form_submit_btn {
+        text-align: center;
+    }
+    .form_submit_btn button{
+        width: 400px;
+        height: 30px;
+        border-radius: 10px;
+        font-size: larger;
+        font-weight: bold;
+        background-color: #2b293d;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+/* REGISTRATION PAGE  ENDS */
+

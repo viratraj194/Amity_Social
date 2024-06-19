@@ -41,7 +41,10 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=12, blank=True)
-
+    id_card_number = models.CharField(max_length=15,blank=True)
+    id_card_image = models.ImageField(upload_to='users/id_card_image')
+    agree_to_terms = models.BooleanField(default=False)
+    
     # REQUIRED_FIELDS 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -70,12 +73,10 @@ class User(AbstractBaseUser):
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    uses_id = models.CharField(max_length=20)
+    users_id = models.CharField(max_length=20,blank=True,null=True)
     profile_picture = models.ImageField(upload_to='users/profile_picture', blank=True, null=True)
     cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True)
     collage_name = models.CharField(max_length=50,blank=True,null=True)
-    id_card_number = models.CharField(max_length=15,blank=True)
-    id_card_image = models.ImageField(upload_to='users/id_card_image')
     collage_pin_code = models.CharField(max_length=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

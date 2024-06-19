@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="registration_form_cover_photo">
+    <img src="{%static '/img/cartoon-nature-landscape-night-time-260nw-2187999189.jpg'%}" alt="">
+</div>
+<div class="registration_form">
+    <form action="{%url 'RegisterUser'%}" method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+        <div class="email_username flex space_around">
+            <div class="email colum ">
+                <label>First Name</label>
+                <input type="text" name="first_name">
+            </div>
+            <div class="username  colum">
+                <label>Last Name</label>
+                <input type="text" name="last_name">
+            </div>
+        </div>
+        <div class="email_username flex space_around">
+            <div class="email colum ">
+                <label>Email</label>
+                <input type="email" name="email">
+            </div>
+            <div class="username  colum">
+                <label>Username</label>
+                <input type="text" name="username">
+            </div>
+        </div>
+
+        <div class="id_cards flex space_around">
+            <div class="id_no colum">
+                <label>ID Number</label>
+                <input type="text" name="id_card_number">
+            </div>
+            <div class="id_prove  colum">
+                <label>ID Image</label>
+                <input type="file" name="id_card_image" >
+            </div>
+        </div>
+        <div class="user_gender colum ">
+            <label for="gender">Gender</label>
+            <select name="gender" >
+                <option>Select your gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+        <div class="passwords flex space_around">
+            <div class="password colum">
+                <label>Password</label>
+                <input type="password" name="password" >
+            </div>
+            <div class="conf_password colum">
+                <label>Conform Password</label>
+                <input type="password" name="conform_password" id="">
+            </div>
+        </div>
+        <div class="agree_to_terms flex" >
+            <label>Agree to terms and conditons</label>
+            <input type="checkbox" name="agree_to_terms" id="">
+        </div>
+        <div class="form_submit_btn">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
