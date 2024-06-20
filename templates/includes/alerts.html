@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Message</title>
+    <style>
+        .alert {
+            position: fixed;
+            /* Fixed positioning for animation */
+            top: 50%;
+            /* Center vertically */
+            right: 0;
+            /* Position at right corner */
+            transform: translateY(-50%);
+            /* Center vertically within viewport */
+            padding: 20px;
+            background-color: #403f3fdd;
+            /* Red color */
+            color: white;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            animation: slide-in 0.5s ease-in-out forwards;
+        }
+
+        .alert.hidden {
+            animation: slide-out 0.5s ease-in-out forwards;
+        }
+
+        .closebtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .closebtn:hover {
+            color: black;
+        }
+
+        /* Animations */
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slide-out {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {%if messages%}
+    {%for message in messages%}
+    <div class="alert">
+        <span class="closebtn">&times;</span>
+        <strong>Success</strong> {{message}}
+    </div>
+    {%endfor%}
+    {%endif%}
+
+    <script>
+        const closeBtn = document.getElementsByClassName("closebtn")[0];
+        const alertDiv = document.getElementsByClassName("alert")[0];
+
+        closeBtn.addEventListener("click", function () {
+            alertDiv.classList.add("hidden");
+        });
+
+    </script>
+</body>
+
+</html>

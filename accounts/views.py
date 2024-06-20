@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponse,redirect
 from . forms import UserForm
 from .models import User
 from . utils import users_id_generator
+from django.contrib import messages
 
 def RegisterUser(request):
     if request.method == 'POST':
@@ -10,9 +11,11 @@ def RegisterUser(request):
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
+            user = form.save()
             user.users_id = users_id_generator(user.id)
             form.save()
-            # user = UserProfile.users_id
+            messages.success(request,'Your account is registered successfully wait for the approval.')
+
             return redirect('RegisterUser')
         else:
             print(form.errors)

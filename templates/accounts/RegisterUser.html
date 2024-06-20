@@ -60,18 +60,24 @@
             <label>Agree to terms and conditons</label>
             <input type="checkbox" name="agree_to_terms" id="">
         </div>
-        {% for field in form %}
-        {% if field.errors%}
-        {% for error in field.errors%}
-        <li style="color: red;">{{error}}</li>
-        {%endfor%}
-        {%endif%}
-        {% endfor%}
-        <li style="color:red;"> {{form.non_field_errors}}</li>
+        <div class="errors_handle" style="width: 1010px;">
+            {% for field in form %}
+            {% if field.errors%}
+            {% for error in field.errors%}
+            <li style="color: red;">* {{error}}</li>
+            {%endfor%}
+            {%endif%}
+            {% endfor%}
+            <li style="color:red;"> {{form.non_field_errors}}</li>
+        </div>
+
         <div class="form_submit_btn">
             <button type="submit">Submit</button>
         </div>
 
+        <div class="messages" style="width: 400px;">
+            {% include "includes/alerts.html" %}
+        </div>
 
     </form>
 </div>
