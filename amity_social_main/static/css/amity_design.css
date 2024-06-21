@@ -383,3 +383,88 @@ footer {
   
 /* REGISTRATION PAGE  ENDS */
 
+
+
+/* LOGIN PAGE STARTS  */
+.login_container{
+    width: 1010px;
+    margin: 20px auto;
+    padding: 10px;
+    background-image: url(../img/Login-Screen-Background-Wood-5.jpg);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    /* height: 800px; */
+}
+.login_container .login_welcom {
+    width: 400px;
+    margin: auto;
+}
+.login_welcom h3 strong{
+    display:flex;
+    flex-direction: column;
+    font-size: 40px;
+    padding: 5px 0px;
+}
+.login_welcom h3{
+    font-weight: bold;
+    font-size: 25px;
+}
+.login_card{
+    width: 400px;
+    margin: auto;
+    border: none;
+    background-color: transparent;
+    padding:77px 20px;
+    border-radius: 15px;
+    box-shadow:0px 0px 17px 0px rgba(232, 232, 232, 0.5); 
+
+}
+.login_card .login_image {
+    font-size: 60px;
+    height: 116px;
+    width:120px;
+    color: #89888aeb;
+    margin: 10px auto;
+    border-radius: 50%;
+    text-align: center;
+    overflow: hidden;
+    background-color: #4d4c4fd3;
+   
+    
+}
+.login_inputs{
+    /* text-align: center; */
+    margin: auto;
+}
+.login_inputs input{
+    background:transparent;
+    margin: 20px auto;
+    width: 200px;
+    border: 3px solid rgba(134, 133, 133, 0.829);
+    height: 30px;
+    outline: none;
+    color: white;
+    border-radius: 15px;
+    padding: 0px 10px;
+
+}
+.login_inputs input::placeholder{
+    font-weight: bold;
+    text-align: center;
+    
+}
+.login_inputs a{
+    color: white;
+}
+.login_inputs button{
+    width: 100px;
+    margin: 20px auto;
+    background-color:rgba(134, 133, 133, 0.829) ;
+    height: 30px;
+    border-radius: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+/* LOGIN PAGE ENDS */
