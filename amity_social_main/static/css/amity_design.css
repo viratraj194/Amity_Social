@@ -5,7 +5,7 @@ body {
 }
 
 /* UTILITY */
-li{
+li {
     list-style: none;
 }
 
@@ -21,7 +21,8 @@ a {
     text-decoration: none;
     color: white;
 }
-.space_around{
+
+.space_around {
     justify-content: space-around;
 }
 
@@ -30,10 +31,11 @@ a {
     flex-wrap: wrap;
 }
 
-.colum{
+.colum {
     display: flex;
     flex-direction: column;
 }
+
 .space_between {
     justify-content: space-between;
 }
@@ -243,7 +245,7 @@ footer {
 
 .footer_container {
     width: 1000px;
-    margin:30px auto;
+    margin: 30px auto;
     justify-content: space-around;
     /* align-items: center; */
 }
@@ -290,17 +292,21 @@ footer {
     font-size: larger;
     color: #878487;
 }
-.footer_link ul{
+
+.footer_link ul {
     display: flex;
     justify-content: center;
 }
-.footer_link ul a{
+
+.footer_link ul a {
     margin: 50px;
 }
-.f_social .f_icon i{
+
+.f_social .f_icon i {
     margin: 20px;
 }
-.f_social{
+
+.f_social {
     width: 1200px;
     margin: auto;
     text-align: center;
@@ -310,83 +316,98 @@ footer {
 /* footer  */
 
 /* REGISTRATION PAGE STARTS  */
-    .registration_form_cover_photo{
-        width: 1200px;
-        height: 300px;
-        margin: 20px auto;
-        overflow: hidden;
-        border-radius: 15px;
-    }
-    .registration_form_cover_photo img{
-        width: 100%;
-        height: 100%;
-    }
-    .registration_form{
-        padding: 20px;
-        border-radius: 15px;
-        width: 1200px;
-        margin: 20px auto;
-    }
-    .registration_form input{
-        width: 400px;
-        height: 30px;
-        /* border-radius: 10px; */
-        border: 1px solid black;
-        font-size: 20px;
-        padding: 5px;
-        outline: none;
-        color: #7d7c7d;
-        background-color: black;
-        border-bottom-color: white;
-    }
-    .registration_form input::placeholder{
-        font-size: 40px;
-        font-weight: bolder;
-        color: #636264;
-    }
-    .registration_form div{
-        margin: 10px auto;
-    }
-    .agree_to_terms{
-        width: 1010px;
-    }
-    .agree_to_terms input{
-        width: 123px;
-        height: 20px;
-    }
-    .user_gender{
-        width:1010px;
-    }
-    .user_gender select{
-        width:200px;
-        height: 30px;
-        background-color: transparent;
-        border: 1px solid black;
-        color:  #7a797a;
-        font-size: large;
-        font-weight: bold;
-    }
-    .form_submit_btn {
-        text-align: center;
-    }
-    .form_submit_btn button{
-        width: 400px;
-        height: 30px;
-        border-radius: 10px;
-        font-size: larger;
-        font-weight: bold;
-        background-color: #2b293d;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-  
+.registration_form_cover_photo {
+    width: 1200px;
+    height: 300px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.registration_form_cover_photo img {
+    width: 100%;
+    height: 100%;
+}
+
+.registration_form {
+    padding: 20px;
+    border-radius: 15px;
+    width: 1200px;
+    margin: 20px auto;
+    background-image: url(../img/image.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.registration_form input {
+    width: 400px;
+    height: 30px;
+    /* border-radius: 10px; */
+    /* border: 1px solid black; */
+    font-size: 20px;
+    padding: 5px;
+    outline: none;
+    color: #7d7c7d;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+}
+
+.registration_form input::placeholder {
+    font-size: 40px;
+    font-weight: bolder;
+    color: #636264;
+}
+
+.registration_form div {
+    margin: 10px auto;
+}
+
+.agree_to_terms {
+    width: 1010px;
+}
+
+.agree_to_terms input {
+    width: 123px;
+    height: 20px;
+}
+
+.user_gender {
+    width: 1010px;
+}
+
+.user_gender select {
+    width: 200px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid black;
+    color: #7a797a;
+    font-size: large;
+    font-weight: bold;
+}
+
+.form_submit_btn {
+    text-align: center;
+}
+
+.form_submit_btn button {
+    width: 150px;
+    height: 30px;
+    border-radius: 10px;
+    font-size: larger;
+    font-weight: bold;
+    background-color: #505050;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
 /* REGISTRATION PAGE  ENDS */
 
 
 
 /* LOGIN PAGE STARTS  */
-.login_container{
+.login_container {
     width: 1010px;
     margin: 20px auto;
     padding: 10px;
@@ -396,49 +417,56 @@ footer {
     overflow: hidden;
     /* height: 800px; */
 }
+
 .login_container .login_welcom {
     width: 400px;
     margin: auto;
 }
-.login_welcom h3 strong{
-    display:flex;
+
+.login_welcom h3 strong {
+    display: flex;
     flex-direction: column;
     font-size: 40px;
     padding: 5px 0px;
 }
-.login_welcom h3{
+
+.login_welcom h3 {
     font-weight: bold;
     font-size: 25px;
 }
-.login_card{
+
+.login_card {
     width: 400px;
     margin: auto;
     border: none;
     background-color: transparent;
-    padding:77px 20px;
+    padding: 77px 20px;
     border-radius: 15px;
-    box-shadow:0px 0px 17px 0px rgba(232, 232, 232, 0.5); 
+    box-shadow: 0px 0px 17px 0px rgba(232, 232, 232, 0.5);
 
 }
+
 .login_card .login_image {
     font-size: 60px;
     height: 116px;
-    width:120px;
+    width: 120px;
     color: #89888aeb;
     margin: 10px auto;
     border-radius: 50%;
     text-align: center;
     overflow: hidden;
     background-color: #4d4c4fd3;
-   
-    
+
+
 }
-.login_inputs{
+
+.login_inputs {
     /* text-align: center; */
     margin: auto;
 }
-.login_inputs input{
-    background:transparent;
+
+.login_inputs input {
+    background: transparent;
     margin: 20px auto;
     width: 200px;
     border: 3px solid rgba(134, 133, 133, 0.829);
@@ -449,22 +477,26 @@ footer {
     padding: 0px 10px;
 
 }
-.login_inputs input::placeholder{
+
+.login_inputs input::placeholder {
     font-weight: bold;
     text-align: center;
-    
+
 }
-.login_inputs a{
+
+.login_inputs a {
     color: white;
 }
-.login_inputs button{
+
+.login_inputs button {
     width: 100px;
     margin: 20px auto;
-    background-color:rgba(134, 133, 133, 0.829) ;
+    background-color: rgba(134, 133, 133, 0.829);
     height: 30px;
     border-radius: 15px;
     border: none;
     color: white;
     cursor: pointer;
 }
+
 /* LOGIN PAGE ENDS */

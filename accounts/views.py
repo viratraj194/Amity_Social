@@ -1,9 +1,11 @@
 from django.shortcuts import render,HttpResponse,redirect
 from . forms import UserForm
 from .models import User
-from . utils import users_id_generator
+from . utils import users_id_generator,send_email_verification,detectUser
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
 
 def RegisterUser(request):
     if request.user.is_authenticated:
@@ -18,6 +20,8 @@ def RegisterUser(request):
             user = form.save()
             user.users_id = users_id_generator(user.id)
             form.save()
+            # send verification
+            send_email_verification(request,user)
             messages.success(request,'Your account is registered successfully wait for the approval.')
 
             return redirect('RegisterUser')
@@ -29,8 +33,23 @@ def RegisterUser(request):
     context = {
         'form':form,
     }
-
     return render(request,'accounts/RegisterUser.html',context)
+
+def activate(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except(TypeError,ValueError,OverflowError,User.DoesNotExist):
+        user =None
+    if user is not None and default_token_generator.check_token(user,token):
+        user.is_active = True
+        user.save()
+        messages.success(request,'Your account has been activated.')
+        return redirect('login')
+    else:
+        messages.error(request,'invalid activation link')
+        return redirect('login')
+    pass
 
 
 def login(request):
@@ -48,7 +67,7 @@ def login(request):
             return redirect('account')
         else:
             messages.error(request,'Invalid credentials!')
-            return redirect('login')
+            return redirect('account')
     return render(request,'accounts/login.html')
 
 
@@ -58,6 +77,12 @@ def logout(request):
     return redirect('login')
 
 @login_required(login_url='login')
+def UserDashboard(request):
+    return render(request,'accounts/UserDashboard.html')
+    
+@login_required(login_url='login')
 def account(request):
-    return render(request,'accounts/account.html')
-    pass
+    user = request.user
+    redirectUrl = detectUser(user)
+    return redirect(redirectUrl)
+
