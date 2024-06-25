@@ -24,11 +24,10 @@ def detectUser(user):
 
 
 
-def send_email_verification(request,user):
+def send_email_verification(request,user,mail_subject,mail_template):
     from_mail = settings.DEFAULT_FROM_EMAIL
     current_site = get_current_site(request)
-    mail_subject = 'please activate your account'
-    message = render_to_string('accounts/email/account_activate.html',{
+    message = render_to_string(mail_template,{
         'user':user,
         'domain':current_site,
         'uid':urlsafe_base64_encode(force_bytes(user.pk)),
