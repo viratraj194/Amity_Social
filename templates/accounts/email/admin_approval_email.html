@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hi {{user.first_name}},
+{% if is_approved %}
+Congurations Your account is approved for the posts,Now you can post on website.
+{% else %}
+Sorry your account is not approved for the posting on the website!. For more support contect us at supprot.collagesocial@gmail.com
+
+{% endif %}
+
+{% endautoescape %}

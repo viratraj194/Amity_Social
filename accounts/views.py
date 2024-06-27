@@ -1,6 +1,6 @@
 from django.shortcuts import render,HttpResponse,redirect
 from . forms import UserForm
-from .models import User
+from .models import User,UserProfile
 from . utils import users_id_generator,send_email_verification,detectUser
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
@@ -47,10 +47,10 @@ def activate(request,uidb64,token):
         user.is_active = True
         user.save()
         messages.success(request,'Your account has been activated.')
-        return redirect('login')
+        return redirect('account')
     else:
         messages.error(request,'invalid activation link')
-        return redirect('login')
+        return redirect('account')
     pass
 
 
@@ -80,7 +80,12 @@ def logout(request):
 
 @login_required(login_url='login')
 def UserDashboard(request):
-    return render(request,'accounts/UserDashboard.html')
+    profile = UserProfile.objects.get(user=request.user)
+    print(profile.profile_picture)
+    context = {
+        'profile':profile,
+    }
+    return render(request,'accounts/UserDashboard.html',context)
     
 @login_required(login_url='login')
 def account(request):

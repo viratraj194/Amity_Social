@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from .utils import send_notification_email
 
 class UserManager(BaseUserManager):
     def create_user(self,first_name,last_name,username,email,password=None):
@@ -72,6 +72,37 @@ class User(AbstractBaseUser):
         return True
 
     
+    def save(self,*args, **kwargs):
+        if self.pk is not None:
+            # UPDATE
+            orig = User.objects.get(pk = self.pk)
+            if orig.is_approved != self.is_approved:
+                context={
+                    'user':orig,
+                    'is_approved':self.is_approved,
+                    'to_email':orig.email
+                }
+                if self.is_approved == True:
+                    # send notification email 
+                    mail_subject = 'congratulation your account is approved for the post'
+                    mail_template = 'accounts/email/admin_approval_email.html'
+                    send_notification_email(mail_subject,mail_template,context)
+            else:
+                mail_subject = 'sorry your account is approved for the post'
+                mail_template = 'accounts/email/admin_approval_email.html'
+                context = {
+                    'user':orig,
+                    'is_approved':self.is_approved,
+                    'to_email':orig.email
+                }
+                send_notification_email(mail_subject,mail_template,context)
+        return super(User,self).save(*args, **kwargs)
+
+
+
+
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='users/profile_picture', blank=True, null=True)

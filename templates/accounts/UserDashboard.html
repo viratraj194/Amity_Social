@@ -1,5 +1,58 @@
 {% extends "base.html" %}
 {% block content %}
-welcome to accounts section{{user.username}}
+<body>
+    <div class="user_profiles">
+        <div class="user_profile">
+            <div class="user_profile_image">
+                {% if profile.profile_picture %}
+                <img src="{{profile.profile_picture.url}}" alt="">
+                {% else %}
+                <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
+                {% endif %}
+            </div>
+            <div class="user_profile_names">
+                <h1><strong>{{user.first_name}} {{user.last_name}}</strong> </h1>
+                <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
+                    <span>Living in Switzerland</span>
+                    <a href="{% url "logout" %}" style="color: #86829a;">
+                        <i class="bi bi-gear"></i>
+                    </a>
+
+                </div>
+            </div>
+            <div class="user_profile_follow_msg_btn">
+                <button type="submit">Follow</button>
+                <a href="#"><button>Message</button></a>
+            </div>
+        </div>
+    </div>
+    <div class="following_follow_posts flex">
+        <div  class=" posts " >
+            <h5>
+                <strong>234</strong>
+            </h5>
+            <a href="">Posts</a>
+            
+        </div>
+        <div class=" followinrs" >
+            <h5>
+                <strong>856</strong>
+            </h5>
+            <a href="">Followers</a>
+            
+        </div>
+        <div class=" followings" >
+            <h5>
+                <strong>562</strong>
+            </h5>
+            <a href="">Following</a>
+            
+        </div>
+    </div>
+    <div class="users_all_posts">
+        <h2>About</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, illum?</p>
+    </div>
+</body>
 {% include "includes/alerts.html" %}
 {% endblock  %}

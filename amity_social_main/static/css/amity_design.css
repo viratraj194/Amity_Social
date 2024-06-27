@@ -1,5 +1,5 @@
 body {
-    background-color: black;
+    background-color:black;
     color: white;
 
 }
@@ -54,12 +54,11 @@ a {
     padding: 10px;
 }
 
-.login {
-    background-color: #2b293d;
-    border-radius: 15px;
-}
 
 .login a {
+    border-radius: 15px;
+    background-color: #2b293d;
+    padding: 10px;
     font-size: 25px;
     font-weight: bold;
 }
@@ -500,3 +499,106 @@ footer {
 }
 
 /* LOGIN PAGE ENDS */
+/* user profile starts  */
+.user_profiles{
+    width: 1010px;
+    margin: auto;
+}
+.user_profiles .user_profile{
+    width: 400px;
+    margin: auto;
+    text-align: center;
+    overflow: hidden;
+}
+.user_profile .user_profile_image{
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.user_profile .user_profile_image img{
+    width: 100%;
+    height: 100%;
+    
+}
+.user_profiles .user_profile_names span{
+    color: #86829a;
+    font-size: large;
+    font-weight: bold;
+
+}
+.user_profiles .user_profile_names h1{
+    margin: 5px;
+
+}
+.user_profile_follow_msg_btn button{
+    margin: 10px;
+    width: 120px;
+    height: 35px;
+    font-size: large;
+    font-weight: bold;
+    border-radius: 10px;
+}
+.user_profile_follow_msg_btn a{
+    margin: 10px;
+    width: 120px;
+    height: 35px;
+    font-size: large;
+    font-weight: bold;
+    border-radius: 10px;
+}
+.user_profiles .user_profile_follow_msg_btn button{
+    background-color: #86829a;
+    outline: none;
+    border:none;
+    cursor: pointer;
+    
+}
+.user_profiles .user_profile_follow_msg_btn a button{
+    background-color: blue;
+    color: white;
+    outline: none;
+    border:none;
+    cursor: pointer;
+    
+}
+.user_profiles .user_profile_follow_msg_btn {
+    margin: 10px auto;
+    
+}
+
+.following_follow_posts{
+    width: 1010px;
+    margin: auto;
+    padding-bottom: 20px;
+    text-align: center;
+    justify-content: space-evenly;
+    border-bottom: 2px solid #86829a;
+}
+.following_follow_posts div{
+    width: 300px;
+    /* height: 100px; */
+    border-radius: 10px;
+    padding: 10px;
+    border: 2px solid rgb(93, 97, 126);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.following_follow_posts div h5{
+    margin:0px;
+    font-size: large;
+}
+.following_follow_posts div a{
+    margin:0px;
+    font-size: 15px;
+    font-weight: 300;
+    color: #86829a;
+}
+.users_all_posts{
+    width: 1010px;
+    margin: auto;
+}
+/* user profile ends */
