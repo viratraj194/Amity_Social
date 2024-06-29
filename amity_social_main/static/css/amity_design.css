@@ -337,7 +337,10 @@ footer {
     background-size: cover;
     background-position: center;
 }
-
+.registration_form label{
+    color: #919092eb;
+    font-weight: bold;
+}
 .registration_form input {
     width: 400px;
     height: 30px;
@@ -462,6 +465,7 @@ footer {
 .login_inputs {
     /* text-align: center; */
     margin: auto;
+    position: relative;
 }
 
 .login_inputs input {
@@ -471,7 +475,7 @@ footer {
     border: 3px solid rgba(134, 133, 133, 0.829);
     height: 30px;
     outline: none;
-    color: white;
+    color:   #89888aeb;
     border-radius: 15px;
     padding: 0px 10px;
 
@@ -485,6 +489,14 @@ footer {
 
 .login_inputs a {
     color: white;
+}
+.login_inputs i {
+    cursor: pointer;
+   position: absolute;
+   top: 41%;
+   left: 70%;
+   color:  #89888aeb;
+   
 }
 
 .login_inputs button {

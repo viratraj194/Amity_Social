@@ -46,6 +46,7 @@ class User(AbstractBaseUser):
     id_card_image = models.ImageField(upload_to='users/id_card_image')
     agree_to_terms = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
+    
     # REQUIRED_FIELDS 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)

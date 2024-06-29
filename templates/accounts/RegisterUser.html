@@ -49,14 +49,24 @@
         <div class="passwords flex space_around">
             <div class="password colum">
                 <label>Password</label>
-                <input type="password" name="password">
+                <input type="password" name="password" id="passwordInput1">
             </div>
             <div class="conf_password colum">
                 <label>Conform Password</label>
-                <input type="password" name="conform_password" id="">
+                <input type="password" name="conform_password" id="passwordInput">
             </div>
+
         </div>
+        <div class="agree_to_terms flex" style="position: relative;">
+
+            <label>Show Passwords</label>
+            <i class="bi bi-unlock" onclick="togglePassword(), changeClass()" id="lock"
+                style="bottom: 1px; left: 280px; position: absolute;color: #89888aeb;"></i>
+
+        </div>
+
         <div class="agree_to_terms flex">
+
             <label>Agree to terms and conditons</label>
             <input type="checkbox" name="agree_to_terms" id="">
         </div>
@@ -80,5 +90,24 @@
         </div>
 
     </form>
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById('passwordInput');
+            var passwordInput1 = document.getElementById('passwordInput1');
+            if (passwordInput.type === 'password' && passwordInput1.type === 'password') {
+                passwordInput.type = 'text';
+                passwordInput1.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+                passwordInput1.type = 'password';
+            }
+        }
+
+        function changeClass() {
+            var lock = document.getElementById('lock');
+            lock.classList.toggle('bi-unlock');
+            lock.classList.toggle('bi-lock-fill');
+        }
+    </script>
 </div>
 {% endblock %}

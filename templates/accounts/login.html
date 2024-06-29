@@ -20,7 +20,10 @@
             </div>
             <div class="login_inputs flex colum">
                 <input type="email" name="email" placeholder="Enter The Email">
-                <input type="password" name="password" placeholder="Enter Password">
+                <i class="bi bi-unlock" onclick="togglePassword(), changeClass()" id="lock"></i>
+                <input type="password" name="password" id="passwordInput" placeholder="Enter Password">
+                
+              
                 <a href="{% url "forgot_password" %}">
                     <span class="forgot_password">Forgot Password?</span>
                 </a>
@@ -38,6 +41,22 @@
         
     </form>
 </div>
+<script>
+    function togglePassword(){
+        var passwordInput = document.getElementById('passwordInput');
+        if(passwordInput.type === 'password'){
+            passwordInput.type = 'text';
+        }else{
+            passwordInput.type = 'password';
+        }
+    }
+
+    function changeClass(){
+        var lock = document.getElementById('lock');
+        lock.classList.toggle('bi-unlock');
+        lock.classList.toggle('bi-lock-fill');
+    }
+</script>
 {% include "includes/alerts.html" %}
 <!-- login page design  ends here  -->
 {% endblock %}
