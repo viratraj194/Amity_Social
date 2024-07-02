@@ -139,3 +139,8 @@ def reset_password(request):
             messages.error(request,"password didn't match".title())
             return redirect('reset_password')
     return render(request,'accounts/reset_password.html')
+
+
+
+def userProfileSettings(request):
+    return render(request,'accounts/userProfileSettings.html')

@@ -615,3 +615,85 @@ footer {
     margin: auto;
 }
 /* user profile ends */
+
+/* userProfileSettings starts */
+.userProfileSettings{
+    width: 1010px;
+    margin: auto;
+}
+.userProfileSettings h1,h2,h3,h4,h5,h6{
+    margin: 0px;
+}
+.userProfileSetting-profile{
+    width: 300px;
+    margin: 20px 0px;
+    align-items: center;
+}
+.userProfileSetting-profile h4,h5{
+    margin: 5px 0px;
+}
+.userProfileSetting-profile h5{
+    color: #86829a;
+}
+
+.userProfileSettings-image{
+    overflow: hidden;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+.userProfileSettings-image img{
+    
+    width: 100%;
+    height: 100%;
+}
+.userProfileSettingsForm input{
+    outline: none;
+    border: none;
+    background-color: #636264;
+    height: 30px;
+    width: 200px;
+    padding-left: 10px;
+    color: white;
+    border-radius: 8px;
+}
+.userProfileSettingsForm input[type="file"] {
+    padding: 5px 0px 0px 5px;
+}
+.userProfileSettingsForm input::placeholder{
+    color: white;
+    padding-left: 10px;
+}
+.userProfileSettingsForm .M-10_0{
+    margin: 15px 0px;
+}
+.userProfileSettingsForm .M-10_0 label{
+    font-size: large;
+    font-weight: 500;
+    
+}
+.userProfileSettingsForm .M-10_0 h6{
+    color: #9e8fab;
+    font-size: 13px;
+}
+.userProfileSettingsForm-button button{
+    width: 100px;
+    height: 30px;
+    border-radius: 8px;
+    background-color: #636264;
+    color: white;
+}
+.userProfile-logout{
+    margin: 20px 0px;
+}
+.userProfile-logout button{
+    width: 100px;
+    margin: 10px 0px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background-color: #c10101;
+    color: white; 
+    cursor: pointer;
+}
+/* userProfileSettings ends */

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="userProfileSettings">
+    <div class="userProfileSettings-title" style="margin: 20px 0px;">
+        <h2>Edit Profile</h2>
+    </div>
+    <div class="userProfileSetting-profile space_between flex">
+        <div class="userProfileSettings-image">
+            {% if profile.profile_picture %}
+            <img src="{{profile.profile_picture.url}}" alt="">
+            {% else %}
+            <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
+            {% endif %}
+        </div>
+        <div class="userProfileSettings-profile-info">
+            <h4>{{user.first_name}}</h4>
+            <h5><span>{{user.username}}</span></h5>
+            <h5><span>{{user.email}}</span></h5>
+        </div>
+    </div>
+    <div class="userProfileSettingsForm">
+        <form action="">
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">First Name</label>
+                    <input type="text" placeholder=" Enter your first name">
+                </div>
+                <h6>Enter your first name of your name</h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Last name</label>
+                    <input type="text" placeholder="Enter last name">
+                </div>
+                <h6>Enter your last name of your full name.</h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Username</label>
+                    <input type="text" placeholder="Enter Username">
+                </div>
+                <h6>Enter you username which should be unique </h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Phone Number</label>
+                    <input type="text" placeholder="Enter Phone number">
+                </div>
+                <h6>Enter you phone number.</h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Profile Picture</label>
+                    <input type="file" name="">
+                </div>
+                <h6>You can update your profile picture here.</h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Cover Photo</label>
+                    <input type="file" name="">
+                </div>
+                <h6>You can update your cover photo here.</h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Collage Name</label>
+                    <input type="text" placeholder="Enter collage name">
+                </div>
+                <h6>Through your collage name you will have specialized post mainly from your collage </h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Collage Pincode</label>
+                    <input type="text" placeholder="Enter collage Pincode">
+                </div>
+                <h6>Through your collage name you will have specialized post mainly from your collage Pin Code</h6>
+            </div>
+            <div class="userProfileSettingsForm-button">
+                <button type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+    <div class="userProfile-logout">
+        <h3>LOG OUT your account</h3>
+        <a href="{% url 'logout'%}" style="margin: 0px;"><button>LOG OUT</button></a>
+    </div>
+</div>
+
+{% include "includes/alerts.html" %}
+<!-- login page design  ends here  -->
+{% endblock %}
