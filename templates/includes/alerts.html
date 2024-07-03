@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +20,7 @@
         }
 
         .alert.hidden {
-            animation: fade-out 4s ease-in-out forwards;
+            animation: fade-out 0.5s ease-in-out forwards;
         }
 
         .closebtn {
@@ -32,7 +31,7 @@
             font-size: 30px;
             font-weight: bold;
             cursor: pointer;
-            transition: 3s;
+            transition: 0.3s;
         }
 
         .closebtn:hover {
@@ -67,7 +66,7 @@
     {% for message in messages %}
     <div class="alert">
         <span class="closebtn">&times;</span>
-        <strong style="padding-right: 10px;">{{ message }}</strong> 
+        <strong style="padding-right: 10px;">{{ message }}</strong>
     </div>
     {% endfor %}
     {% endif %}
@@ -75,24 +74,31 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const alertDiv = document.querySelector(".alert");
-            const closeBtn = alertDiv.querySelector(".closebtn");
 
-            closeBtn.addEventListener("click", function () {
-                alertDiv.classList.add("hidden");
-            });
+            if (alertDiv) {
+                const closeBtn = alertDiv.querySelector(".closebtn");
 
-            // Automatically fade out after 1 second
-            setTimeout(function () {
-                alertDiv.classList.add("hidden");
-            }, 1000); // 1000 milliseconds = 1 second
-
-            // Remove the alert from the DOM after the fade-out animation
-            alertDiv.addEventListener("animationend", function (event) {
-                if (event.animationName === "fade-out") {
-                    alertDiv.style.display = "none";
+                if (closeBtn) {
+                    closeBtn.addEventListener("click", function () {
+                        alertDiv.classList.add("hidden");
+                    });
                 }
-            });
+
+                // Automatically fade out after 1 second
+                setTimeout(function () {
+                    alertDiv.classList.add("hidden");
+                }, 1000); // 1000 milliseconds = 1 second
+
+                // Remove the alert from the DOM after the fade-out animation
+                alertDiv.addEventListener("animationend", function (event) {
+                    if (event.animationName === "slide-out") {
+                        alertDiv.style.display = "none";
+                    }
+                });
+            }
         });
+
     </script>
 </body>
+
 </html>

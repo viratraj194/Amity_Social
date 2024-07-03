@@ -73,31 +73,28 @@ class User(AbstractBaseUser):
         return True
 
     
-    def save(self,*args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.pk is not None:
             # UPDATE
-            orig = User.objects.get(pk = self.pk)
+            orig = User.objects.get(pk=self.pk)
             if orig.is_approved != self.is_approved:
-                context={
-                    'user':orig,
-                    'is_approved':self.is_approved,
-                    'to_email':orig.email
-                }
-                if self.is_approved == True:
-                    # send notification email 
-                    mail_subject = 'congratulation your account is approved for the post'
-                    mail_template = 'accounts/email/admin_approval_email.html'
-                    send_notification_email(mail_subject,mail_template,context)
-            else:
-                mail_subject = 'sorry your account is approved for the post'
-                mail_template = 'accounts/email/admin_approval_email.html'
                 context = {
-                    'user':orig,
-                    'is_approved':self.is_approved,
-                    'to_email':orig.email
+                    'user': orig,
+                    'is_approved': self.is_approved,
+                    'to_email': orig.email
                 }
-                send_notification_email(mail_subject,mail_template,context)
-        return super(User,self).save(*args, **kwargs)
+                if self.is_approved:
+                    # send notification email for approval
+                    mail_subject = 'Congratulations, your account is approved for the post'
+                    mail_template = 'accounts/email/admin_approval_email.html'
+                    send_notification_email(mail_subject, mail_template, context)
+                else:
+                    # send notification email for disapproval
+                    mail_subject = 'Sorry, your account is not approved for the post'
+                    mail_template = 'accounts/email/admin_approval_email.html'
+                    send_notification_email(mail_subject, mail_template, context)
+        return super(User, self).save(*args, **kwargs)
+
 
 
 

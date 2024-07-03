@@ -515,7 +515,7 @@ footer {
 /* user profile starts  */
 .user_profiles{
     width: 1010px;
-    margin: auto;
+    margin: 20px auto;
 }
 .user_profiles .user_profile{
     width: 400px;

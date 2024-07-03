@@ -1,5 +1,5 @@
-from django.shortcuts import render,HttpResponse,redirect
-from . forms import UserForm
+from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
+from . forms import UserForm,userInfoForm,userProfileForm
 from .models import User,UserProfile
 from . utils import users_id_generator,send_email_verification,detectUser
 from django.contrib import messages,auth
@@ -62,7 +62,6 @@ def login(request):
         email = request.POST['email']
         password = request.POST['password']
         user = auth.authenticate(email=email,password=password)
-
         if user is not None:
             auth.login(request,user)
             messages.success(request,'You are now logged in.')
@@ -142,5 +141,32 @@ def reset_password(request):
 
 
 
+@login_required(login_url='login')
 def userProfileSettings(request):
-    return render(request,'accounts/userProfileSettings.html')
+    # Fetch the user profile
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    
+    if request.method == 'POST':
+        user_profile_form = userProfileForm(request.POST, request.FILES, instance=user_profile)
+        user_info_form = userInfoForm(request.POST, instance=request.user)
+        
+        if user_profile_form.is_valid() and user_info_form.is_valid():
+            # Print the cleaned data from the forms
+            
+            # Uncomment the following lines to save the data to the database
+            user_profile_form.save()
+            user_info_form.save()
+        else:
+            print('Invalid forms')
+            print('User Profile Form Errors:', user_profile_form.errors)
+            print('User Info Form Errors:', user_info_form.errors)
+    else:
+        user_profile_form = userProfileForm(instance=user_profile)
+        user_info_form = userInfoForm(instance=request.user)
+    
+    context = {
+        'user_profile_form': user_profile_form,
+        'user_info_form': user_info_form,
+    }
+
+    return render(request, 'accounts/userProfileSettings.html', context)
