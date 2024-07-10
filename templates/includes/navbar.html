@@ -1,11 +1,20 @@
 {% load static %}
 <nav>
     <div class="nav flex space_between">
+        {% if user.is_authenticated %}
+        <div class="nav_image">
+            <a href="{%url 'list_posts'%}">
+                <img src="" alt="@MITY SOCIAL">
+            </a>
+        </div>
+        {% else %}
+        
         <div class="nav_image">
             <a href="{%url 'home'%}">
                 <img src="" alt="@MITY SOCIAL">
             </a>
         </div>
+        {% endif %}
         {% if user.is_authenticated %}
         <div class="login">
             {% if profile.profile_picture %}
@@ -13,8 +22,6 @@
                 <a href="{%url 'UserDashboard'%}">
                     <img src="{{profile.profile_picture.url}}" alt="" style="width: 100%; height: 100%;">
                 </a>
-
-
             </div>
             {% else %}
             <a href="{% url "logout" %}">Log out</a>

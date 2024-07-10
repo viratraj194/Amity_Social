@@ -57,7 +57,7 @@ def activate(request,uidb64,token):
 def login(request):
     if request.user.is_authenticated:
         messages.warning(request,'you are already logged in.')
-        return redirect('account')
+        return redirect('list_posts')
     elif request.method =='POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -65,10 +65,10 @@ def login(request):
         if user is not None:
             auth.login(request,user)
             messages.success(request,'You are now logged in.')
-            return redirect('account')
+            return redirect('list_posts')
         else:
             messages.error(request,'Invalid credentials!')
-            return redirect('account')
+            return redirect('list_posts')
     return render(request,'accounts/login.html')
 
 
@@ -77,14 +77,7 @@ def logout(request):
     messages.success(request, 'you have logged out successfully'.title())
     return redirect('login')
 
-@login_required(login_url='login')
-def UserDashboard(request):
-    profile = UserProfile.objects.get(user=request.user)
-    print(profile.profile_picture)
-    context = {
-        'profile':profile,
-    }
-    return render(request,'accounts/UserDashboard.html',context)
+
     
 @login_required(login_url='login')
 def account(request):
@@ -170,3 +163,23 @@ def userProfileSettings(request):
     }
 
     return render(request, 'accounts/userProfileSettings.html', context)
+
+
+
+
+
+
+
+
+@login_required(login_url='login')
+def UserDashboard(request):
+    profile = UserProfile.objects.get(user=request.user)
+   
+    context = {
+        'profile':profile,
+    }
+    return render(request,'accounts/UserDashboard.html',context)
+
+
+
+

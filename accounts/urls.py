@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from.import views
 
 urlpatterns = [
@@ -18,4 +18,9 @@ urlpatterns = [
 
 
     path('userProfileSettings/',views.userProfileSettings,name='userProfileSettings'),
+
+
+    path('list_posts/',include('list_posts.urls')),
+
+    
 ]

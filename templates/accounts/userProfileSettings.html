@@ -60,12 +60,20 @@
                     <label for="">Profile Picture</label>
                     {{user_profile_form.profile_picture}}
                 </div>
+                <div style="margin-left: -37px; color: rgb(247, 45, 45);">
+                    {{user_profile_form.profile_picture.errors}}
+
+                </div>
                 <h6>You can update your profile picture here.</h6>
             </div>
             <div class="M-10_0">
                 <div class="flex space_between">
                     <label for="">Cover Photo</label>
                     {{user_profile_form.cover_photo}}
+                </div>
+                <div style="margin-left: -37px; color: rgb(247, 45, 45);">
+                    {{user_profile_form.cover_photo.errors}}
+
                 </div>
                 <h6>You can update your cover photo here.</h6>
             </div>

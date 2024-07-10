@@ -1,5 +1,5 @@
 body {
-    background-color:black;
+    background-color:#141414;
     color: white;
 
 }
@@ -39,6 +39,126 @@ a {
 .space_between {
     justify-content: space-between;
 }
+
+
+
+.boton-elegante {
+    padding: 10px 30px;
+    border: 2px solid #2c2c2c;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.4s ease;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+
+}
+
+.boton-elegante::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle,
+            rgba(255, 255, 255, 0.25) 0%,
+            rgba(255, 255, 255, 0) 70%);
+    transform: scale(0);
+    transition: transform 0.5s ease;
+}
+
+.boton-elegante:hover::after {
+    transform: scale(4);
+}
+
+.boton-elegante:hover {
+    border-color: #666666;
+    background: #292929;
+}
+
+/* border */
+
+.border-animation {
+    position: relative;
+
+    /* background-color: #f3f3f3; */
+    margin: 50px auto;
+
+}
+
+.border-animation::before,
+.border-animation::after,
+.border-animation span::before,
+.border-animation span::after {
+    content: '';
+    position: absolute;
+    background: white;
+}
+
+.border-animation::before,
+.border-animation::after {
+    height: 1px;
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+.border-animation span::before,
+.border-animation span::after {
+    width: 1px;
+    height: 0;
+    transition: height 0.5s ease;
+}
+
+.border-animation::before {
+    top: 0;
+    left: 0;
+}
+
+.border-animation::after {
+    bottom: 0;
+    right: 0;
+}
+
+.border-animation span::before {
+    top: 0;
+    right: 0;
+}
+
+.border-animation span::after {
+    bottom: 0;
+    left: 0;
+}
+
+.border-animation:hover::before,
+.border-animation:hover::after {
+    width: 100%;
+}
+
+.border-animation:hover span::before,
+.border-animation:hover span::after {
+    height: 100%;
+}
+
+.border-animation:hover::before {
+    transition-delay: 0s;
+}
+
+.border-animation:hover::after {
+    transition-delay: 0.25s;
+}
+
+.border-animation:hover span::before {
+    transition-delay: 0.5s;
+}
+
+.border-animation:hover span::after {
+    transition-delay: 0.75s;
+}
+
 
 /* UTILITY */
 
@@ -697,3 +817,462 @@ footer {
     cursor: pointer;
 }
 /* userProfileSettings ends */
+
+
+/* post feed starts */
+.postingPage {
+    width: 1400px;
+    margin: 50px auto;
+    justify-content: space-evenly;
+
+}
+
+.loggedInUserProfile {
+    background-color: white;
+}
+
+.postingPageLeft {
+    
+    position: sticky;
+    top: 20;
+    width: 285px;
+    z-index: 100;
+}
+.sticky{
+    display: block;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 30px;
+}
+
+.loggedInUserProfile {
+    border: 1px solid #535252;
+
+    padding: 10px;
+    border-radius: 10px;
+
+
+    border-radius: 30px;
+    background: #1d1c1c;
+}
+
+.UserCover_photo_profile_photo {
+    position: relative;
+    margin: auto;
+    width: 100%;
+    /* Ensure the parent container takes full width */
+    height: 150px;
+    /* Set a height to contain the cover and profile photos */
+}
+
+.postingPage_cover_photo {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    overflow: hidden;
+    height: 100px;
+    border-radius: 15px;
+}
+
+.postingPage_cover_photo img {
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    object-fit: cover;
+}
+
+.postingPage_profile_photo {
+    position: absolute;
+    top: 65px;
+    /* Adjust based on the desired overlap with the cover photo */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    overflow: hidden;
+    /* padding: 5px; */
+    border: 5px solid transparent;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.postingPage_profile_photo img {
+    border-radius: 50%;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    object-fit: cover;
+}
+
+.postingPage-user-details {
+    text-align: center;
+
+}
+
+.postingPage-user-details h3,
+h4 {
+
+    font-weight: 300;
+}
+
+.postingPage-user-profile-counts {
+    font-weight: 300;
+    margin: 20px 0px;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.postingPage-user-profile-counts .postingPage-followers {
+    margin: 10px;
+    width: 55px;
+}
+
+.postingPage-user-profile-counts h6 {
+    font-weight: 200;
+}
+
+.postingPage-myProfile-link {
+    width: 200px;
+    margin: auto;
+    text-align: center;
+
+}
+
+.postingPage-myProfile-link a {
+    /* height: 40px; */
+    /* display: block; */
+    width: 200px;
+
+}
+
+.postingPageLinks {
+    text-align: left;
+    border: 1px solid #535252;
+
+    padding: 20px;
+    margin: 40px 0px;
+    border-radius: 30px;
+    background: #1d1c1c;
+}
+
+.postingPageLinks ul {
+    padding: 0px;
+}
+
+.postingPageLinks ul li {
+    width: 150px;
+    padding: 5px;
+
+    margin: 20px auto;
+    /* border: 1px solid gray; */
+}
+
+.postingPageLinks ul li {
+    align-items: center;
+    border-radius: 0px;
+    font-weight: 300;
+
+
+}
+
+.postingPageLinks ul li a {
+    font-weight: 200;
+
+}
+
+.border-animation li:hover {
+    border-bottom: none;
+}
+
+.saySomething {
+    border: 1px solid #535252;
+    height: fit-content;
+    width: 500px;
+    padding: 20px;
+    border-radius: 15px;
+    background: #1d1c1c;
+}
+
+.saySomething-submain {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.saySomething-input {
+    width: 410px;
+    position: relative;
+    align-items: center;
+    margin: 0px 5px;
+}
+
+.saySomething-submain input {
+    width: 380px;
+    height: 35px;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    padding-left: 40px;
+    border: 1px solid #535252;
+    background-color: #2d2d2d;
+
+}
+
+.saySomething-submain input::placeholder {
+    margin-left: 40px;
+    font-weight: 400;
+    color: #777b7b;
+
+}
+
+.saySomething-icon1 {
+    width: 20px;
+    top: 9px;
+    left: 10px;
+    position: absolute;
+    height: fit-content;
+
+}
+
+.saySomething-icon2 {
+    width: 20px;
+    top: 9px;
+    right: 20px;
+    position: absolute;
+    height: fit-content;
+
+}
+
+.saySomething-icon2,
+.saySomething-icon1 {
+    width: 20px;
+}
+
+.saySomethingImage {
+    margin: 0px 10px;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.saySomethingImage img {
+    width: 100%;
+    height: 100%;
+    background: cover;
+
+}
+
+
+/* SAY SOMETHING INPUTS  */
+.file-input {
+    font-size: 100px;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-input-label {
+    color: #777b7b;
+    display: flex;
+    text-align: center;
+    cursor: pointer;
+}
+
+.file-input-label span {
+    padding-left: 5px;
+    font-weight: 400;
+}
+
+.saySomething-attachments {
+    width: 450px;
+    margin-left: 62px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.saySomething-attachment {
+    width: 50px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.saySomething-Post button {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin: 20px;
+}
+
+.saySomething-Post button span {
+    color: #777b7b;
+    font-size: 17px;
+    font-weight: 400;
+    padding-left: 5px;
+
+}
+
+.saySomething-attachment-left {
+    width: 200px;
+    display: flex;
+}
+
+/* allPostLists */
+.allPostLists {
+    border: 1px solid #535252;
+    margin: 20px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 400px;
+    padding: 30px;
+    background: #1d1c1c;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.postContainer {
+    width: 380px;
+    overflow: hidden;
+    margin: auto;
+}
+
+.postContainer .posting-user-Image_details {
+    /* width: 160px; */
+    align-items: center;
+
+}
+
+.postContainer .posting-user-Image_details span {
+    margin-left: 10px;
+    color: #777b7b;
+    font-weight: 400;
+
+}
+
+.posting-user-Image_details .posting-user-Image {
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.posting-user-Image_details .posting-user-Image img {
+    width: 100%;
+    height: 100%;
+
+}
+
+.postContainer-card {
+    margin: 10px auto;
+    width: 380px;
+    height: auto;
+    height: 500px;
+    overflow: hidden;
+    border: 1px solid #777b7b;
+}
+
+.postContainer-card video {
+    padding: 0px;
+    margin: 0px;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+.posts-likes-comments-saves {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.postAll-comments a {
+    font-weight: 300;
+    font-size: 15px;
+    margin-left: 0px;
+
+}
+
+.allNotifications {
+    width: 285px;
+    border: 1px solid #535252;
+    padding: 20px;
+    border-radius: 10px;
+    border-radius: 30px;
+    background: #1d1c1c;
+}
+
+.allNotifications h4 {
+    font-weight: bold;
+    font-size: 18px;
+    color: #c6c6c6;
+}
+
+.postActivity {
+    margin: 10px auto;
+    padding: 5px;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.postActivity:hover {
+
+    background-color: #383636;
+}
+
+.postActivity .postActivity-userProfile-image {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.postActivity .postActivity-userProfile-image img {
+    width: 100%;
+    height: 100%;
+
+}
+
+.postActivityDetails {
+    text-wrap: wrap;
+    width: 150px;
+}
+
+.postActivityDetails span {
+    color: #777b7b;
+    font-size: smaller;
+
+}
+
+.postActivityDetails span strong {
+    color: #f1f1f1;
+
+}
+
+.postActivityImage_or_video {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.postActivityImage_or_video img {
+    width: 100%;
+    height: 100%;
+
+}
+
+/* post feed ends */
