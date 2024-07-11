@@ -6,6 +6,9 @@ from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
+from django.template.defaultfilters import slugify
+
+
 
 def RegisterUser(request):
     if request.user.is_authenticated:
@@ -18,6 +21,10 @@ def RegisterUser(request):
             password = form.cleaned_data['password']
             user.set_password(password)
             user = form.save()
+            user_f_name = form.cleaned_data['first_name']
+            user_l_name = form.cleaned_data['last_name']
+            user_name = f'{user_f_name}{user_l_name}'
+            user.user_slug = slugify(user_name)+'_'+str(user.id)
             user.users_id = users_id_generator(user.id)
             form.save()
             # send verification

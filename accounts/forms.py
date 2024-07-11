@@ -29,6 +29,7 @@ class UserForm(forms.ModelForm):
 
 class userProfileForm(forms.ModelForm):
     profile_picture = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
+    cover_photo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
 
     class Meta:
         model = UserProfile
