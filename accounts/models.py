@@ -104,8 +104,15 @@ class User(AbstractBaseUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='users/profile_picture', blank=True, null=True)
-    cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='users/profile_picture', blank=True, null=True,width_field='image_width',height_field='image_height')
+    # profile picture  width and height 
+    image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
+
+    cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True,width_field='cover_width',height_field='cover_height')
+    # cover photo width and height 
+    cover_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    cover_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     collage_name = models.CharField(max_length=50,blank=True,null=True)
     collage_pin_code = models.CharField(max_length=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -114,5 +121,13 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.email
 
+    def save(self,*args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.profile_picture:
+            print(f'profile picture height: {self.profile_picture.height}')
+            print(f'Profile picture width: {self.profile_picture.width}')
+        if self.cover_photo:
+            print(f'Cover photo height: {self.cover_photo.height}')
+            print(f'Cover photo width: {self.cover_photo.width}')
 
     

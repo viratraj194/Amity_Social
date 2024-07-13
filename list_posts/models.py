@@ -4,15 +4,21 @@ from accounts.models import User
 
 class UserPosts(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    content = models.TextField()
-    caption = models.TextField()
-    post_image = models.ImageField(upload_to = 'users/posts/post_image',blank=True, null = True)   
-    post_video = models.FileField(upload_to='user/posts/post_video', blank=True,null=True)
+    content = models.TextField(max_length=60,blank=True,null=True)
+    caption = models.TextField(max_length=40)
+    post_image = models.ImageField(upload_to = 'users/posts/post_image',blank=True, null = True,width_field='image_width',height_field='image,height')   
+    image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    post_slug = models.SlugField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"post by {self.user.username}"
+    
+    class Meta:
+        verbose_name = 'UserPost'
+        verbose_name_plural = 'UserPosts'
 
         
 

@@ -152,7 +152,6 @@ def userProfileSettings(request):
         
         if user_profile_form.is_valid() and user_info_form.is_valid():
             # Print the cleaned data from the forms
-            
             # Uncomment the following lines to save the data to the database
             user_profile_form.save()
             user_info_form.save()
