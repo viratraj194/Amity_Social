@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
+from list_posts .models import UserPosts
 
 
 
@@ -180,9 +181,11 @@ def userProfileSettings(request):
 @login_required(login_url='login')
 def UserDashboard(request):
     profile = UserProfile.objects.get(user=request.user)
-   
+    user_posts = UserPosts.objects.filter(user=request.user)
+    
     context = {
         'profile':profile,
+        'user_posts':user_posts,
     }
     return render(request,'accounts/UserDashboard.html',context)
 

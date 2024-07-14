@@ -1,20 +1,29 @@
 from django.db import models
 from accounts.models import User
+from django.core.exceptions import ValidationError
 
 
 class UserPosts(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    content = models.TextField(max_length=60,blank=True,null=True)
-    caption = models.TextField(max_length=40)
-    post_image = models.ImageField(upload_to = 'users/posts/post_image',blank=True, null = True,width_field='image_width',height_field='image,height')   
+    content = models.TextField(blank=True,null=True)
+    caption = models.TextField(max_length=40,blank=True,null=True)
+
+    post_image = models.ImageField(upload_to = 'users/posts/post_image',blank=True, null = True, width_field='image_width', height_field='image_height')   
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    
     post_slug = models.SlugField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"post by {self.user.username}"
+    
+    def save(self, *args, **kwargs):
+        if not self.content and not self.caption and not self.post_image:
+            raise ValidationError("You cannot post an empty post. Please provide content, caption, or an image.")
+        super().save(*args, **kwargs)
+
     
     class Meta:
         verbose_name = 'UserPost'

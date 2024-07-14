@@ -28,7 +28,7 @@
                 <div class="PostContainer-postContent">
                     <label for="userInput"></label>
                     <textarea contenteditable="true" name="content" id="userInput"
-                        placeholder="Something is in your mind? Say it here......" ></textarea>
+                        placeholder="Something is in your mind? Say it here......"></textarea>
                 </div>
             </div>
             <!-- hidden image  -->
@@ -37,7 +37,7 @@
             </div>
             <!-- caption  -->
             <div class="PostContainer-caption">
-                <textarea name="caption"  placeholder="add caption to post..."></textarea>
+                <textarea name="caption" placeholder="add caption to post..."></textarea>
             </div>
 
 
@@ -45,8 +45,9 @@
         <div class="PostContainer-border"></div>
         <div class="PostContainer-image-input">
             <div class="Post-image-input space_between flex">
-                <div class="saySomething-attachment" style="width: 50px; margin: 0px;">
-                    <input type="file" class="file-input" name="post_image" src="" accept="image/*" alt="" id="imageInput">
+                <div class="saySomething-attachment" style="width: 200px; margin: 0px;">
+                    <input type="file" class="file-input" name="post_image" src="" accept="image/*" alt=""
+                        id="imageInput">
                     <label for="imageInput" class="file-input-label">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
@@ -54,6 +55,8 @@
                         </lord-icon>
 
                     </label>
+                    <span class="moreWords" style="display:none; margin-left: 5px; color: red;">ist more then
+                        60words</span>
                 </div>
                 <div class="PostContainer-post-button space_between flex">
                     <div class="progress-circle">
@@ -66,13 +69,24 @@
                     </div>
 
                     <div class="" style="border-right: 1px solid silver; height: 30px; width: 1px;"></div>
-                    <button type="submit">Post</button>
+                    <button class="postButton" type="submit" style="display: none;">Post</button>
                 </div>
             </div>
         </div>
+
     </form>
+    {% if messages %}
+    <ul class="messages" style="color: red;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
 </div>
 <!-- post popup ends -->
+
+
+
 
 <!-- POSTING PAGE STARTS -->
 <div class="postingPage flex "> <!-- posting page main container-->
@@ -240,18 +254,43 @@
 
             </div>
         </div>
+        <!-- listing post one by one here starts  -->
+         {% for post in posts %}
         <div class="allPostLists">
             <div class="postContainer">
                 <div class="posting-user-Image_details flex">
                     <div class="posting-user-Image">
-                        <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
+                        <img src="{{post.user.userprofile.profile_picture.url}}" alt="">
                     </div>
-                    <span>Username</span>
+                    <span>{{post.user.users_id}}</span>
                     <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
                     <span>3h</span>
                 </div>
                 <div class="postContainer-card">
-                    <img src="../img/nature1.jpg" alt="">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            {% if post.post_image %}
+                            <div class="swiper-slide">
+                                <div class="postContainer-Post_image">
+                                    <img src="{{post.post_image.url}}" alt="">
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if post.content %}
+                            <div class="swiper-slide">
+                                <div class="postContainer-Post_image">
+                                    <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3;">{{post.content}}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Add more swiper slides as needed -->
+                        </div>
+                        <!-- Pagination -->
+                        
+                    </div>
+                    <div class="Pagination-Dots">
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </div>
                 <div class="posts-likes-comments-saves flex">
                     <div class="flex">
@@ -285,7 +324,7 @@
                 </div>
                 <div class="postsCaptions">
                     <div class="post-caption">
-                        <h4><strong>@_username</strong> <span>Lorem ipsum dolor sit amet.</span></h4>
+                        <h4><strong>{{post.user.users_id}}</strong> <span>{{post.caption}}</span></h4>
                     </div>
                     <div class="postAll-comments">
                         <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
@@ -294,114 +333,10 @@
 
             </div>
         </div>
-        <div class="allPostLists">
-            <div class="postContainer">
-                <div class="posting-user-Image_details flex">
-                    <div class="posting-user-Image">
-                        <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
-                    </div>
-                    <span>Username</span>
-                    <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
-                    <span>3h</span>
-                </div>
-                <div class="postContainer-card">
-                    <video src="/img/y2mate.com - Nandiya re shilpi raj arkestra 2022_1080p.mp4" controls></video>
-                </div>
-                <div class="posts-likes-comments-saves flex">
-                    <div class="flex">
-                        <div class="posts-like-comment-save">
-                            <a href="#like">
-                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                    colors="primary:#777b7b" style="width:30px;height:30px">
-                                </lord-icon>
-                            </a>
-                        </div>
+        {% endfor %}
+        <!-- listing post one by one here ends  -->
 
-                        <div class="posts-like-comment-save">
-                            <a href="#like">
-                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
-                                    colors="primary:#777b7b" style="width:30px;height:30px">
-                                </lord-icon>
-                            </a>
-                        </div>
-                    </div>
 
-                    <div class="posts-save">
-                        <a href="#like">
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon src="https://cdn.lordicon.com/prjooket.json" trigger="hover"
-                                colors="primary:#777b7b" style="width:30px;height:30px">
-                            </lord-icon>
-                        </a>
-                    </div>
-                </div>
-                <div class="postsCaptions">
-                    <div class="post-caption">
-                        <h4><strong>@_username</strong> <span>Lorem ipsum dolor sit amet.</span></h4>
-                    </div>
-                    <div class="postAll-comments">
-                        <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="allPostLists">
-            <div class="postContainer">
-                <div class="posting-user-Image_details flex">
-                    <div class="posting-user-Image">
-                        <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
-                    </div>
-                    <span>Username</span>
-                    <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
-                    <span>3h</span>
-                </div>
-                <div class="postContainer-card">
-                    <img src="../img/nature1.jpg" alt="">
-                </div>
-                <div class="posts-likes-comments-saves flex">
-                    <div class="flex">
-                        <div class="posts-like-comment-save">
-                            <a href="#like">
-                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                    colors="primary:#777b7b" style="width:30px;height:30px">
-                                </lord-icon>
-                            </a>
-                        </div>
-
-                        <div class="posts-like-comment-save">
-                            <a href="#like">
-                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
-                                    colors="primary:#777b7b" style="width:30px;height:30px">
-                                </lord-icon>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="posts-save">
-                        <a href="#like">
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon src="https://cdn.lordicon.com/prjooket.json" trigger="hover"
-                                colors="primary:#777b7b" style="width:30px;height:30px">
-                            </lord-icon>
-                        </a>
-                    </div>
-                </div>
-                <div class="postsCaptions">
-                    <div class="post-caption">
-                        <h4><strong>@_username</strong> <span>Lorem ipsum dolor sit amet.</span></h4>
-                    </div>
-                    <div class="postAll-comments">
-                        <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
 
     </div>
     <div class="postingPageLast">

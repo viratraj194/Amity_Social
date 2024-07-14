@@ -19,7 +19,6 @@ urlpatterns = [
 
     path('userProfileSettings/',views.userProfileSettings,name='userProfileSettings'),
 
-
     path('list_posts/',include('list_posts.urls')),
 
     

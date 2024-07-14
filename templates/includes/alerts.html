@@ -55,7 +55,7 @@
 
             to {
                 opacity: 0;
-                transform: translateX(100%);
+                transform: translateY(100%);
             }
         }
     </style>
@@ -84,14 +84,14 @@
                     });
                 }
 
-                // Automatically fade out after 1 second
+                // Automatically fade out after 5 seconds
                 setTimeout(function () {
                     alertDiv.classList.add("hidden");
-                }, 1000); // 1000 milliseconds = 1 second
+                }, 5000); // 5000 milliseconds = 5 seconds
 
                 // Remove the alert from the DOM after the fade-out animation
                 alertDiv.addEventListener("animationend", function (event) {
-                    if (event.animationName === "slide-out") {
+                    if (event.animationName === "fade-out") {
                         alertDiv.style.display = "none";
                     }
                 });

@@ -65,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const userInput = document.getElementById('userInput');
     const progressCircle = document.querySelector('.progress-circle .progress');
     const progressText = document.querySelector('.progress-circle .text');
+    const postButton = document.querySelector('.postButton');
+    const moreWordsMessage = document.querySelector('.moreWords');
+    let alertShown = false;  // Flag to track if alert message has been shown
 
     userInput.addEventListener('input', () => {
         const text = userInput.value.trim();
@@ -76,16 +79,63 @@ document.addEventListener('DOMContentLoaded', function () {
         progressCircle.style.strokeDashoffset = offset;
         progressText.textContent = `${Math.floor(progress)}%`;
 
-        if (wordCount > 60) {
+        // Change circle color based on progress
+        if (progress >= 100) {
             progressCircle.classList.add('over-limit');
-            alert('Word limit exceeded!');
         } else {
             progressCircle.classList.remove('over-limit');
+        }
+
+        // Show/hide postButton based on circle color
+        if (progress >= 100) {
+            postButton.style.display = 'none';  // Hide the postButton if word count exceeds 60
+        } else {
+            postButton.style.display = 'block';  // Show the postButton if within word limit
+        }
+
+        // Show moreWordsMessage only when progressCircle is over limit and not at 100%
+        if (progress >= 100) {
+            moreWordsMessage.style.display = 'block';
+        } else {
+            moreWordsMessage.style.display = 'none';
+        }
+    });
+
+    // Optional: If you want to handle backspace to reset alertShown and moreWordsMessage
+    userInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace') {
+            const text = userInput.value.trim();
+            const words = text.split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+
+            if (wordCount <= 60) {
+                progressCircle.classList.remove('over-limit');
+                postButton.style.display = 'block';  // Show the postButton if within word limit
+                moreWordsMessage.style.display = 'none';  // Hide .moreWords message
+                alertShown = false;  // Reset alertShown flag
+            }
         }
     });
 });
 
 
+
+// post card swiper 
+document.addEventListener('DOMContentLoaded', function () {
+    var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        grabCursor: true,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+    });
+});
 
 
 

@@ -752,6 +752,69 @@ footer {
     margin: auto;
 }
 
+.post-saved_post {
+    width: 500px;
+    margin: auto;
+    justify-content: center;
+}
+
+.post-saved_post .userAllPosts,
+.userAllSavePosts {
+    width: 100px;
+    padding: 10px;
+}
+
+.UserAllPostList {
+    justify-content: space-evenly;
+}
+
+.userPostContent,
+.post_content {
+    width: 200px;
+    height: 200px;
+    margin: 5px;
+    overflow: hidden;
+    border-radius: 8px;
+
+}
+
+.post_content {
+    position: relative;
+}
+.post_content:hover .post_content-likes-comment{
+    display:flex;
+    cursor:pointer;
+    background-color: rgba(0, 0, 0, 0.252);
+    width: 100%;
+    height: 100%;
+}
+
+.post_content-likes-comment {
+    position: absolute;
+    top:0;
+    left:0;
+    display:none;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.userPostContent img {
+    width: 100%;
+    height: 100%;
+
+}
+.usersAllPosts {
+    width: 1010px;
+    margin: auto;
+}
+.messages {
+    color: red;
+    display: none;
+}
+
 /* user profile ends */
 
 /* userProfileSettings starts */
@@ -1220,14 +1283,32 @@ h4 {
     overflow: hidden;
     border: 1px solid #777b7b;
 }
+.postContainer-Post_image {
 
-.postContainer-card video {
+    width: 380px;
+    height: auto;
+    height: 500px;
+    overflow: hidden;
+    border: 1px solid #777b7b;
+}
+.postContainer-Post_image img {
+    width: 100%;
+    height: 100%;
+}
+.Pagination-Dots{
+    position: relative;
+}
+.swiper-pagination{
+    position: absolute;
+}
+
+/* .postContainer-card video {
     padding: 0px;
     margin: 0px;
     object-fit: cover;
     width: 100%;
     height: 100%;
-}
+} */
 
 
 

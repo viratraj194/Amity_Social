@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile,User
 from .forms import addPostsForm
+from .models import UserPosts
 from django.contrib import messages
 from django.template.defaultfilters import slugify
 
@@ -10,12 +11,13 @@ from django.template.defaultfilters import slugify
 def list_posts(request):
     user_profile = UserProfile.objects.get(user=request.user)
     user = request.user
+    posts = UserPosts.objects.all().order_by('-created_at')
     context = {
         'user_profile':user_profile,
         'user':user,
+        'posts':posts,
 
     }
-
     return render(request,'list_posts/list_posts.html',context)
 
 

@@ -119,7 +119,7 @@ class UserProfile(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.email
+        return self.user
 
     def save(self,*args, **kwargs):
         super().save(*args, **kwargs)
