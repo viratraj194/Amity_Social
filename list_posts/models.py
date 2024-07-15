@@ -19,10 +19,10 @@ class UserPosts(models.Model):
     def __str__(self):
         return f"post by {self.user.username}"
     
-    def save(self, *args, **kwargs):
-        if not self.content and not self.caption and not self.post_image:
-            raise ValidationError("You cannot post an empty post. Please provide content, caption, or an image.")
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.content and not self.caption and not self.post_image:
+    #         raise ValidationError("You cannot post an empty post. Please provide content, caption, or an image.")
+    #     super().save(*args, **kwargs)
 
     
     class Meta:

@@ -12,6 +12,11 @@ def list_posts(request):
     user_profile = UserProfile.objects.get(user=request.user)
     user = request.user
     posts = UserPosts.objects.all().order_by('-created_at')
+    for post in posts:
+        if post.image_height is not None and post.image_width is not None:
+            post.is_portrait = post.image_height > post.image_width
+        else:
+            post.is_portrait = False  # Default to landscape if dimensions are missing
     context = {
         'user_profile':user_profile,
         'user':user,
@@ -21,12 +26,20 @@ def list_posts(request):
     return render(request,'list_posts/list_posts.html',context)
 
 
+@login_required(login_url='login')
 def add_posts(request):
+    if not request.user.is_approved:
+        messages.error(request, 'Your account is not approved to post.')
+        return redirect('list_posts')
     if request.method == 'POST':
         post_form = addPostsForm(request.POST, request.FILES)
         if post_form.is_valid():
             post = post_form.save(commit=False)  # Don't save to the database yet
             post.user = request.user  # Set the user to the current logged-in user
+
+            if not post.content and not post.caption and not post.post_image:
+                messages.error(request, "You cannot post an empty post. Please provide content, caption, or an image.")
+                return redirect('list_posts')
             post.save()  # Save the post now
 
             # Set post_slug based on user's name and post id

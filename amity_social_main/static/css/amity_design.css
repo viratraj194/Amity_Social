@@ -1232,7 +1232,7 @@ h4 {
 
 /* allPostLists */
 .allPostLists {
-    border: 1px solid #535252;
+    /* border: 1px solid #535252; */
     margin: 20px auto;
     border-radius: 15px;
     overflow: hidden;
@@ -1279,22 +1279,38 @@ h4 {
     margin: 10px auto;
     width: 380px;
     height: auto;
-    height: 500px;
+    max-height: 500px;
     overflow: hidden;
-    border: 1px solid #777b7b;
+    border: 1px solid #555555;
 }
 .postContainer-Post_image {
 
-    width: 380px;
+    width: 100%;
     height: auto;
-    height: 500px;
+    max-height: 500px;
+    object-fit: contain;
     overflow: hidden;
-    border: 1px solid #777b7b;
+    
 }
 .postContainer-Post_image img {
     width: 100%;
     height: 100%;
+    object-fit: contain !important;
 }
+
+.postContainer-Post_Big-image {
+    width: 100%;
+    height: 500px;
+    object-fit: contain;
+    overflow: hidden;
+    
+}
+.postContainer-Post_Big-image  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+}
+
 .Pagination-Dots{
     position: relative;
 }

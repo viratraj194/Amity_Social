@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="" style="border-right: 1px solid silver; height: 30px; width: 1px;"></div>
-                    <button class="postButton" type="submit" style="display: none;">Post</button>
+                    <button class="postButton" type="submit" >Post</button>
                 </div>
             </div>
         </div>
@@ -200,15 +200,15 @@
                 </div>
 
                 {% endif %}
-                <div class="saySomething-input flex">
+                <div class="saySomething-input  flex">
                     <div class="saySomething-icon1">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon class="lord-icon" src="https://cdn.lordicon.com/mecwbjnp.json" trigger="hover"
                             colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
                         </lord-icon>
                     </div>
-
-                    <input type="text" placeholder="Is there is something in your mind?..........">
+                    
+                    <input type="text" class="" placeholder="Is there is something in your mind?..........">
 
                     <div class="saySomething-icon2">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -231,7 +231,7 @@
                             <span>Image</span>
                         </label>
                     </div>
-                    {% comment %} <div class="saySomething-attachment">
+                    <!-- <div class="saySomething-attachment">
                         <input type="file" class="file-input" accept="video/*" id="videoInput">
                         <label for="videoInput" class="file-input-label">
                             <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -240,7 +240,7 @@
                             </lord-icon>
                             <span>Video</span>
                         </label>
-                    </div> {% endcomment %}
+                    </div> -->
                 </div>
                 <div class="saySomething-Post">
                     <button type="submit">
@@ -259,9 +259,15 @@
         <div class="allPostLists">
             <div class="postContainer">
                 <div class="posting-user-Image_details flex">
+                    {%if post.user.userprofile.profile_picture%}
                     <div class="posting-user-Image">
                         <img src="{{post.user.userprofile.profile_picture.url}}" alt="">
                     </div>
+                    {%else%}
+                    <div class="posting-user-Image">
+                        <img src="{%static 'img/images.jpeg'%}" alt="">
+                    </div>
+                    {%endif%}
                     <span>{{post.user.users_id}}</span>
                     <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
                     <span>3h</span>
@@ -270,16 +276,24 @@
                     <div class="swiper-container">
                         <div class="swiper-wrapper">
                             {% if post.post_image %}
+                            {% if post.is_portrait %}
+                            <div class="swiper-slide">
+                                <div class="postContainer-Post_Big-image">
+                                    <img src="{{post.post_image.url}}" alt="">
+                                </div>
+                            </div>
+                            {%else%}
                             <div class="swiper-slide">
                                 <div class="postContainer-Post_image">
                                     <img src="{{post.post_image.url}}" alt="">
                                 </div>
                             </div>
+                            {%endif%}
                             {% endif %}
                             {% if post.content %}
                             <div class="swiper-slide">
-                                <div class="postContainer-Post_image">
-                                    <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3;">{{post.content}}</p>
+                                <div class="postContainer-Post_image flex" style="justify-content: center;align-items: center; height: auto;">
+                                    <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; height: 100%;">{{post.content}}</p>
                                 </div>
                             </div>
                             {% endif %}
@@ -287,9 +301,9 @@
                         </div>
                         <!-- Pagination -->
                         
-                    </div>
-                    <div class="Pagination-Dots">
-                        <div class="swiper-pagination"></div>
+                        <div class="Pagination-Dots">
+                            <div class="swiper-pagination"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="posts-likes-comments-saves flex">

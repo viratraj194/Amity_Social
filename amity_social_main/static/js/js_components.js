@@ -1,3 +1,5 @@
+
+
 // postcontainer scroolbar 
 document.addEventListener('DOMContentLoaded', function () {
     let postContainer = document.querySelector('.PostContainer');
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             reader.onload = function (e) {
                 imageContainer.style.display = 'block'; // Show the div
                 imageContainer.querySelector('img').src = e.target.result; // Set the image src
+                
             }
             reader.readAsDataURL(file);
         } else {
@@ -136,6 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 });
+
+
 
 
 

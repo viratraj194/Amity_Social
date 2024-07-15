@@ -104,7 +104,7 @@ def forgot_password(request):
             messages.success(request,'reset password link has sent to your'.title())
             return redirect('login')
         else:
-            messages.error("email doesn't match")
+            messages.error(request,"email doesn't match")
             return redirect('forgot_password')
     return render(request,'accounts/forgot_password.html')
 
@@ -120,7 +120,7 @@ def reset_password_validator(request,uidb64,token):
         messages.success(request,'please reset your password'.title())
         return redirect('reset_password')
     else:
-        messages.error(request,"email didn't exist".title())
+        messages.error(request,"email didn't exist")
         return redirect('account')
 
 def reset_password(request):
@@ -157,7 +157,7 @@ def userProfileSettings(request):
             user_profile_form.save()
             user_info_form.save()
         else:
-            print('Invalid forms')
+            messages.error(request,'Form is invalid')
             print('User Profile Form Errors:', user_profile_form.errors)
             print('User Info Form Errors:', user_info_form.errors)
     else:
