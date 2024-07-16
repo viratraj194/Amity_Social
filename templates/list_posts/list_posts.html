@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="" style="border-right: 1px solid silver; height: 30px; width: 1px;"></div>
-                    <button class="postButton" type="submit" >Post</button>
+                    <button class="postButton" type="submit">Post</button>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
                     </div>
                     {% else %}
                     <div class="postingPage_cover_photo">
-                        <img src="../img/nature.jpg" alt="">
+                        <img src="" alt="">
                     </div>
                     {% endif %}
                     {% if user_profile.profile_picture %}
@@ -207,7 +207,7 @@
                             colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
                         </lord-icon>
                     </div>
-                    
+
                     <input type="text" class="" placeholder="Is there is something in your mind?..........">
 
                     <div class="saySomething-icon2">
@@ -255,7 +255,7 @@
             </div>
         </div>
         <!-- listing post one by one here starts  -->
-         {% for post in posts %}
+        {% for post in posts %}
         <div class="allPostLists">
             <div class="postContainer">
                 <div class="posting-user-Image_details flex">
@@ -292,29 +292,56 @@
                             {% endif %}
                             {% if post.content %}
                             <div class="swiper-slide">
-                                <div class="postContainer-Post_image flex" style="justify-content: center;align-items: center; height: auto;">
-                                    <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; height: 100%;">{{post.content}}</p>
+                                <div class="postContainer-Post_image flex"
+                                    style="justify-content: center;align-items: center; height: auto;">
+                                    <p
+                                        style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; height: 100%;">
+                                        {{post.content}}</p>
                                 </div>
                             </div>
                             {% endif %}
                             <!-- Add more swiper slides as needed -->
                         </div>
                         <!-- Pagination -->
-                        
+
                         <div class="Pagination-Dots">
                             <div class="swiper-pagination"></div>
                         </div>
                     </div>
                 </div>
+
                 <div class="posts-likes-comments-saves flex">
                     <div class="flex">
                         <div class="posts-like-comment-save">
-                            <a href="#like">
-                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                    colors="primary:#777b7b" style="width:30px;height:30px">
-                                </lord-icon>
+                            <a href="#" class="like_post" data-id="{{ post.id }}"
+                                data-url="{% url 'post_like' post.id %}">
+
+                                <!-- <div class="postLiked_icon" style="display: none;">
+                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                    <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
+                                        colors="primary:#e83a30" style="width:30px;height:30px">
+                                    </lord-icon>
+                                </div>
+                                <div class="postUnliked_icon" style="display: block;">
+                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                    <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                                        colors="primary:#848484" style="width:30px;height:30px">
+                                    </lord-icon>
+                                </div> -->
+                                <div
+                                    class="post_icon {% if post.liked_by_user %}postLiked_icon{% else %}postUnliked_icon{% endif %}">
+                                    {% if post.liked_by_user %}
+                                    <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
+                                        colors="primary:#e83a30" style="width:30px;height:30px">
+                                    </lord-icon>
+                                    {% else %}
+                                    <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                                        colors="primary:#848484" style="width:30px;height:30px">
+                                    </lord-icon>
+                                    {% endif %}
+                                </div>
                             </a>
+
                         </div>
 
                         <div class="posts-like-comment-save">
@@ -359,49 +386,46 @@
                 <h4>Activity</h4>
                 <div class="postActivity flex">
                     <div class="postActivity-userProfile-image">
-                        <img src="https://w0.peakpx.com/wallpaper/50/31/HD-wallpaper-beautiful-anime-girl-kimono-hairbun-anime.jpg"
-                            alt="">
+                        <img src="" alt="">
                     </div>
                     <div class="postActivityDetails">
                         <span><strong>@_raj</strong> started following you just today</span>
                     </div>
                     <div class="postActivityImage_or_video">
-                        <img src="https://w0.peakpx.com/wallpaper/962/826/HD-wallpaper-beauty-girl-animation-beautiful-cartoon.jpg"
-                            alt="">
+                        <img src="" alt="">
                     </div>
                 </div>
                 <div class="postActivity flex">
                     <div class="postActivity-userProfile-image">
-                        <img src="/img/nature.jpg" alt="">
+                        <img src="" alt="">
                     </div>
                     <div class="postActivityDetails">
                         <span><strong>@_raj</strong> liked your post</span>
                     </div>
                     <div class="postActivityImage_or_video">
-                        <img src="/img/pexels-keenan-constance-545154-2865901.jpg" alt="">
+                        <img src="" alt="">
                     </div>
                 </div>
                 <div class="postActivity flex">
                     <div class="postActivity-userProfile-image">
-                        <img src="https://w0.peakpx.com/wallpaper/50/31/HD-wallpaper-beautiful-anime-girl-kimono-hairbun-anime.jpg"
-                            alt="">
+                        <img src="" alt="">
                     </div>
                     <div class="postActivityDetails">
                         <span><strong>@_raj</strong> started following you just today</span>
                     </div>
                     <div class="postActivityImage_or_video">
-                        <img src="../img/image2.jpg" alt="">
+                        <img src="" alt="">
                     </div>
                 </div>
                 <div class="postActivity flex">
                     <div class="postActivity-userProfile-image">
-                        <img src="/img/nature.jpg" alt="">
+                        <img src="" alt="">
                     </div>
                     <div class="postActivityDetails">
                         <span><strong>@_raj</strong> Liked your post</span>
                     </div>
                     <div class="postActivityImage_or_video">
-                        <img src="/img/pexels-keenan-constance-545154-2865901.jpg" alt="">
+                        <img src="" alt="">
                     </div>
                 </div>
 
@@ -410,6 +434,64 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.like_post').on('click', function (e) {
+            e.preventDefault();
+            const post_id = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const csrfToken = getCookie('csrftoken');
+
+            const data = {
+                post_id: post_id
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+                    // Toggle icon based on liked status
+                    const iconDiv = $(`.like_post[data-id="${post_id}"] .post_icon`);
+                    iconDiv.removeClass('postLiked_icon postUnliked_icon');
+                    if (response.liked) {
+                        iconDiv.addClass('postLiked_icon');
+                        iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
+                            colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>`);
+                    } else {
+                        iconDiv.addClass('postUnliked_icon');
+                        iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                            colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
 <!-- POSTING PAGE ENDS -->
 
 {% include "includes/alerts.html" %}

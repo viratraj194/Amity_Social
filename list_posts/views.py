@@ -1,8 +1,8 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile,User
 from .forms import addPostsForm
-from .models import UserPosts
+from .models import UserPosts,Like
 from django.contrib import messages
 from django.template.defaultfilters import slugify
 
@@ -17,6 +17,10 @@ def list_posts(request):
             post.is_portrait = post.image_height > post.image_width
         else:
             post.is_portrait = False  # Default to landscape if dimensions are missing
+            
+        for post in posts:
+            post.liked_by_user = post.likes.filter(user=user).exists() if user else False
+
     context = {
         'user_profile':user_profile,
         'user':user,
@@ -60,3 +64,35 @@ def add_posts(request):
     }
     return render(request, 'list_posts/list_posts.html', context)
 
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+
+def post_like(request, post_id):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                post = get_object_or_404(UserPosts, id=post_id)
+                user = request.user
+
+                if Like.objects.filter(user=user, post=post).exists():
+                    # If already liked, remove the like
+                    Like.objects.filter(user=user, post=post).delete()
+                    liked = False
+                else:
+                    # If not liked, create a new like
+                    Like.objects.create(user=user, post=post)
+                    liked = True
+                
+                return JsonResponse({'status': 'success', 'liked': liked})
+
+            except UserPosts.DoesNotExist:
+                return JsonResponse({'status': 'failed', 'message': 'This post does not exist'})
+
+        else:
+            return JsonResponse({'status': 'failed', 'message': 'Invalid request'})
+
+    else:
+        return JsonResponse({'status': 'failed', 'message': 'Please login to continue'})
+
+    

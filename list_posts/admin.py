@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserPosts
+from .models import UserPosts,Like
 
 
 class CustomUserPostsAdmin(admin.ModelAdmin):
@@ -10,6 +10,7 @@ class CustomUserPostsAdmin(admin.ModelAdmin):
     fieldsets = ()
 
 # admin.site.register(CustomUserPosts)
+admin.site.register(Like)
 admin.site.register(UserPosts,CustomUserPostsAdmin)
 
 
