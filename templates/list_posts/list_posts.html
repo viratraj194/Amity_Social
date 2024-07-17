@@ -12,7 +12,7 @@
         </lord-icon>
     </div>
     <form action="{%url 'add_posts'%}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+        {%csrf_token%}
 
         <div class="PostContainer">
             <div class="postContainer-input-image flex">
@@ -192,7 +192,7 @@
                 {% if user_profile.profile_picture %}
 
                 <div class="saySomethingImage">
-                    <img src="{{profile.profile_picture.url}}" alt="">
+                    <img style="object-fit:cover;" src="{{profile.profile_picture.url}}" alt="">
                 </div>
                 {% else %}
                 <div class="saySomethingImage">
@@ -261,7 +261,7 @@
                 <div class="posting-user-Image_details flex">
                     {%if post.user.userprofile.profile_picture%}
                     <div class="posting-user-Image">
-                        <img src="{{post.user.userprofile.profile_picture.url}}" alt="">
+                        <img style="object-fit: cover;" src="{{post.user.userprofile.profile_picture.url}}" alt="">
                     </div>
                     {%else%}
                     <div class="posting-user-Image">
@@ -270,7 +270,7 @@
                     {%endif%}
                     <span>{{post.user.users_id}}</span>
                     <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
-                    <span>3h</span>
+                    <span>{{post.updated_at}}</span>
                 </div>
                 <div class="postContainer-card">
                     <div class="swiper-container">
@@ -315,19 +315,6 @@
                         <div class="posts-like-comment-save">
                             <a href="#" class="like_post" data-id="{{ post.id }}"
                                 data-url="{% url 'post_like' post.id %}">
-
-                                <!-- <div class="postLiked_icon" style="display: none;">
-                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                    <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
-                                        colors="primary:#e83a30" style="width:30px;height:30px">
-                                    </lord-icon>
-                                </div>
-                                <div class="postUnliked_icon" style="display: block;">
-                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                    <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                        colors="primary:#848484" style="width:30px;height:30px">
-                                    </lord-icon>
-                                </div> -->
                                 <div
                                     class="post_icon {% if post.liked_by_user %}postLiked_icon{% else %}postUnliked_icon{% endif %}">
                                     {% if post.liked_by_user %}
@@ -335,6 +322,7 @@
                                         colors="primary:#e83a30" style="width:30px;height:30px">
                                     </lord-icon>
                                     {% else %}
+
                                     <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
                                         colors="primary:#848484" style="width:30px;height:30px">
                                     </lord-icon>
@@ -383,52 +371,37 @@
     <div class="postingPageLast">
         <div class="sticky">
             <div class="allNotifications">
-                <h4>Activity</h4>
-                <div class="postActivity flex">
+                <div class="flex">
+                    <h4>Notifications</h4>
+                    {%if notifications%}
+                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                    <lord-icon
+                        src="https://cdn.lordicon.com/vspbqszr.json"
+                        trigger="hover"
+                        colors="primary:#e83a30"
+                        style="width:30px;height:30px">
+                    </lord-icon>
+                    {%endif%}
+                </div>
+                {%if notifications%}
+                {% for notification in notifications %}
+                <div class="postActivity notification flex" data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
                     <div class="postActivity-userProfile-image">
-                        <img src="" alt="">
+                        <img src="{{notification.actor.userprofile.profile_picture.url}}" alt="">
                     </div>
                     <div class="postActivityDetails">
-                        <span><strong>@_raj</strong> started following you just today</span>
-                    </div>
-                    <div class="postActivityImage_or_video">
-                        <img src="" alt="">
-                    </div>
-                </div>
-                <div class="postActivity flex">
-                    <div class="postActivity-userProfile-image">
-                        <img src="" alt="">
-                    </div>
-                    <div class="postActivityDetails">
-                        <span><strong>@_raj</strong> liked your post</span>
-                    </div>
-                    <div class="postActivityImage_or_video">
-                        <img src="" alt="">
-                    </div>
-                </div>
-                <div class="postActivity flex">
-                    <div class="postActivity-userProfile-image">
-                        <img src="" alt="">
-                    </div>
-                    <div class="postActivityDetails">
-                        <span><strong>@_raj</strong> started following you just today</span>
-                    </div>
-                    <div class="postActivityImage_or_video">
-                        <img src="" alt="">
-                    </div>
-                </div>
-                <div class="postActivity flex">
-                    <div class="postActivity-userProfile-image">
-                        <img src="" alt="">
-                    </div>
-                    <div class="postActivityDetails">
-                        <span><strong>@_raj</strong> Liked your post</span>
-                    </div>
-                    <div class="postActivityImage_or_video">
-                        <img src="" alt="">
-                    </div>
-                </div>
+                        <strong style="font-size: 13px;font-weight: 300;">@{{notification.actor.users_id}}</strong>
+                        <span style="text-wrap: wrap;">Liked your post at: {{notification.timestamp}}</span>
 
+                    </div>
+                    <div class="postActivityImage_or_video">
+                        <img style="object-fit: cover;" src="{{notification.post.post_image.url}}" alt="">
+                    </div>
+                </div>
+                {% endfor %}
+                {%else%}
+                <h4 style="color: #777b7b; text-align: center; margin: 5px;">No Notifications</h4>
+                {%endif%}
             </div>
 
         </div>
@@ -494,6 +467,26 @@
 </script>
 <!-- POSTING PAGE ENDS -->
 
+<!-- notification -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.notification').on('mouseenter', function () {
+            const notificationId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        });
+    });
+</script>
 {% include "includes/alerts.html" %}
 
 {% endblock %}

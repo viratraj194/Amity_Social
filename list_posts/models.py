@@ -1,7 +1,7 @@
 from django.db import models
 from accounts.models import User
 from django.core.exceptions import ValidationError
-
+from django.utils import timezone
 
 class UserPosts(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -53,3 +53,16 @@ class Like(models.Model):
 #     def __str__(self):
 #         return f'Comment by {self.user.username} on {self.post.id}'
     
+
+
+# test notification 
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications')
+    actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actor')
+    timestamp = models.DateTimeField(default=timezone.now)
+    read = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return f"{self.actor} liked {self.user}'s post"

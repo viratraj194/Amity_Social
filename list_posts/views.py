@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile,User
 from .forms import addPostsForm
-from .models import UserPosts,Like
+from .models import UserPosts,Like,Notification
 from django.contrib import messages
 from django.template.defaultfilters import slugify
 
@@ -12,6 +12,7 @@ def list_posts(request):
     user_profile = UserProfile.objects.get(user=request.user)
     user = request.user
     posts = UserPosts.objects.all().order_by('-created_at')
+    notifications = Notification.objects.filter(user=request.user, read=False) 
     for post in posts:
         if post.image_height is not None and post.image_width is not None:
             post.is_portrait = post.image_height > post.image_width
@@ -25,6 +26,7 @@ def list_posts(request):
         'user_profile':user_profile,
         'user':user,
         'posts':posts,
+        'notifications':notifications,
 
     }
     return render(request,'list_posts/list_posts.html',context)
@@ -83,7 +85,10 @@ def post_like(request, post_id):
                     # If not liked, create a new like
                     Like.objects.create(user=user, post=post)
                     liked = True
-                
+                    if post.user != user:
+                        Notification.objects.create(user=post.user,post = post,actor=user)
+                        
+
                 return JsonResponse({'status': 'success', 'liked': liked})
 
             except UserPosts.DoesNotExist:
@@ -96,3 +101,24 @@ def post_like(request, post_id):
         return JsonResponse({'status': 'failed', 'message': 'Please login to continue'})
 
     
+
+
+
+
+# def notification(request):
+#     if request.user.is_authenticated:
+#         notifications = Notification.objects.filter(user=request.user, read=False)
+#         context = {
+#             'notifications':notifications
+#         }
+#         return render(request, 'list_posts/list_posts.html',context)
+#     else:
+#         return redirect('login')
+
+
+
+def mark_notification_as_read(request, notification_id):
+    notification = Notification.objects.get(id=notification_id, user=request.user)
+    notification.read = True
+    notification.save()
+    return JsonResponse({'status': 'success'})
