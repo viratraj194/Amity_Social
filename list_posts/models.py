@@ -65,4 +65,4 @@ class Notification(models.Model):
 
 
     def __str__(self):
-        return f"{self.actor} liked {self.user}'s post"
+        return f"{self.actor} Notified {self.user}'s post"

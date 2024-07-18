@@ -152,12 +152,13 @@
                                 <span>Home</span></a>
                         </li>
                         <li class="border-animation">
-                            <a href="{% url 'account'%}">
+                            <a class="open" style="cursor: pointer;">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
-                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                <lord-icon src="https://cdn.lordicon.com/ercyvufy.json" trigger="hover"
+                                    colors="primary:#ffffff,secondary:#e4e4e4"
+                                    style="width:20px;height:20px; font-weight: bold;">
                                 </lord-icon>
-                                <span>Account</span>
+                                <span>Post</span>
                             </a>
                         </li>
                         <li class="border-animation">
@@ -170,13 +171,21 @@
                             </a>
                         </li>
                         <li class="border-animation">
-                            <a class="open" style="cursor: pointer;">
+                            <a href="#">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                <lord-icon src="https://cdn.lordicon.com/ercyvufy.json" trigger="hover"
-                                    colors="primary:#ffffff,secondary:#e4e4e4"
-                                    style="width:20px;height:20px; font-weight: bold;">
+                                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
                                 </lord-icon>
-                                <span>Post</span>
+                                <span>Events</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="{% url 'account'%}">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Account</span>
                             </a>
                         </li>
 
@@ -270,7 +279,7 @@
                     {%endif%}
                     <span>{{post.user.users_id}}</span>
                     <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
-                    <span>{{post.updated_at}}</span>
+                    <span>{{post.updated_atsour}}</span>
                 </div>
                 <div class="postContainer-card">
                     <div class="swiper-container">

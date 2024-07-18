@@ -155,5 +155,13 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'collage social  <collages.socialmedia@gmail.com>'
 
 
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'fancy-charmed-crow.ngrok-free.app'
+]
 
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://fancy-charmed-crow.ngrok-free.app',
+]

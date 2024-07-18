@@ -3,8 +3,17 @@
     <div class="nav flex space_between">
         {% if user.is_authenticated %}
         <div class="nav_image">
-            <a href="{%url 'list_posts'%}">
-                <img src="" alt="@MITY SOCIAL">
+            <a href="{%url 'list_posts'%}" style="text-align: center;">
+                <h4 style="font-weight: 600;"><strong style="font-size: larger;">UNI</strong> <small style="
+                    font-size: larger;
+                    background-color: #b9b9b9;
+                    color: black;
+                    border-radius: 3px;
+                    padding: 2px;
+                ">Hub</small></h4>
+                <span style="color: gray;
+    font-size: medium;">Unknown Talk</span>
+              
             </a>
         </div>
         {% else %}
@@ -21,7 +30,7 @@
             <div class="nav_profile_image"
                 style="width: 50px;height: 50px;overflow: hidden; border-radius: 50%; cursor: pointer;">
                 <a href="{%url 'UserDashboard'%}">
-                    <img src="{{profile.profile_picture.url}}" alt="" style="width: 100%; height: 100%;">
+                    <img src="{{profile.profile_picture.url}}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                 </a>
             </div>
             {% else %}

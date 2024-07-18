@@ -12,7 +12,7 @@ def list_posts(request):
     user_profile = UserProfile.objects.get(user=request.user)
     user = request.user
     posts = UserPosts.objects.all().order_by('-created_at')
-    notifications = Notification.objects.filter(user=request.user, read=False) 
+    notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
     for post in posts:
         if post.image_height is not None and post.image_width is not None:
             post.is_portrait = post.image_height > post.image_width
