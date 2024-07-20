@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserPosts,Like,Notification
+from .models import UserPosts,Like,Notification,Comment
 
 
 class CustomUserPostsAdmin(admin.ModelAdmin):
@@ -14,6 +14,10 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display=('actor','read','user','timestamp')
     ordering = ('-timestamp',)
 # admin.site.register(CustomUserPosts)
+
+
+admin.site.register(Comment)
+
 admin.site.register(Notification,NotificationAdmin)
 admin.site.register(Like)
 admin.site.register(UserPosts,CustomUserPostsAdmin)

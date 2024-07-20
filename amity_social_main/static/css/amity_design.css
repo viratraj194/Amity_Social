@@ -782,9 +782,10 @@ footer {
 .post_content {
     position: relative;
 }
-.post_content:hover .post_content-likes-comment{
-    display:flex;
-    cursor:pointer;
+
+.post_content:hover .post_content-likes-comment {
+    display: flex;
+    cursor: pointer;
     background-color: rgba(0, 0, 0, 0.252);
     width: 100%;
     height: 100%;
@@ -792,9 +793,9 @@ footer {
 
 .post_content-likes-comment {
     position: absolute;
-    top:0;
-    left:0;
-    display:none;
+    top: 0;
+    left: 0;
+    display: none;
     width: 100%;
     height: 100%;
     justify-content: center;
@@ -807,10 +808,12 @@ footer {
     height: 100%;
 
 }
+
 .usersAllPosts {
     width: 1010px;
     margin: auto;
 }
+
 .messages {
     color: red;
     display: none;
@@ -1285,6 +1288,7 @@ h4 {
     overflow: hidden;
     border: 1px solid #555555;
 }
+
 .postContainer-Post_image {
 
     width: 100%;
@@ -1292,8 +1296,9 @@ h4 {
     max-height: 500px;
     object-fit: contain;
     overflow: hidden;
-    
+
 }
+
 .postContainer-Post_image img {
     width: 100%;
     height: 100%;
@@ -1305,18 +1310,20 @@ h4 {
     height: 500px;
     object-fit: contain;
     overflow: hidden;
-    
+
 }
-.postContainer-Post_Big-image  img {
+
+.postContainer-Post_Big-image img {
     width: 100%;
     height: 100%;
     object-fit: contain !important;
 }
 
-.Pagination-Dots{
+.Pagination-Dots {
     position: relative;
 }
-.swiper-pagination{
+
+.swiper-pagination {
     position: absolute;
 }
 
@@ -1528,44 +1535,52 @@ h4 {
     padding: 10px;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-  }
-  .progress-circle {
+}
+
+.progress-circle {
     position: relative;
     width: 40px;
     height: 40px;
     display: inline-block;
-  }
-  .progress-circle svg {
+}
+
+.progress-circle svg {
     transform: rotate(-90deg);
     width: 40px;
     height: 40px;
-  }
-  .progress-circle circle {
+}
+
+.progress-circle circle {
     fill: none;
     stroke-width: 5;
-  }
-  .progress-circle .bg {
+}
+
+.progress-circle .bg {
     stroke: #e6e6e6;
-  }
-  .progress-circle .progress {
+}
+
+.progress-circle .progress {
     stroke: #4caf50;
     stroke-linecap: round;
     transition: stroke 0.3s;
-  }
-  .progress-circle .over-limit {
+}
+
+.progress-circle .over-limit {
     stroke: red;
-  }
-  .progress-circle .text {
+}
+
+.progress-circle .text {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 10px;
     font-weight: bold;
-  }
-  .highlight {
+}
+
+.highlight {
     background-color: rgb(241, 40, 40);
-  }
+}
 
 /* hidden image  */
 .hidden-image {
@@ -1585,3 +1600,140 @@ h4 {
 }
 
 /* floating post ends */
+
+
+/* post comments starts */
+
+.comment-close{
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+}
+.PostComments-forPosts {
+    display: none;
+    position: fixed;
+    top: 20px;
+    transform: translate(-8%, 0%);
+    width: 460px;
+    margin: auto;
+    height: 640px;
+    z-index: 1000;
+    background-color:#1d1c1c;
+    border-radius: 15px;
+}
+
+.PostComments-forPostsTitle {
+    text-align: center;
+    font-weight: bolder;
+    width: 300px;
+    margin: 10px auto;
+    border-bottom: 1px solid rgb(139, 139, 139);
+}
+
+.PostComments-forPostsTitle h3 {
+    padding-top: 10px;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ListComments-UserProfile {
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.ListComments-UserProfile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ListsComments-All {
+    height: 500px;
+    /* Set the height to make it scrollable */
+    overflow-y: auto;
+    /* Make it scrollable */
+}
+
+.ListComments-All {
+    padding: 10px;
+    /* justify-content: space-around; */
+}
+
+.ListComments-All .Comments_contents {
+    width: 333px;
+}
+
+.ListComments-All span {
+    word-wrap: break-word;
+    color: #989595;
+}
+
+.comment-posting-user {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.comment-posting-user img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.PostComments-Input {
+    padding: 10px;
+    align-items: center;
+    margin: 0px 10px;
+}
+
+.PostComments-Input textarea {
+    position: relative;
+    background-color: #2d2d2d;
+    width: 300px;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    font-size: large;
+    color: #777676;
+    padding-top: 5px;
+    padding-right: 69px;
+}
+.PostComments-Input .Main-commentdiv {
+    margin-left: 5px;
+    justify-content: center;
+    align-items: center;
+    /* justify-content: space-between; */
+}
+
+.PostComments-Input textarea::placeholder {
+    padding-top: 5px;
+}
+
+.Comment-PostButton {
+    position: absolute;
+    right: 30px;
+}
+
+.Comment-PostButton button {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    color: #b5b5b5;
+    font-size: large;
+    cursor: pointer;
+}
+.Comment_details-time span{
+    font-size: 11px;
+}
+
+
+/* post comments ends */

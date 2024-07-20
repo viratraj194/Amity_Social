@@ -93,7 +93,7 @@
             <div class="post_content">
                 <div class="userPostContent" style="margin: 0px;">
                     {% if post.post_image %}
-                    <img src="{{post.post_image.url}}" alt="">
+                    <img src="{{post.post_image.url}}" alt="" style="object-fit: cover;">
                     {% else %}
                     <p style="text-align: center; font-size:small;">{{post.content}}</p>
                     {% endif %}

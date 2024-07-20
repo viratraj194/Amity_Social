@@ -2,9 +2,10 @@ from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile,User
 from .forms import addPostsForm
-from .models import UserPosts,Like,Notification
+from .models import UserPosts,Like,Notification,Comment
 from django.contrib import messages
 from django.template.defaultfilters import slugify
+import json
 
 
 @login_required(login_url='login')
@@ -100,25 +101,84 @@ def post_like(request, post_id):
     else:
         return JsonResponse({'status': 'failed', 'message': 'Please login to continue'})
 
-    
-
-
-
-
-# def notification(request):
-#     if request.user.is_authenticated:
-#         notifications = Notification.objects.filter(user=request.user, read=False)
-#         context = {
-#             'notifications':notifications
-#         }
-#         return render(request, 'list_posts/list_posts.html',context)
-#     else:
-#         return redirect('login')
-
-
 
 def mark_notification_as_read(request, notification_id):
     notification = Notification.objects.get(id=notification_id, user=request.user)
     notification.read = True
     notification.save()
     return JsonResponse({'status': 'success'})
+
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .forms import addCommentForm
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .forms import addCommentForm
+from .models import Comment, UserPosts
+
+@csrf_exempt
+def add_comment(request, post_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            comment_text = data.get('comment', '').strip()
+            post_id = data.get('post_id', '')
+
+            if not comment_text or not post_id:
+                return JsonResponse({'success': False, 'message': 'Comment or Post ID missing.'})
+
+            # Get the post object
+            post = UserPosts.objects.get(id=post_id)
+            user = request.user
+
+            # Create and validate the form
+            comment_form = addCommentForm(data={'comment': comment_text, 'post_id': post_id})
+            if comment_form.is_valid():
+                # Create and save the comment
+                Comment.objects.create(
+                    user=user,
+                    post=post,
+                    comment=comment_text
+                )
+                return JsonResponse({'success': True, 'message': f'Comment added: {comment_text}'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid form data.'})
+
+        except UserPosts.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Post not found.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+
+
+
+# showing comments
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import UserPosts, Comment
+
+def get_comments(request, post_id):
+    post = get_object_or_404(UserPosts, id=post_id)
+    comments = Comment.objects.filter(post=post).select_related('user__userprofile')
+    
+    comments_data = [
+        {
+            'user': comment.user.username,
+            'profile_picture': comment.user.userprofile.profile_picture.url,
+            'comment': comment.comment,
+            'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for comment in comments
+    ]
+    
+    return JsonResponse({'comments': comments_data})

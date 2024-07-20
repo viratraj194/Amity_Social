@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             reader.onload = function (e) {
                 imageContainer.style.display = 'block'; // Show the div
                 imageContainer.querySelector('img').src = e.target.result; // Set the image src
-                
+
             }
             reader.readAsDataURL(file);
         } else {
@@ -142,5 +142,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-// like function 
+// comment sections
+document.addEventListener('DOMContentLoaded', function () {
+    $('.Comment-onPost').on('click', function (e) {
+        e.preventDefault();
+        const post_id = $(this).attr('data-id');
+
+        // Find the div with class 'Comment-container' that has the matching data-id
+        const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+
+        if (targetDiv) {
+            // Toggle the display property
+            if (targetDiv.style.display === 'block') {
+                targetDiv.style.display = 'none';
+            } else {
+                targetDiv.style.display = 'block';
+            }
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Get all elements with the class 'comment-close'
+    const closeComments = document.getElementsByClassName('comment-close');
+    // Get all elements with the class 'PostComments-forPosts'
+    const postComments = document.getElementsByClassName('PostComments-forPosts');
+
+    // Add a click event listener to each element with the class 'comment-close'
+    for (let i = 0; i < closeComments.length; i++) {
+        closeComments[i].addEventListener('click', function () {
+            // Hide all elements with the class 'PostComments-forPosts'
+            for (let j = 0; j < postComments.length; j++) {
+                postComments[j].style.display = 'none';
+            }
+        });
+    }
+});
+
+
+// adding the comment 
 

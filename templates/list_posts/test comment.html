@@ -345,44 +345,34 @@
 
                         <div class="posts-like-comment-save Comment-onPost">
                             <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon class="Comment-onPost show-comments-btn" data-post-id="{{ post.id }}"
-                                data-id="{{post.id}}" data-url="{% url 'get_comments' post.id %}"
+                            <lord-icon class="Comment-onPost" data-id="{{post.id}}"
                                 src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:#777b7b"
                                 style="width:30px;height:30px">
                             </lord-icon>
                         </div>
 
-
-
-
-
                     </div>
                     <!-- adding comment  starts  -->
-
                     <div class="PostComments-forPosts" data-id="{{post.id}}" style="display: none;">
-
                         <div class="comment-close " style="cursor: pointer;">
                             <script src="https://cdn.lordicon.com/lordicon.js"></script>
                             <lord-icon src="https://cdn.lordicon.com/jkppkiom.json" trigger="hover"
                                 colors="primary:#848484" style="width:20px;height:20px">
                             </lord-icon>
                         </div>
-
                         <div class="PostComments-forPostsTitle">
                             <h3>Comments</h3>
                         </div>
                         <div class="PostComments-All">
                             <div class="ListsComments-All">
-
-                                <div id="comments-container-{{ post.id }}"
-                                    class="ListComments-All comments-container flex">
+                                {%for comment in comments%}
+                                <div class="ListComments-All flex">
                                     <div class="ListComments-UserProfile">
-                                        <img src="" alt="">
+                                        <img src="{{post.user.userprofile.profile_picture.url}}" alt="">
                                     </div>
                                     <div class="Comments_contents">
                                         <div>
-                                            <small><strong></strong>
-                                                <span></span></small>
+                                            <small><strong>{{comment.user.users_id}}</strong> <span>{{comment.comment}}</span></small>
                                         </div>
 
                                         <div class="Comment_details-time flex">
@@ -391,7 +381,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                {%endfor%}
 
                                 <!-- Add more comments as needed -->
                             </div>
@@ -614,98 +604,6 @@
     });
 
 
-</script>
-<script>
-
-
-    $(document).ready(function () {
-        $('.show_comments_button').on('click', function (e) {
-            e.preventDefault();
-            const post_id = $(this).attr('data-id');
-            const url = `/comment/${post_id}/`;
-            const commentsContainer = $(this).closest('.PostComments-All').find('.ListsComments-All');
-
-            $.ajax({
-                type: 'GET',
-                url: url,
-                success: function (response) {
-                    if (response.comments) {
-                        commentsContainer.empty();
-                        response.comments.forEach(function (comment) {
-                            const commentHtml = `
-                            <div class="ListComments-All flex">
-                                <div class="ListComments-UserProfile">
-                                    <img src="${comment.user__userprofile__profile_picture}" alt="">
-                                </div>
-                                <div class="Comments_contents">
-                                    <div>
-                                        <small><strong>${comment.user__username}</strong> <span>${comment.comment}</span></small>
-                                    </div>
-                                    <div class="Comment_details-time flex">
-                                        <span style="margin: 0px 10px;">${comment.created_at}</span>
-                                        <span style="margin: 0px 10px;">Replay</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                            commentsContainer.append(commentHtml);
-                        });
-                    } else {
-                        console.error('Failed to load comments:', response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        });
-    });
-
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('.show-comments-btn').on('click', function (e) {
-            e.preventDefault();
-
-            var postId = $(this).data('post-id');  // Get post ID from data attribute
-            var url = $(this).data('url');         // Get URL from data attribute
-
-            $.ajax({
-                url: url,
-                method: 'GET',
-                success: function (response) {
-                    var comments = response.comments;
-                    var commentsHtml = '';
-
-                    comments.forEach(function (comment) {
-                        commentsHtml += `
-<div class="ListComments-All flex">
-    <div class="ListComments-UserProfile">
-        <img src="${comment.profile_picture}" alt="${comment.user}">
-    </div>
-    <div class="Comments_contents">
-        <div>
-            <small><strong>${comment.user}</strong> <span>${comment.comment}</span></small>
-        </div>
-        <div class="Comment_details-time flex">
-            <span style="margin: 0px 10px;">${comment.created_at}</span>
-            <span style="margin: 0px 10px;">Reply</span>
-        </div>
-    </div>
-</div>
-`;
-                    });
-
-                    // Update the specific comments container for the current post
-                    $('#comments-container-' + postId).html(commentsHtml);
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching comments:', error);
-                }
-            });
-        });
-    });
 </script>
 
 

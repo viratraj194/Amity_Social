@@ -9,5 +9,9 @@ urlpatterns = [
     # test notification 
     # path('notification/',views.notification, name='notification')
     path('mark_notification_as_read/<int:notification_id>/', views.mark_notification_as_read, name='mark_notification_as_read'),
+    path('add_comment/<int:post_id>/',views.add_comment,name='add_comment'),
+
+
+    path('comments/<int:post_id>/', views.get_comments, name='get_comments'),
     
 ]

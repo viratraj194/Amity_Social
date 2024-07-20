@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .PostComments-forPosts {
+            position: fixed;
+            top: 20px;
+            transform: translate(-5%, -97%);
+            width: 460px;
+            margin: auto;
+            height: 640px;
+            z-index: 1000;
+            background-color: rgb(81, 80, 80);
+            border-radius: 15px;
+        }
+
+        .PostComments-forPostsTitle {
+            text-align: center;
+            font-weight: bolder;
+            width: 300px;
+            margin: 10px auto;
+            border-bottom: 1px solid rgb(139, 139, 139);
+        }
+
+        .PostComments-forPostsTitle h3 {
+            padding-top: 10px;
+        }
+
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .ListComments-UserProfile {
+            margin: 5px;
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .ListComments-UserProfile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ListsComments-All {
+            height: 500px;
+            /* Set the height to make it scrollable */
+            overflow-y: auto;
+            /* Make it scrollable */
+        }
+
+        .ListComments-All {
+            padding: 10px;
+            justify-content: space-around;
+        }
+
+        .ListComments-All .Comments_contents {
+            width: 360px;
+        }
+
+        .ListComments-All span {
+            word-wrap: break-word;
+        }
+
+        .comment-posting-user {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .comment-posting-user img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .PostComments-Input {
+            padding: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0px 10px;
+        }
+
+        .PostComments-Input textarea {
+            position: relative;
+            background-color: #2d2d2d;
+            width: 360px;
+            border: none;
+            outline: none;
+            border-radius: 8px;
+            font-size: large;
+            color: #777676;
+            padding-top: 5px;
+        }
+
+        .PostComments-Input textarea::placeholder {
+            padding-top: 5px;
+        }
+
+        .Comment-PostButton {
+            position: absolute;
+            right: 30px;
+        }
+
+        .Comment-PostButton button {
+            background-color: transparent;
+            outline: none;
+            border: none;
+            color: #b5b5b5;
+            font-size: large;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio corporis sit voluptate inventore, natus
+        consequatur.
+        Minus laboriosam vitae hic vel doloribus ipsam consequatur? Eveniet ipsum nulla quibusdam repellendus ab aut
+        veniam
+        quaerat fuga! Iure delectus voluptates quidem, vel quod, magnam fugiat quam quo ipsa, temporibus eum! Impedit
+        magnam
+        aut corporis eum provident esse ea praesentium a velit? Quibusdam deleniti facilis et consectetur officia animi.
+        Eos
+        adipisci quod reiciendis mollitia minus corporis magnam autem maiores eaque enim, nulla pariatur at
+        necessitatibus,
+        laborum dolore accusamus modi voluptates fugit libero debitis cum ratione dicta expedita nam. Ducimus error nemo
+        et
+        culpa iure fugiat nobis. Sit voluptates officia assumenda expedita repellat ad voluptas sunt animi, unde,
+        deserunt,
+        voluptate minus ab? Mollitia perspiciatis in dolores eveniet, culpa nam debitis numquam blanditiis itaque
+        eligendi
+        ut neque voluptate, expedita laudantium tempora doloremque delectus commodi? Architecto quae eaque, temporibus
+        numquam rerum ullam veritatis aut provident earum beatae vero quo, expedita nulla ratione dolorum minima.
+        Necessitatibus pariatur beatae doloremque maxime. Architecto officia eligendi, ut consectetur expedita quas
+        veritatis autem mollitia facilis quia labore assumenda eius voluptatibus omnis dicta numquam suscipit ullam
+        laborum
+        blanditiis incidunt ipsam nihil vel odio! Pariatur ipsam commodi animi aspernatur! Odio nostrum dolorum ea
+        inventore
+        labore fugiat fuga quos esse omnis architecto ullam eaque quas voluptatibus dolor ipsam dolore aut quae quidem
+        itaque corporis, eligendi temporibus. Dicta esse dolorum accusantium repellendus. Obcaecati, dignissimos.
+        Voluptas
+        nisi ut sed temporibus aperiam eos nulla officia suscipit deleniti magnam fugit qui inventore expedita minus
+        dolore
+        similique dolorum quam eaque, dicta est pariatur alias omnis cum! Corrupti, laboriosam tenetur quibusdam libero
+        corporis enim beatae, quis aliquam illum a officiis sequi nihil doloremque possimus esse quidem? Ratione
+        eveniet, at
+        sapiente amet esse, voluptas eaque repellat quae cumque culpa recusandae, rerum quos tempore. Earum sint beatae
+        voluptate fuga animi, sed velit ea facere accusantium commodi doloribus perferendis saepe fugiat reprehenderit
+        dolorum? Expedita iusto exercitationem sunt at natus in magni numquam dolores esse saepe laboriosam maiores,
+        reiciendis enim quam sapiente nesciunt cupiditate distinctio. Quo sapiente ab hic vitae iusto deleniti culpa
+        excepturi facilis quod ipsa, quibusdam possimus doloribus quisquam itaque architecto minus quos dolores labore
+        nemo
+        commodi saepe amet enim est. Possimus deleniti blanditiis quibusdam quod voluptas dolore modi odit perferendis
+        cum
+        laudantium non eius incidunt dolor atque expedita earum laborum repellendus iure, magnam et. Nostrum voluptates
+        dolorum saepe fuga neque repellat, odio, officia distinctio, aliquam facere iusto accusantium consequatur vero
+        itaque ducimus minus. Asperiores laborum unde ad libero sit reiciendis dolorum dolores, quis nam deserunt
+        accusantium? Tenetur accusamus voluptas laborum consequuntur eveniet fugit cupiditate iure rem ipsum,
+        perferendis
+        exercitationem magnam natus incidunt ad animi non tempora debitis corporis iste enim similique ipsa. Repellendus
+        voluptatum libero illum laborum atque, blanditiis placeat pariatur rerum quod est, voluptate excepturi fuga,
+        doloribus ipsum commodi eveniet? Reiciendis nisi eligendi cumque saepe doloribus? Omnis iusto eius libero ea
+        voluptatem unde accusantium beatae nam tempora assumenda minus id impedit aperiam, expedita ex incidunt? Eius
+        asperiores ipsam dolorem eaque ab aspernatur dolor doloribus est inventore molestiae voluptatibus autem alias,
+        neque
+        incidunt doloremque expedita et voluptates voluptate sint ullam aut necessitatibus! Dicta quia minima
+        perferendis
+        laudantium incidunt voluptate beatae totam sunt quasi aperiam ipsa modi, recusandae ullam minus, error amet
+        asperiores quas nisi voluptates aspernatur earum explicabo? Natus itaque explicabo molestiae maxime voluptatum
+        est a
+        accusamus! A perspiciatis doloribus voluptates accusantium quaerat. Iste a autem suscipit. Laborum molestias
+        similique nemo pariatur ipsa, maxime quia cumque totam eaque unde alias cum eveniet quidem, temporibus optio.
+        Consequuntur amet doloribus obcaecati beatae! Aut delectus illum qui sint! Voluptas corrupti possimus veritatis
+        quas
+        sequi sed placeat temporibus blanditiis. Assumenda quaerat, maiores, maxime odio non quo nisi sit doloremque
+        illum
+        obcaecati cumque deserunt, distinctio porro ad mollitia! Facere eveniet voluptas cumque quis aliquid, dolor
+        ratione
+        incidunt fuga dolorem ipsam similique impedit saepe fugit, adipisci totam beatae. Ex est illum, ea consequuntur
+        corporis cupiditate temporibus amet sint dolorum minus. Architecto, sit! Totam minus quibusdam, magnam nihil
+        provident repellendus ad doloribus nostrum quia voluptatum, obcaecati illo. Ea illo fugit quibusdam, tenetur
+        facilis
+        nostrum delectus dicta nobis ullam quis amet optio veritatis? Eligendi est laborum, esse, praesentium,
+        voluptatum
+        voluptatibus doloribus nesciunt eum impedit repellendus possimus rerum excepturi fugit quia quam accusantium
+        mollitia quaerat quae ratione ad aperiam ab itaque pariatur. Et deserunt labore expedita doloribus eligendi
+        placeat
+        temporibus, hic corrupti dolores delectus ex consequuntur deleniti! Iure iusto nostrum autem, eos at repellat
+        sapiente! Reiciendis similique distinctio dolore optio cum in ab sequi iure odit odio magni accusamus eos nemo
+        dolores omnis at vel ut temporibus, et incidunt ratione culpa? Iste facere nam eos tempore magni dolorem nostrum
+        accusantium quibusdam accusamus, ab iure excepturi error in repudiandae culpa officia. Facilis consectetur atque
+        harum minus maiores! Quia obcaecati iste corporis quisquam dolores delectus nemo consectetur hic adipisci
+        ducimus
+        voluptatum quaerat fugiat est, animi aperiam eveniet reiciendis suscipit pariatur cumque voluptate? Repudiandae
+        deleniti laudantium sapiente dolorum veniam. Tempora, quo rem. Dignissimos qui natus, repudiandae praesentium
+        beatae
+        nisi id molestiae rerum expedita ut commodi aliquam aspernatur sit! Distinctio laboriosam reprehenderit
+        cupiditate
+        porro culpa perferendis fugit adipisci sunt ipsa asperiores. Sunt iusto consequuntur hic, vel qui error
+        explicabo
+        dolorum magnam fugiat, numquam consectetur deleniti. Error fugiat, eius fuga soluta alias ea numquam aliquam
+        libero
+        quis perspiciatis possimus consequuntur harum? Earum, natus. Quidem, ex. Doloremque, ratione harum? Aliquam,
+        voluptatem ipsum nam, cum, soluta suscipit nemo sint aliquid dicta deserunt magni laborum vel similique
+        perferendis
+        facilis dolorem recusandae quia id itaque quos sunt voluptas esse harum corrupti. Rem, qui itaque. Animi fugiat
+        pariatur perferendis consequatur, tempora quo ducimus possimus, eveniet ut nostrum, saepe laboriosam cumque!
+        Voluptates a obcaecati natus quod incidunt doloribus rerum quia illum, molestiae temporibus iste laudantium
+        dolores
+        quasi necessitatibus possimus omnis, iure vel culpa explicabo, architecto consequuntur ratione assumenda
+        reiciendis
+        aspernatur. Blanditiis aliquam perferendis magni. Unde totam, labore alias quae minus natus laborum laboriosam
+        corporis sunt cumque voluptas tenetur mollitia, eius quam error, tempore earum numquam! Repellat totam a
+        consectetur
+        perferendis aperiam hic! Recusandae tempore ex iste optio amet perspiciatis cupiditate doloremque asperiores sed
+        sequi ratione nu
+        mquam dolorem nisi laboriosam commodi, in tempora assumenda!
+    </p>
+    <div class="PostComments-forPosts">
+        <div class="PostComments-forPostsTitle">
+            <h3>Comments</h3>
+        </div>
+        <div class="PostComments-All">
+            <div class="ListsComments-All">
+                <div class="ListComments-All flex">
+                    <div class="ListComments-UserProfile">
+                        <img src="/media/users/profile_picture/1657303298772-01_9zKjVcd.jpeg" alt="">
+                    </div>
+                    <div class="Comments_contents">
+                        <div>
+                            <small><strong>@asta_clover</strong> <span>Lorem ipsum dolor sit amet consectetur
+                                    adipisicing
+                                    elit.
+                                    Perferendis harum at ea similique facere facilis minima modi excepturi nihil
+                                    repellat
+                                    quaerat
+                                    adipisci, a voluptate laboriosam aperiam possimus. Quisquam, quia
+                                    expedita?</span></small>
+                        </div>
+
+                        <div class="Comment_details-time flex">
+                            <span style="margin: 0px 10px;">36/25/</span>
+                            <span style="margin: 0px 10px;">Replay</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ListComments-All flex">
+                    <div class="ListComments-UserProfile">
+                        <img src="/media/users/profile_picture/1657303298772-01_9zKjVcd.jpeg" alt="">
+                    </div>
+                    <div class="Comments_contents">
+                        <div>
+                            <small><strong>@asta_clover</strong> <span>Lorem ipsum dolor sit amet consectetur
+                                    adipisicing
+                                    elit.
+                                    Perferendis harum at ea similique facere facilis minima modi excepturi nihil
+                                    repellat
+                                    quaerat
+                                    adipisci, a voluptate laboriosam aperiam possimus. Quisquam, quia
+                                    expedita?</span></small>
+                        </div>
+
+                        <div class="Comment_details-time flex">
+                            <span style="margin: 0px 10px;">36/25/</span>
+                            <span style="margin: 0px 10px;">Replay</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ListComments-All flex">
+                    <div class="ListComments-UserProfile">
+                        <img src="/media/users/profile_picture/1657303298772-01_9zKjVcd.jpeg" alt="">
+                    </div>
+                    <div class="Comments_contents">
+                        <div>
+                            <small><strong>@asta_clover</strong> <span>Lorem ipsum dolor sit amet consectetur
+                                    adipisicing
+                                    elit.
+                                    Perferendis harum at ea similique facere facilis minima modi excepturi nihil
+                                    repellat
+                                    quaerat
+                                    adipisci, a voluptate laboriosam aperiam possimus. Quisquam, quia
+                                    expedita?</span></small>
+                        </div>
+
+                        <div class="Comment_details-time flex">
+                            <span style="margin: 0px 10px;">36/25/</span>
+                            <span style="margin: 0px 10px;">Replay</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ListComments-All flex">
+                    <div class="ListComments-UserProfile">
+                        <img src="/media/users/profile_picture/1657303298772-01_9zKjVcd.jpeg" alt="">
+                    </div>
+                    <div class="Comments_contents">
+                        <div>
+                            <small><strong>@asta_clover</strong> <span>Lorem ipsum dolor sit amet consectetur
+                                    adipisicing
+                                    elit.
+                                    Perferendis harum at ea similique facere facilis minima modi excepturi nihil
+                                    repellat
+                                    quaerat
+                                    adipisci, a voluptate laboriosam aperiam possimus. Quisquam, quia
+                                    expedita?</span></small>
+                        </div>
+
+                        <div class="Comment_details-time flex">
+                            <span style="margin: 0px 10px;">36/25/</span>
+                            <span style="margin: 0px 10px;">Replay</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ListComments-All flex">
+                    <div class="ListComments-UserProfile">
+                        <img src="/media/users/profile_picture/1657303298772-01_9zKjVcd.jpeg" alt="">
+                    </div>
+                    <div class="Comments_contents">
+                        <div>
+                            <small><strong>@asta_clover</strong> <span>Lorem ipsum dolor sit amet consectetur
+                                    adipisicing
+                                    elit.
+                                    Perferendis harum at ea similique facere facilis minima modi excepturi nihil
+                                    repellat
+                                    quaerat
+                                    adipisci, a voluptate laboriosam aperiam possimus. Quisquam, quia
+                                    expedita?</span></small>
+                        </div>
+
+                        <div class="Comment_details-time flex">
+                            <span style="margin: 0px 10px;">36/25/</span>
+                            <span style="margin: 0px 10px;">Replay</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more comments as needed -->
+            </div>
+
+            <div class="PostComments-Input flex">
+                <div class="comment-posting-user">
+                    <img src="/media/users/posts/post_image/1652889132474-01.jpeg" alt="" style="object-fit: cover;">
+                </div>
+                <textarea name="" id="" style="resize: none;" placeholder="Comment......"></textarea>
+                <div class="Comment-PostButton">
+                    <button type="submit">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
