@@ -58,7 +58,10 @@ def add_posts(request):
             messages.success(request, 'New post is added.')
             return redirect('list_posts')
         else:
-            print(post_form.errors)
+            
+            messages.error(request,'POST Image is not valid image or its corrupted image')
+            return redirect('list_posts')
+            
     else:
         post_form = addPostsForm()
     
@@ -105,6 +108,7 @@ def post_like(request, post_id):
 def mark_notification_as_read(request, notification_id):
     notification = Notification.objects.get(id=notification_id, user=request.user)
     notification.read = True
+    notification.delete()
     notification.save()
     return JsonResponse({'status': 'success'})
 

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeButton.addEventListener('click', function () {
         if (confirm('Are you sure you want to discard the post?')) {
             postDiv.style.display = 'none';
-            redirectToPath('/accounts/list_posts/list-posts/');
+            
         }
     });
 });

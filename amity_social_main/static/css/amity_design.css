@@ -1281,7 +1281,7 @@ h4 {
 }
 
 .postContainer-card {
-    margin: 10px auto;
+    margin: auto;
     width: 380px;
     height: auto;
     max-height: 500px;
@@ -1290,9 +1290,9 @@ h4 {
 }
 
 .postContainer-Post_image {
-
+    
     width: 100%;
-    height: auto;
+   
     max-height: 500px;
     object-fit: contain;
     overflow: hidden;
@@ -1358,7 +1358,7 @@ h4 {
     background: #1d1c1c;
 }
 .allnotificatons_scrol {
-    height: 400px;
+    max-height: 400px;
     overflow-y: auto;
 }
 

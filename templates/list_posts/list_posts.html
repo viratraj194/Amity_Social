@@ -302,10 +302,15 @@
                             {% endif %}
                             {% if post.content %}
                             <div class="swiper-slide">
-                                <div class="postContainer-Post_image flex"
-                                    style="justify-content: center;align-items: center; height: auto;">
+                                <style>
+                                    .swiper-slide-active{
+                                        margin: auto;
+                                    }
+                                </style>
+                                <div class="postContainer-Post_image "
+                                    style="justify-content: center;align-items: center;">
                                     <p
-                                        style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; height: 100%;">
+                                        style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; ">
                                         {{post.content}}</p>
                                 </div>
                             </div>
@@ -462,7 +467,7 @@
                     {%endif%}
                 </div>
                 
-                <div class="allnotificatons_scrol" style="height: 400px; overflow-y: auto;">
+                <div class="allnotificatons_scrol" style="max-height: 400px; overflow-y: auto;">
                     {%if notifications%}
                 {% for notification in notifications %}
                     <div class="postActivity notification flex"
