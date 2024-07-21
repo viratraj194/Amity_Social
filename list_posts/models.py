@@ -19,6 +19,9 @@ class UserPosts(models.Model):
     def __str__(self):
         return f"post by {self.user.username}"
     
+    def total_likes(self):
+        return self.likes.count()
+    
     # def save(self, *args, **kwargs):
     #     if not self.content and not self.caption and not self.post_image:
     #         raise ValidationError("You cannot post an empty post. Please provide content, caption, or an image.")
@@ -28,6 +31,8 @@ class UserPosts(models.Model):
     class Meta:
         verbose_name = 'UserPost'
         verbose_name_plural = 'UserPosts'
+
+        
 
         
 
@@ -59,6 +64,7 @@ class Comment(models.Model):
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications')
+    notification_msg = models.CharField(blank=True,null=True)
     actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actor')
     timestamp = models.DateTimeField(default=timezone.now)
     read = models.BooleanField(default=False)

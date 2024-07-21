@@ -126,38 +126,29 @@ from .models import Comment, UserPosts
 @csrf_exempt
 def add_comment(request, post_id):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            comment_text = data.get('comment', '').strip()
-            post_id = data.get('post_id', '')
+        data = json.loads(request.body)
+        comment_text = data.get('comment', 'No comment provided')
+        post_id = data.get('post_id', 'None')
+        user = request.user
 
-            if not comment_text or not post_id:
-                return JsonResponse({'success': False, 'message': 'Comment or Post ID missing.'})
-
-            # Get the post object
+        if comment_text:
             post = UserPosts.objects.get(id=post_id)
-            user = request.user
+            comment = Comment.objects.create(post=post, user=user, comment=comment_text)
 
-            # Create and validate the form
-            comment_form = addCommentForm(data={'comment': comment_text, 'post_id': post_id})
-            if comment_form.is_valid():
-                # Create and save the comment
-                Comment.objects.create(
-                    user=user,
-                    post=post,
-                    comment=comment_text
-                )
-                return JsonResponse({'success': True, 'message': f'Comment added: {comment_text}'})
-            else:
-                return JsonResponse({'success': False, 'message': 'Invalid form data.'})
-
-        except UserPosts.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'Post not found.'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)})
+            response_data = {
+                'success': True,
+                'comment': {
+                    'text': comment.comment,
+                    'user': comment.user.username,
+                    'profile_picture': comment.user.userprofile.profile_picture.url,
+                    'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }
+            return JsonResponse(response_data)
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid form data.'})
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
 
 
 
@@ -170,7 +161,16 @@ from .models import UserPosts, Comment
 def get_comments(request, post_id):
     post = get_object_or_404(UserPosts, id=post_id)
     comments = Comment.objects.filter(post=post).select_related('user__userprofile')
-    
+    user = request.user
+    # Create a notification for the post's author
+    Notification.objects.create(
+                user=post.user,
+                post=post,
+                notification_msg="Commented on your post",
+                actor=user,
+                read=False
+        )
+
     comments_data = [
         {
             'user': comment.user.username,
@@ -179,6 +179,5 @@ def get_comments(request, post_id):
             'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
         for comment in comments
-    ]
-    
+    ]  
     return JsonResponse({'comments': comments_data})

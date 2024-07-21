@@ -329,18 +329,20 @@
                                     style="align-items: center;">
                                     {% if post.liked_by_user %}
                                     <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
-                                        colors="primary:#e83a30" style="width:30px;height:30px">
-                                    </lord-icon>
+                                        colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>
                                     {% else %}
-
                                     <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                        colors="primary:#848484" style="width:30px;height:30px">
-                                    </lord-icon>
+                                        colors="primary:#848484" style="width:30px;height:30px"></lord-icon>
                                     {% endif %}
                                 </div>
-                                <span style="color: #777b7b; margin: 0px 5px;"><strong>655</strong> Likes</span>
+                                {% if post.total_likes%}
+                                <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
+                                    Likes</span>
+                                {%else%}
+                                <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
+                                    Likes</span>
+                                {%endif%}
                             </a>
-
                         </div>
 
                         <div class="posts-like-comment-save Comment-onPost">
@@ -397,9 +399,16 @@
                             </div>
 
                             <div class="PostComments-Input flex">
+                                {%if user_profile.profile_picture %}
                                 <div class="comment-posting-user">
                                     <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
                                 </div>
+                                {%else%}
+
+                                <div class="comment-posting-user">
+                                    <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                                </div>
+                                {%endif%}
                                 <div class=" Main-commentdiv flex">
                                     <textarea class="textareamain" name="comment" style="resize: none;"
                                         placeholder="Comment......"></textarea>
@@ -425,11 +434,11 @@
                 </div>
                 <div class="postsCaptions">
                     <div class="post-caption">
-                        <h4><strong>{{post.user.users_id}}</strong> <span>{{post.caption}}</span></h4>
+                        <h4><strong style="font-size: small;">@{{post.user.users_id}}</strong> <span>{{post.caption}}</span></h4>
                     </div>
-                    <div class="postAll-comments">
+                    <!-- <div class="postAll-comments">
                         <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>
@@ -452,26 +461,44 @@
                     </lord-icon>
                     {%endif%}
                 </div>
-                {%if notifications%}
+                
+                <div class="allnotificatons_scrol" style="height: 400px; overflow-y: auto;">
+                    {%if notifications%}
                 {% for notification in notifications %}
-                <div class="postActivity notification flex"
-                    data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
-                    <div class="postActivity-userProfile-image">
-                        <img src="{{notification.actor.userprofile.profile_picture.url}}" alt="">
+                    <div class="postActivity notification flex"
+                        data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
+                        {%if notification.actor.userprofile.profile_picture %}
+                        <div class="postActivity-userProfile-image">
+                            <img src="{{notification.actor.userprofile.profile_picture.url}}" style="object-fit: cover;"
+                                alt="">
+                        </div>
+                        {%else%}
+                        <div class="comment-posting-user">
+                            <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                        </div>
+                        {%endif%}
+                        <div class="postActivityDetails">
+                            <strong style="font-size: 13px;font-weight: 300;">@{{notification.actor.users_id}}</strong>
+                            <span style="text-wrap: wrap;">{{notification.notification_msg}}:
+                                {{notification.timestamp}}</span>
+    
+                        </div>
+                        {%if notification.post.post_image %}
+                        <div class="postActivityImage_or_video">
+                            <img style="object-fit: cover;" src="{{notification.post.post_image.url}}" alt="">
+                        </div>
+                        {%else%}
+                        <div class="comment-posting-user">
+                            <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                        </div>
+                        {%endif%}
                     </div>
-                    <div class="postActivityDetails">
-                        <strong style="font-size: 13px;font-weight: 300;">@{{notification.actor.users_id}}</strong>
-                        <span style="text-wrap: wrap;">Liked your post at: {{notification.timestamp}}</span>
-
-                    </div>
-                    <div class="postActivityImage_or_video">
-                        <img style="object-fit: cover;" src="{{notification.post.post_image.url}}" alt="">
-                    </div>
-                </div>
-                {% endfor %}
+                    {% endfor %}
                 {%else%}
                 <h4 style="color: #777b7b; text-align: center; margin: 5px;">No Notifications</h4>
                 {%endif%}
+                </div>
+                
             </div>
 
         </div>
@@ -482,12 +509,12 @@
     $(document).ready(function () {
         $('.like_post').on('click', function (e) {
             e.preventDefault();
-            const post_id = $(this).attr('data-id');
+            const postId = $(this).attr('data-id');
             const url = $(this).attr('data-url');
             const csrfToken = getCookie('csrftoken');
 
             const data = {
-                post_id: post_id
+                post_id: postId
             };
 
             $.ajax({
@@ -500,18 +527,25 @@
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
+
+                    // Select the icon div and like count span
+                    const iconDiv = $(`.like_post[data-id="${postId}"] .post_icon`);
+                    
+
                     // Toggle icon based on liked status
-                    const iconDiv = $(`.like_post[data-id="${post_id}"] .post_icon`);
-                    iconDiv.removeClass('postLiked_icon postUnliked_icon');
                     if (response.liked) {
-                        iconDiv.addClass('postLiked_icon');
+                        iconDiv.removeClass('postUnliked_icon').addClass('postLiked_icon');
                         iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
-                            colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>`);
+                        colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>`);
                     } else {
-                        iconDiv.addClass('postUnliked_icon');
+                        iconDiv.removeClass('postLiked_icon').addClass('postUnliked_icon');
                         iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                            colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
+                        colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
+                        
                     }
+
+                    // Update the likes count
+                    
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
@@ -534,6 +568,7 @@
             return cookieValue;
         }
     });
+
 </script>
 <!-- POSTING PAGE ENDS -->
 
@@ -558,7 +593,6 @@
     });
 
     // adding teh comment 
-
     $(document).ready(function () {
         $('.add_comments').on('click', function (e) {
             e.preventDefault();
@@ -584,9 +618,30 @@
                 success: function (response) {
                     console.log(response);
 
-                    // Clear the textarea if the comment was successfully posted
                     if (response.success) {
+                        // Clear the textarea
                         $('.textareamain').val('');
+
+                        // Create the new comment HTML
+                        const newCommentHtml = `
+                        <div class="ListComments-All flex">
+                            <div class="ListComments-UserProfile">
+                                <img src="${response.comment.profile_picture}" alt="${response.comment.user}">
+                            </div>
+                            <div class="Comments_contents">
+                                <div>
+                                    <small><strong>${response.comment.user}</strong> <span>${response.comment.text}</span></small>
+                                </div>
+                                <div class="Comment_details-time flex">
+                                    <span style="margin: 0px 10px;">${response.comment.created_at}</span>
+                                    <span style="margin: 0px 10px;">Reply</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                        // Append the new comment to the comments container
+                        $(`#comments-container-${postId}`).append(newCommentHtml);
                     } else {
                         console.error('Failed to post comment:', response.message);
                     }
@@ -615,53 +670,8 @@
 
 
 </script>
-<script>
 
-
-    $(document).ready(function () {
-        $('.show_comments_button').on('click', function (e) {
-            e.preventDefault();
-            const post_id = $(this).attr('data-id');
-            const url = `/comment/${post_id}/`;
-            const commentsContainer = $(this).closest('.PostComments-All').find('.ListsComments-All');
-
-            $.ajax({
-                type: 'GET',
-                url: url,
-                success: function (response) {
-                    if (response.comments) {
-                        commentsContainer.empty();
-                        response.comments.forEach(function (comment) {
-                            const commentHtml = `
-                            <div class="ListComments-All flex">
-                                <div class="ListComments-UserProfile">
-                                    <img src="${comment.user__userprofile__profile_picture}" alt="">
-                                </div>
-                                <div class="Comments_contents">
-                                    <div>
-                                        <small><strong>${comment.user__username}</strong> <span>${comment.comment}</span></small>
-                                    </div>
-                                    <div class="Comment_details-time flex">
-                                        <span style="margin: 0px 10px;">${comment.created_at}</span>
-                                        <span style="margin: 0px 10px;">Replay</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                            commentsContainer.append(commentHtml);
-                        });
-                    } else {
-                        console.error('Failed to load comments:', response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        });
-    });
-
-</script>
+<!-- showing comments  -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
