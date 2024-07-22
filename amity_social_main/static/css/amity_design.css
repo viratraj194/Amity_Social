@@ -823,7 +823,7 @@ footer {
     color: red;
     display: none;
 }
-.UserAllSavedPosts {
+.UserSavedPosts,.UserAllThePosts{
     display: none;
 }
 /* user profile ends */

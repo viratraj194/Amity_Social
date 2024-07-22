@@ -58,7 +58,7 @@
 
     <div class="post-saved_post flex">
         <div class="userAllPosts">
-            <a href="#" style="margin: 0px !important;">
+            <a href="{% url 'UserDashboard'%}" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
                     <div class="icon">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -66,14 +66,14 @@
                             colors="primary:#848484,secondary:#b4b4b4" style="width:25px;height:25px">
                         </lord-icon>
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;">{{total_posts}} Post</span>
+                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_posts}} Post</span>
 
                 </div>
             </a>
         </div>
         
         <div class="userAllSavePosts">
-            <a href="{% url 'SavedPosts' %}" style="margin: 0px !important;">
+            <a href="#" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
                     <div class="icon">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -82,7 +82,7 @@
                         </lord-icon>
 
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;" >{{total_saved}} Saved</span>
+                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;  border-bottom: 2px solid #86829a;" >{{total_saved}} Saved</span>
 
                 </div>
             </a>
@@ -90,11 +90,11 @@
     </div>
     <div class="usersAllPosts">
         <div class="UserAllPostList  flex ">
-            {% for post in user_posts %}
+            {% for save in saved_posts %}
             <div class="post_content ">
                 <div class="userPostContent" style="margin: 0px;">
-                    {% if post.post_image %}
-                    <img src="{{post.post_image.url}}" alt="" style="object-fit: cover;">
+                    {% if save.post.post_image %}
+                    <img src="{{save.post.post_image.url}}" alt="" style="object-fit: cover;">
                     {% else %}
                     <p style="text-align: center; font-size:small;">{{post.content}}</p>
                     {% endif %}
@@ -105,14 +105,14 @@
                         <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:white"
                             style="width:30px;height:30px;font-weight: bold;">
                         </lord-icon>
-                        <h4><strong>{{post.total_likes}}</strong></h4>
+                        <h4><strong>{{save.post.total_likes}}</strong></h4>
                     </div>
                     <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
                             style="width:30px;height:30px;font-weight: bold;">
                         </lord-icon>
-                        <h4><strong>{{post.total_comments}}</strong></h4>
+                        <h4><strong>{{save.post.total_comments}}</strong></h4>
                     </div>
                 </div>
             </div>

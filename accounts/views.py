@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
-from list_posts .models import UserPosts
+from list_posts .models import UserPosts,UserSavedPosts
 
 
 
@@ -183,18 +183,33 @@ def userProfileSettings(request):
 @login_required(login_url='login')
 def UserDashboard(request):
     profile = UserProfile.objects.get(user=request.user)
-    user_posts = UserPosts.objects.filter(user=request.user)
+    user_posts = UserPosts.objects.filter(user=request.user).order_by('-created_at')
     total_posts =  user_posts.count()
-    
-    print(total_posts)
+    user_saves = UserSavedPosts.objects.filter(user=request.user)
+    total_saved = user_saves.count()
+ 
     context = {
         'profile':profile,
         'user_posts':user_posts,
         'total_posts':total_posts,
+        'total_saved':total_saved
     }
     return render(request,'accounts/UserDashboard.html',context)
 
+def SavedPosts(request):
+    profile = UserProfile.objects.get(user=request.user)
+    user_posts = UserPosts.objects.filter(user=request.user)
+    saved_posts = UserSavedPosts.objects.filter(user=request.user).order_by('-created_at')
+    total_posts =  user_posts.count()
+    total_saved = saved_posts.count()
 
+    context = {
+        'profile':profile,
+        'saved_posts':saved_posts,
+        'total_posts':total_posts,
+        'total_saved':total_saved
+    }
+    return render(request,'accounts/SavedPosts.html',context)
 
 
 
