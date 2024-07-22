@@ -21,6 +21,9 @@ class UserPosts(models.Model):
     
     def total_likes(self):
         return self.likes.count()
+
+    def total_comments(self):
+        return self.comments.count()
     
     # def save(self, *args, **kwargs):
     #     if not self.content and not self.caption and not self.post_image:
@@ -72,3 +75,20 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.actor} Notified {self.user}'s post"
+
+
+class UserSavedPosts(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    post = models.ForeignKey(UserPosts,on_delete=models.CASCADE,related_name='saved_posts')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['post']),
+        ]
+        verbose_name = 'User Saved Post'
+        verbose_name_plural = 'User Saved Posts'
+
+    def __str__(self):
+        return f"{self.user.email} saved {self.post.id}"

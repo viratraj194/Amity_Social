@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeButton.addEventListener('click', function () {
         if (confirm('Are you sure you want to discard the post?')) {
             postDiv.style.display = 'none';
-            
+
         }
     });
 });
@@ -182,3 +182,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // adding the comment 
 
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        var content = document.querySelector('.toggleable-content');
+        var post_icon = document.querySelector('.UserAllSavedPosts');
+        if (content.style.display !== 'none' || content.style.display === '') {
+            content.style.display = 'none';
+            post_icon.style.display = 'none'; // Hide post_icon when content is displayed
+        } else {
+            content.style.display = 'flex';
+            post_icon.style.display = 'flex'; // Show post_icon when content is hidden
+        }
+    });
+});

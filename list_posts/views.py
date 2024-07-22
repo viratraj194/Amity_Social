@@ -2,10 +2,19 @@ from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile,User
 from .forms import addPostsForm
-from .models import UserPosts,Like,Notification,Comment
+from .models import UserPosts,Like,Notification,Comment,UserSavedPosts
 from django.contrib import messages
 from django.template.defaultfilters import slugify
 import json
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from .forms import addCommentForm
+
+
+
+
+
 
 
 @login_required(login_url='login')
@@ -13,6 +22,8 @@ def list_posts(request):
     user_profile = UserProfile.objects.get(user=request.user)
     user = request.user
     posts = UserPosts.objects.all().order_by('-created_at')
+    for post in posts:
+        post.saved_by_user = UserSavedPosts.objects.filter(user=request.user, post=post).exists()
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
     for post in posts:
         if post.image_height is not None and post.image_width is not None:
@@ -70,40 +81,6 @@ def add_posts(request):
     }
     return render(request, 'list_posts/list_posts.html', context)
 
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-
-
-def post_like(request, post_id):
-    if request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            try:
-                post = get_object_or_404(UserPosts, id=post_id)
-                user = request.user
-
-                if Like.objects.filter(user=user, post=post).exists():
-                    # If already liked, remove the like
-                    Like.objects.filter(user=user, post=post).delete()
-                    liked = False
-                else:
-                    # If not liked, create a new like
-                    Like.objects.create(user=user, post=post)
-                    liked = True
-                    if post.user != user:
-                        Notification.objects.create(user=post.user,post = post,actor=user)
-                        
-
-                return JsonResponse({'status': 'success', 'liked': liked})
-
-            except UserPosts.DoesNotExist:
-                return JsonResponse({'status': 'failed', 'message': 'This post does not exist'})
-
-        else:
-            return JsonResponse({'status': 'failed', 'message': 'Invalid request'})
-
-    else:
-        return JsonResponse({'status': 'failed', 'message': 'Please login to continue'})
-
 
 def mark_notification_as_read(request, notification_id):
     notification = Notification.objects.get(id=notification_id, user=request.user)
@@ -115,17 +92,8 @@ def mark_notification_as_read(request, notification_id):
 
 
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-from .forms import addCommentForm
 
 
-
-from django.views.decorators.csrf import csrf_exempt
-import json
-from .forms import addCommentForm
-from .models import Comment, UserPosts
 
 @csrf_exempt
 def add_comment(request, post_id):
@@ -167,13 +135,15 @@ def get_comments(request, post_id):
     comments = Comment.objects.filter(post=post).select_related('user__userprofile')
     user = request.user
     # Create a notification for the post's author
-    Notification.objects.create(
-                user=post.user,
-                post=post,
-                notification_msg="Commented on your post",
-                actor=user,
-                read=False
-        )
+    if post.user != user:
+        Notification.objects.create(
+                    user=post.user,
+                    post=post,
+                    notification_msg="Commented on your post",
+                    actor=user,
+                    read=False
+            )
+        
 
     comments_data = [
         {
@@ -185,3 +155,53 @@ def get_comments(request, post_id):
         for comment in comments
     ]  
     return JsonResponse({'comments': comments_data})
+
+
+def post_like(request, post_id):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                post = get_object_or_404(UserPosts, id=post_id)
+                user = request.user
+
+                if Like.objects.filter(user=user, post=post).exists():
+                    # If already liked, remove the like
+                    Like.objects.filter(user=user, post=post).delete()
+                    liked = False
+                else:
+                    # If not liked, create a new like
+                    Like.objects.create(user=user, post=post)
+                    liked = True
+                    if post.user != user:
+                        Notification.objects.create(user=post.user,post = post,actor=user, notification_msg='Liked your Post.')
+                        
+
+                return JsonResponse({'status': 'success', 'liked': liked})
+
+            except UserPosts.DoesNotExist:
+                return JsonResponse({'status': 'failed', 'message': 'This post does not exist'})
+
+        else:
+            return JsonResponse({'status': 'failed', 'message': 'Invalid request'})
+
+    else:
+        return JsonResponse({'status': 'failed', 'message': 'Please login to continue'})
+
+
+
+def save_post(request, post_id):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:
+            post = get_object_or_404(UserPosts, id=post_id)
+            user = request.user
+            if UserSavedPosts.objects.filter(user=user, post=post).exists():
+                UserSavedPosts.objects.filter(user=user, post=post).delete()
+                post_saved = False
+            else:
+                UserSavedPosts.objects.create(user=user, post=post)
+                post_saved = True
+            return JsonResponse({'status': 'success', 'post_saved': post_saved})
+        except UserPosts.DoesNotExist:
+            return JsonResponse({'status': 'failed', 'message': 'Post does not exist'})
+    else:
+        return JsonResponse({'status': 'failed', 'message': 'Invalid request'})

@@ -18,6 +18,7 @@ urlpatterns = [
 
 
     path('userProfileSettings/',views.userProfileSettings,name='userProfileSettings'),
+    
 
     path('',include('list_posts.urls')),
 

@@ -13,5 +13,6 @@ urlpatterns = [
 
 
     path('comments/<int:post_id>/', views.get_comments, name='get_comments'),
+    path('save_post/<int:post_id>/',views.save_post,name='save_post'),
     
 ]

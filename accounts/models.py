@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from .utils import send_notification_email
 
+
+
+
 class UserManager(BaseUserManager):
     def create_user(self,first_name,last_name,username,email,password=None):
         if not email:
@@ -130,4 +133,5 @@ class UserProfile(models.Model):
             print(f'Cover photo height: {self.cover_photo.height}')
             print(f'Cover photo width: {self.cover_photo.width}')
 
-    
+
+

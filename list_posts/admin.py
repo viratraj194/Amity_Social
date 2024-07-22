@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserPosts,Like,Notification,Comment
+from .models import UserPosts,Like,Notification,Comment,UserSavedPosts
 
 
 class CustomUserPostsAdmin(admin.ModelAdmin):
@@ -16,6 +16,7 @@ class NotificationAdmin(admin.ModelAdmin):
 # admin.site.register(CustomUserPosts)
 
 
+admin.site.register(UserSavedPosts)
 admin.site.register(Comment)
 
 admin.site.register(Notification,NotificationAdmin)

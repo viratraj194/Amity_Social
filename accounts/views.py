@@ -184,12 +184,16 @@ def userProfileSettings(request):
 def UserDashboard(request):
     profile = UserProfile.objects.get(user=request.user)
     user_posts = UserPosts.objects.filter(user=request.user)
+    total_posts =  user_posts.count()
     
+    print(total_posts)
     context = {
         'profile':profile,
         'user_posts':user_posts,
+        'total_posts':total_posts,
     }
     return render(request,'accounts/UserDashboard.html',context)
+
 
 
 

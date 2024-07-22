@@ -66,11 +66,15 @@
                             colors="primary:#848484,secondary:#b4b4b4" style="width:25px;height:25px">
                         </lord-icon>
                     </div>
-                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">Post</span>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_posts}} Post</span>
 
                 </div>
             </a>
         </div>
+        <style>
+            
+            
+        </style>
         <div class="userAllSavePosts">
             <a href="#" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
@@ -81,14 +85,14 @@
                         </lord-icon>
 
                     </div>
-                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">Saved</span>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;" id="toggleButton">Saved</span>
 
                 </div>
             </a>
         </div>
     </div>
     <div class="usersAllPosts">
-        <div class="UserAllPostList flex">
+        <div class="UserAllPostList flex toggleable-content">
             {% for post in user_posts %}
             <div class="post_content">
                 <div class="userPostContent" style="margin: 0px;">
@@ -101,23 +105,27 @@
                 <div class="post_content-likes-comment flex">
                     <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
-                            style="width:30px;height:30px;font-weight: bold;">
-                        </lord-icon>
-                        <h4><strong>54</strong></h4>
-                    </div>
-                    <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:white"
                             style="width:30px;height:30px;font-weight: bold;">
                         </lord-icon>
-                        <h4><strong>54</strong></h4>
+                        <h4><strong>{{post.total_likes}}</strong></h4>
+                    </div>
+                    <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
+                            style="width:30px;height:30px;font-weight: bold;">
+                        </lord-icon>
+                        <h4><strong>{{post.total_comments}}</strong></h4>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+        <div class="UserAllPostList UserAllSavedPosts flex">
+            saved posts
+        </div>
     </div>
+    
 </body>
 {% include "includes/alerts.html" %}
 {% endblock %}
