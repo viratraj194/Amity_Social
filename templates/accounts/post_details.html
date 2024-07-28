@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+
+<body>
+    <div class="user_profiles ">
+        <div class="user_profile">
+            <div class="user_profile_image">
+                {% if profile.profile_picture %}
+                <img src="{{profile.profile_picture.url}}" alt="">
+                {% else %}
+                <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
+                {% endif %}
+            </div>
+            <div class="user_profile_names">
+                <h1><strong>{{user.first_name}} {{user.last_name}}</strong> </h1>
+                <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
+                    <span>Living in Switzerland</span>
+                    <a href="{% url 'userProfileSettings'%}" style="color: #86829a;">
+                        <i class="bi bi-gear"></i>
+                    </a>
+
+                </div>
+            </div>
+            <div class="user_profile_follow_msg_btn">
+                <button type="submit">Follow</button>
+                <a href="#"><button>Message</button></a>
+            </div>
+        </div>
+    </div>
+    <div class="following_follow_posts flex">
+        <div class=" posts ">
+            <h5>
+                <strong>234</strong>
+            </h5>
+            <a href="">Posts</a>
+
+        </div>
+        <div class=" followinrs">
+            <h5>
+                <strong>856</strong>
+            </h5>
+            <a href="">Followers</a>
+
+        </div>
+        <div class=" followings">
+            <h5>
+                <strong>562</strong>
+            </h5>
+            <a href="">Following</a>
+
+        </div>
+    </div>
+    <div class="users_all_posts">
+        <h2>About</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, illum?</p>
+    </div>
+    <div style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
+
+    <div class="post-saved_post flex">
+        <div class="userAllPosts">
+            <a href="{%url 'UserDashboard'%}" style="margin: 0px !important;">
+                <div class="flex" style="align-items: center;">
+                    <div class="icon">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                            colors="primary:#848484,secondary:#b4b4b4" style="width:25px;height:25px">
+                        </lord-icon>
+                    </div>
+                    <span
+                        style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;">{{total_posts}}
+                        Post</span>
+
+                </div>
+            </a>
+        </div>
+
+        <div class="userAllSavePosts">
+            <a href="{% url 'SavedPosts' %}" style="margin: 0px !important;">
+                <div class="flex" style="align-items: center;">
+                    <div class="icon">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/prjooket.json" trigger="hover" colors="primary:#777b7b"
+                            style="width:25px;height:25px">
+                        </lord-icon>
+
+                    </div>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_saved}} Saved</span>
+
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="usersAllPosts">
+        <div class="UserAllPostList indetails flex ">
+            <div class="PostDetailsContents">
+                <div class="PostDetailsContent">
+                    <div class="postContainer-card">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper">
+                                {%if post.post_image%}
+
+                                <div class="swiper-slide">
+                                    <div class="postContainer-Post_Big-image">
+                                        <img src="{{post.post_image.url}}"
+                                            alt="">
+                                    </div>
+                                </div>
+                                {%endif%}
+
+
+
+                                <div class="swiper-slide">
+                                    <style>
+                                        .swiper-slide-active {
+                                            margin: auto;
+                                        }
+                                    </style>
+                                    {%if post.content%}
+                                    <div class="postContainer-Post_image "
+                                        style="justify-content: center;align-items: center;">
+                                        <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; ">
+                                            {{post.content}}</p>
+                                    </div>
+                                    {%endif%}
+                                </div>
+
+                                <!-- Add more swiper slides as needed -->
+                            </div>
+                            <!-- Pagination -->
+
+                            <div class="Pagination-Dots">
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="PostDetails-Allcomments">
+                <div class="postDetails_title">
+                    <h4 style="text-align: center; font-size: large; font-weight: 400;">Comments</h4>
+                </div>
+                <div class="PostDetailsAll-comments ">
+                    
+                    <div class="PostDetailsAll-comment ">
+                        {%if comments%}
+                        {%for comment in comments%}
+                        <div class="postDetailsAll-comment-lists flex" style="margin: 10px auto;">
+                            <div class="PostDetailsAll-comment-img">
+                                <img src="{{comment.user.userprofile.profile_picture.url}}"  alt="">
+                            </div>
+                            
+                            <div class="PostDetailsAll-comment-details">
+                                <h4><strong style="font-size: small;font-weight: 400;">@{{comment.user.users_id}}</strong> <span>{{comment.comment}}</span></h4>
+                                <h6><span style="margin: 0px 10px; font-weight: 300;">{{comment.created_at}}</span> <span style="font-weight: 300;">replay</span></h6>
+                            </div>
+                        </div>
+                        {%endfor%}
+                        {%else%}
+                        <h6 style="text-align: center; ">No Comments</h6>
+                        {%endif%}
+                    </div>
+                    <form action="{% url 'post_details' post_slug=post.post_slug %}" method="post">
+                        {%csrf_token%}
+                        <div class="PostDetails-comments-add_btn" style="align-items: center;">
+                            <textarea name="comment" style="resize: none;"></textarea>
+                            <button class="add_comments" data-id="{{ post.id }}"
+                                data-url="" type="submit">Post</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+{% include "includes/alerts.html" %}
+{% endblock %}

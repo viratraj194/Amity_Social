@@ -126,12 +126,17 @@ class UserProfile(models.Model):
 
     def save(self,*args, **kwargs):
         super().save(*args, **kwargs)
-        if self.profile_picture:
-            print(f'profile picture height: {self.profile_picture.height}')
-            print(f'Profile picture width: {self.profile_picture.width}')
-        if self.cover_photo:
-            print(f'Cover photo height: {self.cover_photo.height}')
-            print(f'Cover photo width: {self.cover_photo.width}')
+        
 
 
 
+# class Follow(models.Model):
+#     follower_user = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+#     followed_user = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+#     followed_at = models.DateTimeField(auto_now_add=True)
+
+#     class Meta:
+#         unique_together = ('follower_user', 'followed_user')
+
+#     def __str__(self):
+#         return f'{self.follower_user.username} follows {self.followed_user.username}'

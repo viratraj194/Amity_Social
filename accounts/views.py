@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
-from list_posts .models import UserPosts,UserSavedPosts
+from list_posts .models import UserPosts,UserSavedPosts,Comment
+from list_posts . forms import addCommentForm
 
 
 
@@ -212,4 +213,44 @@ def SavedPosts(request):
     return render(request,'accounts/SavedPosts.html',context)
 
 
+def post_details(request,post_slug):
+    post = get_object_or_404(UserPosts,post_slug=post_slug)
+    comments = Comment.objects.filter(post=post)
+    if request.method == 'POST':
+        form = addCommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.post = post
+            new_comment.user = request.user
+            new_comment.save()
+            return redirect('post_details',post_slug=post_slug)
+    comment_form = addCommentForm()
+    context = {
+        'post':post,
+        'comments':comments,
+        'comment_form':comment_form
+        
+    }
+
+    return render(request,'accounts/post_details.html',context)
+
+# def post_details_addComment(request):          
+#     if request.method == 'POST':
+#         form = addCommentForm(request.POST)
+#         if form.is_valid():
+#             comment = form
+
+#             return redirect('post_details')
+#     comment_form = addCommentForm()
+#     context = {
+#         'comment_form':comment_form,
+#     }
+#     return render(request,'accounts/post_details.html',context)
+
+
+
+def deletePost(request,post_slug):
+    post = get_object_or_404(UserPosts,post_slug = post_slug,user=request.user)
+    post.delete()
+    return redirect('UserDashboard')
 

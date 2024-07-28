@@ -1749,3 +1749,72 @@ h4 {
 
 
 /* post comments ends */
+
+/* post details starts  */
+.indetails{
+    max-height:600px;
+    overflow: hidden;
+}
+.PostDetailsContents{
+    height: 500px;
+
+}
+.PostDetailsContent .postContainer-card{
+    margin: 0px;
+}
+.PostDetails-Allcomments{
+    height: 600px;
+    margin: 20px auto;
+}
+.PostDetailsAll-comment{
+    height: 382px;
+    padding: 10px;
+    overflow-y: auto;
+}
+.PostDetailsAll-comment-img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.PostDetailsAll-comment-img img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    
+}
+.PostDetailsAll-comment-details{
+    width: 380px;
+    margin: 0px 5px;
+}
+.PostDetails-comments-add_btn textarea{
+    position: relative;
+    width: 380px;
+    outline: none;
+    color: gray;
+    padding-top: 1px;
+    padding-left: 10px;
+    padding-right: 20px;
+    overflow-y: hidden;
+    font-size: large;
+    background-color: transparent;
+    border: 1px solid gray;
+    border-radius: 10px;
+
+}
+.PostDetails-comments-add_btn button{
+    position: absolute;
+    width: 80px;
+    padding: 10px;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    color: white;
+    font-weight: 400;
+    background-color: #484848;
+    transform: translate(-87px, 9px);
+    cursor: pointer;
+
+
+}
+/* post details ends */

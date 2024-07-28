@@ -91,6 +91,7 @@
     <div class="usersAllPosts">
         <div class="UserAllPostList  flex ">
             {% for post in user_posts %}
+            <a href="{%url 'post_details' post_slug=post.post_slug %}">
             <div class="post_content ">
                 <div class="userPostContent" style="margin: 0px;">
                     {% if post.post_image %}
@@ -116,6 +117,7 @@
                     </div>
                 </div>
             </div>
+        </a>
             {% endfor %}
             
         </div>

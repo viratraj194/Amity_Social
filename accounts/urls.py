@@ -18,6 +18,11 @@ urlpatterns = [
     path('reset_password/',views.reset_password,name='reset_password'),
 
 
+    # post details 
+    path('post_details/<slug:post_slug>/',views.post_details,name='post_details'),
+    # path('post_details_addComment',views.post_details_addComment,name='post_details_addComment'),
+    # deleting the post
+    path('deletePost/<slug:post_slug>/',views.deletePost,name='deletePost'),
     path('userProfileSettings/',views.userProfileSettings,name='userProfileSettings'),
     
 
