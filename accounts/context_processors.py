@@ -2,7 +2,7 @@ from . models import UserProfile
 
 def get_user_profile(request):
     try:
-        profile = UserProfile.objects.get(user= request.user)
+        user_profile = UserProfile.objects.get(user= request.user)
     except:
-        profile = None
-    return dict(profile=profile)
+        user_profile = None
+    return dict(user_profile=user_profile)

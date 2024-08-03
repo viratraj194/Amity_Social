@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- post popup start  -->
-
+<script src="{% static 'js/js_components_for_ajax.js'%}"></script>
 <div class="PostContainers">
     <div class="close-button close " style="cursor: pointer;">
         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -123,16 +123,16 @@
                 </div>
                 <div class="postingPage-user-profile-counts  flex">
                     <div class="postingPage-followers">
-                        <h4>123</h4>
+                        <h4>{{total_posts}}</h4>
+                        <h6>Posts</h6>
+                    </div>
+                    <div class="postingPage-followers">
+                        <h4>{{total_followers}}</h4>
                         <h6>followers</h6>
                     </div>
                     <div class="postingPage-followers">
-                        <h4>123</h4>
-                        <h6>followers</h6>
-                    </div>
-                    <div class="postingPage-followers">
-                        <h4>123</h4>
-                        <h6>followers</h6>
+                        <h4>{{total_following}}</h4>
+                        <h6>Following</h6>
                     </div>
                 </div>
                 <div class="postingPage-myProfile-link">
@@ -268,6 +268,7 @@
         {% for post in posts %}
         <div class="allPostLists">
             <div class="postContainer">
+                <a href="{%url 'profile_details' post.user.id %}">
                 <div class="posting-user-Image_details flex">
                     {%if post.user.userprofile.profile_picture%}
                     <div class="posting-user-Image">
@@ -285,6 +286,7 @@
                         <span style="font-size: small; font-weight: 300;">{{post.created_at}}</span>
                     </div>
                 </div>
+                </a>
                 <div class="postContainer-card">
                     <div class="swiper-container">
                         <div class="swiper-wrapper">
@@ -470,21 +472,66 @@
 
 
     </div>
+    
     <div class="postingPageLast">
         <div class="sticky">
             <div class="allNotifications">
                 <div class="flex">
                     <h4>Notifications</h4>
-                    {%if notifications%}
+                    {%if notifications or follow_requests%}
                     <script src="https://cdn.lordicon.com/lordicon.js"></script>
                     <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#e83a30"
                         style="width:30px;height:30px">
                     </lord-icon>
                     {%endif%}
                 </div>
+                {% comment %} start request {% endcomment %}
+                {% for request  in follow_requests %}
+                <div class="postActivity  flex" id="follow-request-{{ request.id }}">
+                    {%if request.from_user.userprofile.profile_picture %}
+                    <div class="postActivity-userProfile-image">
+                        <img src="{{request.from_user.userprofile.profile_picture.url}}" style="object-fit: cover;"
+                            alt="">
+                    </div>
+                    {%else%}
+                    <div class="comment-posting-user">
+                        <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                    </div>
+                    {%endif%}
+                    <div class="postActivityDetails">
+                        <strong style="font-size: 13px;font-weight: 300;">@{{request.from_user.users_id}}</strong>
+                        <span style="text-wrap: wrap;">Sent follow request:
+                            </span>
 
+                    </div>
+                    <div class="flex space_between">
+                            <div >
+                                <a href="#" class="follow-action" data-url="{% url 'accept_follow_request' request.id %}" style="margin:auto 5px;">
+                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                    <lord-icon
+                                        src="https://cdn.lordicon.com/oqdmuxru.json"
+                                        trigger="hover"
+                                        colors="primary:#848484"
+                                        style="width:20px;height:20px">
+                                    </lord-icon>
+                                </a>
+                                <a href="#" class="follow-action" data-url="{% url 'deny_follow_request' request.id %}" style="margin:auto 5px;">
+                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                    <lord-icon
+                                        src="https://cdn.lordicon.com/nqtddedc.json"
+                                        trigger="hover"
+                                        colors="primary:#f4a09c"
+                                        style="width:20px;height:20px">
+                                    </lord-icon>
+                                </a>
+                            </div>
+                    </div>
+                </div>
+
+                {% comment %} end request  {% endcomment %}
+                {% endfor %}
                 <div class="allnotificatons_scrol" style="max-height: 400px; overflow-y: auto;">
-                    {%if notifications%}
+                    {%if notifications %}
                     {% for notification in notifications %}
                     <div class="postActivity notification flex"
                         data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
@@ -524,6 +571,7 @@
 
         </div>
     </div>
+    
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

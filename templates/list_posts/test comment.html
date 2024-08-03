@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<!-- post popup start  -->
+
+<div class="PostContainers">
+    <div class="close-button close " style="cursor: pointer;">
+        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+        <lord-icon src="https://cdn.lordicon.com/jkppkiom.json" trigger="hover" colors="primary:#848484"
+            style="width:20px;height:20px">
+        </lord-icon>
+    </div>
+    <form action="{%url 'add_posts'%}" method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+
+        <div class="PostContainer">
+            <div class="postContainer-input-image flex">
+                {% if user_profile.profile_picture %}
+                <div class="postContainer-image">
+                    <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
+                </div>
+                {% else %}
+                <div class="postContainer-image">
+                    <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                </div>
+                {%endif%}
+                <div class="PostContainer-postContent">
+                    <label for="userInput"></label>
+                    <textarea contenteditable="true" name="content" id="userInput"
+                        placeholder="Something is in your mind? Say it here......" style="resize: none;"></textarea>
+                </div>
+            </div>
+            <!-- hidden image  -->
+            <div class="hidden-image image-container" id="preview">
+                <img src="" alt="">
+            </div>
+            <!-- caption  -->
+            <div class="PostContainer-caption">
+                <textarea name="caption" placeholder="add caption to post..." style="resize: none;"></textarea>
+            </div>
+
+
+        </div>
+        <div class="PostContainer-border"></div>
+        <div class="PostContainer-image-input">
+            <div class="Post-image-input space_between flex">
+                <div class="saySomething-attachment" style="width: 200px; margin: 0px;">
+                    <input type="file" class="file-input" name="post_image" src="" accept="image/*" alt=""
+                        id="imageInput">
+                    <label for="imageInput" class="file-input-label">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                            colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
+                        </lord-icon>
+
+                    </label>
+                    <span class="moreWords" style="display:none; margin-left: 5px; color: red;">ist more then
+                        60words</span>
+                </div>
+                <div class="PostContainer-post-button space_between flex">
+                    <div class="progress-circle">
+                        <svg width="40" height="40">
+                            <circle class="bg" cx="20" cy="20" r="15"></circle>
+                            <circle class="progress" cx="20" cy="20" r="15" stroke-dasharray="94.2"
+                                stroke-dashoffset="94.2"></circle>
+                        </svg>
+                        <div class="text">0%</div>
+                    </div>
+
+                    <div class="" style="border-right: 1px solid silver; height: 30px; width: 1px;"></div>
+                    <button class="postButton" type="submit">Post</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    {% if messages %}
+    <ul class="messages" style="color: red;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+<!-- post popup ends -->
+
+
+
+
+
+<!-- POSTING PAGE STARTS -->
+<div class="postingPage flex "> <!-- posting page main container-->
+
+    <div class="postingPageLeft">
+        <div class="sticky">
+            <div class="loggedInUserProfile">
+                <div class="UserCover_photo_profile_photo">
+                    {% if user_profile.cover_photo %}
+                    <div class="postingPage_cover_photo">
+                        <img src="{{user_profile.cover_photo.url}}" alt="">
+                    </div>
+                    {% else %}
+                    <div class="postingPage_cover_photo">
+                        <img src="" alt="">
+                    </div>
+                    {% endif %}
+                    {% if user_profile.profile_picture %}
+                    <div class="postingPage_profile_photo">
+                        <img src="{{user_profile.profile_picture.url}}" alt="">
+                    </div>
+
+
+                    {% else %}
+                    <div class="postingPage_profile_photo">
+                        <img src="{%static 'img/images.jpeg'%}" alt="">
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="postingPage-user-details">
+                    <h3>{{user.first_name}} {{user.last_name}}</h3>
+                    <h4 style="color: rgb(169, 169, 169);">@{{user.username}}</h4>
+                </div>
+                <div class="postingPage-user-profile-counts  flex">
+                    <div class="postingPage-followers">
+                        <h4>123</h4>
+                        <h6>followers</h6>
+                    </div>
+                    <div class="postingPage-followers">
+                        <h4>123</h4>
+                        <h6>followers</h6>
+                    </div>
+                    <div class="postingPage-followers">
+                        <h4>123</h4>
+                        <h6>followers</h6>
+                    </div>
+                </div>
+                <div class="postingPage-myProfile-link">
+                    <a href="#"><button class="boton-elegante">Explore</button></a>
+                </div>
+            </div>
+            <!-- posting apge links start  -->
+            <div class="postingPageLinks">
+                <div class="linkLists">
+                    <ul>
+                        <li class="border-animation">
+
+
+                            <a href="{% url 'home'%}">
+                                <lord-icon src="https://cdn.lordicon.com/cnpvyndp.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Home</span></a>
+                        </li>
+                        <li class="border-animation">
+                            <a class="open" style="cursor: pointer;">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/ercyvufy.json" trigger="hover"
+                                    colors="primary:#ffffff,secondary:#e4e4e4"
+                                    style="width:20px;height:20px; font-weight: bold;">
+                                </lord-icon>
+                                <span>Post</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="#">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Messages</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="#">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Events</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="{% url 'account'%}">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Account</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="postingPageMiddle">
+        <div class="saySomething">
+            <div class=" saySomething-submain  ">
+                {% if user_profile.profile_picture %}
+
+                <div class="saySomethingImage">
+                    <img style="object-fit:cover;" src="{{profile.profile_picture.url}}" alt="">
+                </div>
+                {% else %}
+                <div class="saySomethingImage">
+                    <img src="{%static 'img/images.jpeg'%}" alt="">
+                </div>
+
+                {% endif %}
+                <div class="saySomething-input  flex">
+                    <div class="saySomething-icon1">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon class="lord-icon" src="https://cdn.lordicon.com/mecwbjnp.json" trigger="hover"
+                            colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
+                        </lord-icon>
+                    </div>
+
+                    <input type="text" class="" placeholder="Is there is something in your mind?..........">
+
+                    <div class="saySomething-icon2">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/ercyvufy.json" trigger="hover" colors="primary:#777b7b"
+                            style="width:20px;height:20px">
+                        </lord-icon>
+                    </div>
+                </div>
+            </div>
+            <!-- Posting input on the top of the posting page  -->
+            <div class="saySomething-attachments">
+                <div class="saySomething-attachment-left">
+                    <div class="saySomething-attachment">
+                        <input type="file" class="file-input" src="" accept="image/*" alt="" id="imageInput">
+                        <label for="imageInput" class="file-input-label">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                                colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
+                            </lord-icon>
+                            <span>Image</span>
+                        </label>
+                    </div>
+                    <!-- <div class="saySomething-attachment">
+                        <input type="file" class="file-input" accept="video/*" id="videoInput">
+                        <label for="videoInput" class="file-input-label">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/sdrxeanh.json" trigger="hover"
+                                colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
+                            </lord-icon>
+                            <span>Video</span>
+                        </label>
+                    </div> -->
+                </div>
+                <div class="saySomething-Post">
+                    <button type="submit">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/mqwitsmv.json" trigger="hover"
+                            colors="primary:#ffffff,secondary:#b4b4b4" style="width:20px;height:20px">
+                        </lord-icon>
+                        <span>Post</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <!-- listing post one by one here starts  -->
+        {% for post in posts %}
+        <div class="allPostLists">
+            <div class="postContainer">
+                <div class="posting-user-Image_details flex">
+                    {%if post.user.userprofile.profile_picture%}
+                    <div class="posting-user-Image">
+                        <img style="object-fit: cover;" src="{{post.user.userprofile.profile_picture.url}}" alt="">
+                    </div>
+                    {%else%}
+                    <div class="posting-user-Image">
+                        <img src="{%static 'img/images.jpeg'%}" alt="">
+                    </div>
+                    {%endif%}
+                    <span>{{post.user.users_id}}</span>
+                    <span style="    size: 1px; width: 100; margin-left: 9px; margin-right: -7px;">•</span>
+                    <span>{{post.updated_atsour}}</span>
+                </div>
+                <div class="postContainer-card">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            {% if post.post_image %}
+                            {% if post.is_portrait %}
+                            <div class="swiper-slide">
+                                <div class="postContainer-Post_Big-image">
+                                    <img src="{{post.post_image.url}}" alt="">
+                                </div>
+                            </div>
+                            {%else%}
+                            <div class="swiper-slide">
+                                <div class="postContainer-Post_image">
+                                    <img src="{{post.post_image.url}}" alt="">
+                                </div>
+                            </div>
+                            {%endif%}
+                            {% endif %}
+                            {% if post.content %}
+                            <div class="swiper-slide">
+                                <div class="postContainer-Post_image flex"
+                                    style="justify-content: center;align-items: center; height: auto;">
+                                    <p
+                                        style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; height: 100%;">
+                                        {{post.content}}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Add more swiper slides as needed -->
+                        </div>
+                        <!-- Pagination -->
+
+                        <div class="Pagination-Dots">
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="posts-likes-comments-saves flex">
+                    <div class="flex">
+                        <div class="posts-like-comment-save">
+                            <a href="#" class="like_post" data-id="{{ post.id }}"
+                                data-url="{% url 'post_like' post.id %}">
+                                <div class="post_icon flex {% if post.liked_by_user %}postLiked_icon{% else %}postUnliked_icon{% endif %}"
+                                    style="align-items: center;">
+                                    {% if post.liked_by_user %}
+                                    <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
+                                        colors="primary:#e83a30" style="width:30px;height:30px">
+                                    </lord-icon>
+                                    {% else %}
+
+                                    <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                                        colors="primary:#848484" style="width:30px;height:30px">
+                                    </lord-icon>
+                                    {% endif %}
+                                </div>
+                                <span style="color: #777b7b; margin: 0px 5px;"><strong>655</strong> Likes</span>
+                            </a>
+
+                        </div>
+
+                        <div class="posts-like-comment-save Comment-onPost">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon class="Comment-onPost" data-id="{{post.id}}"
+                                src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:#777b7b"
+                                style="width:30px;height:30px">
+                            </lord-icon>
+                        </div>
+
+                    </div>
+                    <!-- adding comment  starts  -->
+                    <div class="PostComments-forPosts" data-id="{{post.id}}" style="display: none;">
+                        <div class="comment-close " style="cursor: pointer;">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/jkppkiom.json" trigger="hover"
+                                colors="primary:#848484" style="width:20px;height:20px">
+                            </lord-icon>
+                        </div>
+                        <div class="PostComments-forPostsTitle">
+                            <h3>Comments</h3>
+                        </div>
+                        <div class="PostComments-All">
+                            <div class="ListsComments-All">
+                                {%for comment in comments%}
+                                <div class="ListComments-All flex">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="{{post.user.userprofile.profile_picture.url}}" alt="">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>{{comment.user.users_id}}</strong> <span>{{comment.comment}}</span></small>
+                                        </div>
+
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">36/25/</span>
+                                            <span style="margin: 0px 10px;">Replay</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%endfor%}
+
+                                <!-- Add more comments as needed -->
+                            </div>
+
+                            <div class="PostComments-Input flex">
+                                <div class="comment-posting-user">
+                                    <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
+                                </div>
+                                <div class=" Main-commentdiv flex">
+                                    <textarea class="textareamain" name="comment" style="resize: none;"
+                                        placeholder="Comment......"></textarea>
+                                    <div class="Comment-PostButton">
+
+                                        <button class="add_comments" data-id="{{ post.id }}"
+                                            data-url="{% url 'add_comment' post.id %}" type="submit">Post</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- adding comment  ends -->
+
+                    <div class="posts-save">
+                        <a href="#like">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/prjooket.json" trigger="hover"
+                                colors="primary:#777b7b" style="width:30px;height:30px">
+                            </lord-icon>
+                        </a>
+                    </div>
+                </div>
+                <div class="postsCaptions">
+                    <div class="post-caption">
+                        <h4><strong>{{post.user.users_id}}</strong> <span>{{post.caption}}</span></h4>
+                    </div>
+                    <div class="postAll-comments">
+                        <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+        <!-- listing post one by one here ends  -->
+
+
+
+    </div>
+    <div class="postingPageLast">
+        <div class="sticky">
+            <div class="allNotifications">
+                <div class="flex">
+                    <h4>Notifications</h4>
+                    {%if notifications%}
+                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                    <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#e83a30"
+                        style="width:30px;height:30px">
+                    </lord-icon>
+                    {%endif%}
+                </div>
+                {%if notifications%}
+                {% for notification in notifications %}
+                <div class="postActivity notification flex"
+                    data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
+                    <div class="postActivity-userProfile-image">
+                        <img src="{{notification.actor.userprofile.profile_picture.url}}" alt="">
+                    </div>
+                    <div class="postActivityDetails">
+                        <strong style="font-size: 13px;font-weight: 300;">@{{notification.actor.users_id}}</strong>
+                        <span style="text-wrap: wrap;">Liked your post at: {{notification.timestamp}}</span>
+
+                    </div>
+                    <div class="postActivityImage_or_video">
+                        <img style="object-fit: cover;" src="{{notification.post.post_image.url}}" alt="">
+                    </div>
+                </div>
+                {% endfor %}
+                {%else%}
+                <h4 style="color: #777b7b; text-align: center; margin: 5px;">No Notifications</h4>
+                {%endif%}
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.like_post').on('click', function (e) {
+            e.preventDefault();
+            const post_id = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const csrfToken = getCookie('csrftoken');
+
+            const data = {
+                post_id: post_id
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+                    // Toggle icon based on liked status
+                    const iconDiv = $(`.like_post[data-id="${post_id}"] .post_icon`);
+                    iconDiv.removeClass('postLiked_icon postUnliked_icon');
+                    if (response.liked) {
+                        iconDiv.addClass('postLiked_icon');
+                        iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
+                            colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>`);
+                    } else {
+                        iconDiv.addClass('postUnliked_icon');
+                        iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                            colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+<!-- POSTING PAGE ENDS -->
+
+<!-- notification -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.notification').on('mouseenter', function () {
+            const notificationId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        });
+    });
+
+    // adding teh comment 
+
+    $(document).ready(function () {
+        $('.add_comments').on('click', function (e) {
+            e.preventDefault();
+
+            const postId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const commentText = $(this).closest('.PostComments-Input').find('.textareamain').val().trim();
+            const csrfToken = getCookie('csrftoken');
+
+            const data = {
+                comment: commentText,
+                post_id: postId
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+
+                    // Clear the textarea if the comment was successfully posted
+                    if (response.success) {
+                        $('.textareamain').val('');
+                    } else {
+                        console.error('Failed to post comment:', response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+
+
+</script>
+
+
+{% include "includes/alerts.html" %}
+
+{% endblock %}

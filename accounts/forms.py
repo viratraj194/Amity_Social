@@ -1,5 +1,5 @@
 from django import forms
-from .models import User,UserProfile
+from .models import User,UserProfile,FollowRequest
 
 
 class UserForm(forms.ModelForm):
@@ -9,7 +9,7 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name','last_name','username','email','password','gender','id_card_image','agree_to_terms','id_card_number']
+        fields = ['first_name','last_name','username','email','password','collage_name','gender','agree_to_terms']
 
 
     def clean(self):
@@ -30,10 +30,10 @@ class UserForm(forms.ModelForm):
 class userProfileForm(forms.ModelForm):
     profile_picture = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
     cover_photo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
-
+    collage_name = forms.CharField(widget=forms.HiddenInput()) 
     class Meta:
         model = UserProfile
-        fields = ['profile_picture','cover_photo','collage_name','collage_pin_code']
+        fields = ['profile_picture','cover_photo','collage_pin_code']
 
 
 
@@ -41,4 +41,11 @@ class userProfileForm(forms.ModelForm):
 class userInfoForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name','last_name','username','phone_number']
+        fields = ['first_name','last_name','username','phone_number','collage_name']
+
+# follow system 
+
+class FollowRequestForm(forms.ModelForm):
+    class Meta:
+        model = FollowRequest
+        fields = ['to_user']

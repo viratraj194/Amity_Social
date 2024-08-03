@@ -1,6 +1,6 @@
 from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
 from . forms import UserForm,userInfoForm,userProfileForm
-from .models import User,UserProfile
+from .models import User,UserProfile,Follower,FollowRequest
 from . utils import users_id_generator,send_email_verification,detectUser
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
@@ -9,9 +9,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
 from list_posts .models import UserPosts,UserSavedPosts,Comment
 from list_posts . forms import addCommentForm
+from django.http import JsonResponse
 
 
 
+   
 def RegisterUser(request):
     if request.user.is_authenticated:
         messages.warning(request,'you are already logged in.')
@@ -45,6 +47,8 @@ def RegisterUser(request):
         'form':form,
     }
     return render(request,'accounts/RegisterUser.html',context)
+
+
 
 def activate(request,uidb64,token):
     try:
@@ -149,11 +153,12 @@ def reset_password(request):
 def userProfileSettings(request):
     # Fetch the user profile
     user_profile = get_object_or_404(UserProfile, user=request.user)
-    
+    user = request.user
+    # userInfo = get_object_or_404(User,user=user)
+    print(user.collage_name)
     if request.method == 'POST':
         user_profile_form = userProfileForm(request.POST, request.FILES, instance=user_profile)
         user_info_form = userInfoForm(request.POST, instance=request.user)
-        
         if user_profile_form.is_valid() and user_info_form.is_valid():
             # Print the cleaned data from the forms
             # Uncomment the following lines to save the data to the database
@@ -166,10 +171,14 @@ def userProfileSettings(request):
     else:
         user_profile_form = userProfileForm(instance=user_profile)
         user_info_form = userInfoForm(instance=request.user)
-    
+     
+    profile = UserProfile.objects.get(user=user)
+    print('here is the profile',profile.profile_picture)
     context = {
         'user_profile_form': user_profile_form,
         'user_info_form': user_info_form,
+        'saved_collage':user.collage_name,
+        'profile':profile,
     }
 
     return render(request, 'accounts/userProfileSettings.html', context)
@@ -184,7 +193,18 @@ def userProfileSettings(request):
 @login_required(login_url='login')
 def UserDashboard(request):
     profile = UserProfile.objects.get(user=request.user)
-    user_posts = UserPosts.objects.filter(user=request.user).order_by('-created_at')
+    user = request.user
+    user_posts = UserPosts.objects.filter(user=user).order_by('-created_at')
+    # Get all users who are following the logged-in user
+    followers = Follower.objects.filter(following=user).select_related('follower')
+
+    # Get all users the logged-in user is following
+    following = Follower.objects.filter(follower=user).select_related('following')
+
+    total_following = following.count()
+    total_followers = followers.count()
+    
+    
     total_posts =  user_posts.count()
     user_saves = UserSavedPosts.objects.filter(user=request.user)
     total_saved = user_saves.count()
@@ -193,7 +213,10 @@ def UserDashboard(request):
         'profile':profile,
         'user_posts':user_posts,
         'total_posts':total_posts,
-        'total_saved':total_saved
+        'total_saved':total_saved,
+        'total_following':total_following,
+        'total_followers':total_followers,
+
     }
     return render(request,'accounts/UserDashboard.html',context)
 
@@ -234,23 +257,56 @@ def post_details(request,post_slug):
 
     return render(request,'accounts/post_details.html',context)
 
-# def post_details_addComment(request):          
-#     if request.method == 'POST':
-#         form = addCommentForm(request.POST)
-#         if form.is_valid():
-#             comment = form
-
-#             return redirect('post_details')
-#     comment_form = addCommentForm()
-#     context = {
-#         'comment_form':comment_form,
-#     }
-#     return render(request,'accounts/post_details.html',context)
-
-
 
 def deletePost(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug = post_slug,user=request.user)
     post.delete()
     return redirect('UserDashboard')
 
+
+# follow systems 
+def send_follow_request(request,user_id):
+    to_user = get_object_or_404(User,id=user_id)
+    from_user = request.user
+    if from_user == to_user:
+        messages.error(request,'You can follow yourself!')
+        return redirect('list_posts')
+    elif FollowRequest.objects.filter(from_user=from_user,to_user=to_user).exists():
+        messages.info(request,'Request is already sent!')
+        return redirect('profile_details',user_id=user_id)
+    else:
+        FollowRequest.objects.create(to_user=to_user,from_user=from_user)
+        messages.success(request,'Follow request sent.'.title())
+        return redirect('profile_details',user_id=user_id)
+
+    return redirect('profile_details',user_id=user_id)
+
+# accepting the request 
+def accept_follow_request(request,request_id):
+    follow_request = get_object_or_404(FollowRequest, id=request_id, to_user=request.user)
+    
+    if follow_request:
+        # Check if the follower relationship already exists
+        existing_follower = Follower.objects.filter(follower=follow_request.from_user, following=follow_request.to_user).exists()
+        
+        if not existing_follower:
+            # Create a new Follower instance if not already following
+            Follower.objects.create(follower=follow_request.from_user, following=follow_request.to_user)
+            follow_request.is_accepted = True
+            follow_request.save()
+            return JsonResponse({'status': 'accepted'})
+        else:
+            # If already following, just mark the follow request as accepted
+            follow_request.is_accepted = True
+            follow_request.save()
+            return JsonResponse({'status': 'already_following'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+def deny_follow_request(request,request_id):
+    
+    follow_request = get_object_or_404(FollowRequest, id=request_id, to_user=request.user)
+    if follow_request:
+        follow_request.delete()
+        return JsonResponse({'status': 'denied'})
+    return JsonResponse({'status': 'error'}, status=400)

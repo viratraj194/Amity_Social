@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 class UserPosts(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,db_index=True)
     content = models.TextField(blank=True,null=True)
     caption = models.TextField(max_length=40,blank=True,null=True)
 
@@ -12,7 +12,7 @@ class UserPosts(models.Model):
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     
-    post_slug = models.SlugField(unique=True)
+    post_slug = models.SlugField(unique=True,db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

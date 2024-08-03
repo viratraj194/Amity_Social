@@ -52,3 +52,6 @@ def send_notification_email(mail_subjects, mail_template, context):
     # mail.attach(context['image'])
     mail.send()
     return
+
+
+

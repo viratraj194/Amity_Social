@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, UserProfile
+from .models import User, UserProfile,FollowRequest,Follower
 from django.contrib.auth.admin import UserAdmin
 
 class CustomUserAdmin(UserAdmin):
@@ -11,5 +11,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = ()
 
 
+admin.site.register(Follower)
+admin.site.register(FollowRequest)
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(UserProfile)

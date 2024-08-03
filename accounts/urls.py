@@ -3,6 +3,7 @@ from.import views
 
 urlpatterns = [
     path('',views.account),
+    path('',include('list_posts.urls')),
 
 
     path('RegisterUser/',views.RegisterUser,name='RegisterUser'),
@@ -26,7 +27,14 @@ urlpatterns = [
     path('userProfileSettings/',views.userProfileSettings,name='userProfileSettings'),
     
 
-    path('',include('list_posts.urls')),
+    # adding following and follow systems
+    path('send_follow_request/<int:user_id>/',views.send_follow_request,name='send_follow_request'),
+    path('accept-follow-request/<int:request_id>/',views.accept_follow_request, name='accept_follow_request'),
+    path('deny-follow-request/<int:request_id>/',views.deny_follow_request, name='deny_follow_request'),
+
+
+
+
 
     
 ]

@@ -42,7 +42,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'list_posts',
+    'compressor',
 ]
+
+
+STATICFILES_STORAGE = 'compressor.storage.CompressorFileStorage'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -131,18 +142,22 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR /'static'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'amity_social_main/static/'),
 ]
 
-
-STATIC_URL = '/media/'
+# media files 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
 
 #Email setup
 
@@ -158,10 +173,20 @@ DEFAULT_FROM_EMAIL = 'collage social  <collages.socialmedia@gmail.com>'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'fancy-charmed-crow.ngrok-free.app'
+    'amity.loca.lt'
+    
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://fancy-charmed-crow.ngrok-free.app',
+    'https://amity.loca.lt',
 ]
+
+
+# cachesing 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}

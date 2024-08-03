@@ -14,7 +14,7 @@
             <div class="user_profile_names">
                 <h1><strong>{{user.first_name}} {{user.last_name}}</strong> </h1>
                 <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
-                    <span>Living in Switzerland</span>
+                    <span>@_ {{user.username}}</span>
                     <a href="{% url 'userProfileSettings'%}" style="color: #86829a;">
                         <i class="bi bi-gear"></i>
                     </a>
@@ -30,21 +30,21 @@
     <div class="following_follow_posts flex">
         <div class=" posts ">
             <h5>
-                <strong>234</strong>
+                <strong>{{total_posts}}</strong>
             </h5>
             <a href="">Posts</a>
 
         </div>
         <div class=" followinrs">
             <h5>
-                <strong>856</strong>
+                <strong>{{total_followers}}</strong>
             </h5>
             <a href="">Followers</a>
 
         </div>
         <div class=" followings">
             <h5>
-                <strong>562</strong>
+                <strong>{{total_following}}</strong>
             </h5>
             <a href="">Following</a>
 
@@ -88,6 +88,9 @@
             </a>
         </div>
     </div>
+
+
+
     <div class="usersAllPosts">
         <div class="UserAllPostList  flex ">
             {% for post in user_posts %}
@@ -122,7 +125,7 @@
             
         </div>
     </div>
-    
+
 </body>
 {% include "includes/alerts.html" %}
 {% endblock %}

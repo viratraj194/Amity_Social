@@ -42,12 +42,11 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=20,null=True,blank=True)
     username = models.CharField(max_length=50, unique=True)
-    user_slug = models.SlugField(max_length=100,unique=True)
+    # userSlug = models.SlugField(max_length=100,blank=True,unique=True)
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=12, blank=True)
-    id_card_number = models.CharField(max_length=15,blank=True)
+    collage_name = models.CharField(blank=True,null=True)
     users_id = models.CharField(max_length=20,blank=True,null=True)
-    id_card_image = models.ImageField(upload_to='users/id_card_image')
     agree_to_terms = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     
@@ -116,7 +115,6 @@ class UserProfile(models.Model):
     # cover photo width and height 
     cover_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     cover_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
-    collage_name = models.CharField(max_length=50,blank=True,null=True)
     collage_pin_code = models.CharField(max_length=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -130,13 +128,28 @@ class UserProfile(models.Model):
 
 
 
-# class Follow(models.Model):
-#     follower_user = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
-#     followed_user = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
-#     followed_at = models.DateTimeField(auto_now_add=True)
+# follow system 
+class Follower(models.Model):
+    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
 
-#     class Meta:
-#         unique_together = ('follower_user', 'followed_user')
+    class Meta:
+        unique_together = ('follower', 'following')
 
-#     def __str__(self):
-#         return f'{self.follower_user.username} follows {self.followed_user.username}'
+    def __str__(self):
+        return f'{self.follower} follows {self.following}'
+
+
+
+class FollowRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='follow_requests_sent_from', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='follow_requests_sent_to', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_accepted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('from_user', 'to_user')
+
+    def __str__(self):
+        return f'{self.from_user} requests to follow {self.to_user}'

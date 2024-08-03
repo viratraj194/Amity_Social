@@ -3,6 +3,16 @@ body {
     color: white;
 
 }
+::-webkit-scrollbar{
+    width: 10px;
+}
+::-webkit-scrollbar-track{
+    background-color: #292929;
+}
+::-webkit-scrollbar-thumb{
+    background-color: #c5bfbf;
+    border-radius: 10px;
+}
 
 /* UTILITY */
 li {
@@ -495,9 +505,18 @@ footer {
     width: 123px;
     height: 20px;
 }
-
-.user_gender {
+.id_cards{
     width: 1010px;
+    margin: auto;
+    justify-content: space-between;
+}
+.id_cards{
+    width: 1010px;
+    margin: auto;
+    justify-content: space-between;
+}
+.user_gender {
+    width: 200px !important;
 }
 
 .user_gender select {
@@ -1368,6 +1387,16 @@ h4 {
 .allnotificatons_scrol {
     max-height: 400px;
     overflow-y: auto;
+}
+
+.allnotificatons_scrol::-webkit-scrollbar{
+    width: 10px;
+}
+.allnotificatons_scrol::-webkit-scrollbar-track{
+    background-color: #292929;
+}
+.allnotificatons_scrol::-webkit-scrollbar-thumb{
+    background-color: #777676;
 }
 
 .allNotifications h4 {

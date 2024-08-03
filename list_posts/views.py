@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
-from accounts.models import UserProfile,User
+from accounts.models import UserProfile,User,FollowRequest,Follower
 from .forms import addPostsForm
 from .models import UserPosts,Like,Notification,Comment,UserSavedPosts
 from django.contrib import messages
@@ -10,8 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .forms import addCommentForm
-
-
+from django.views.decorators.cache import cache_page
 
 
 
@@ -21,24 +20,46 @@ from .forms import addCommentForm
 def list_posts(request):
     user_profile = UserProfile.objects.get(user=request.user)
     user = request.user
-    posts = UserPosts.objects.all().order_by('-created_at')
+    collage = user.collage_name
+    posts = UserPosts.objects.filter(user__collage_name=collage).order_by('-created_at')
+    total_posts = UserPosts.objects.filter(user=user)
+    
+    # sending the follow request
+    follow_requests = FollowRequest.objects.filter(to_user = user, is_accepted=False)
+    
+        # Get all users who are following the logged-in user
+    followers = Follower.objects.filter(following=user).select_related('follower')
+
+    # Get all users the logged-in user is following
+    following = Follower.objects.filter(follower=user).select_related('following')
+
+    total_following = following.count()
+    total_followers = followers.count()
+    
+    # posts = UserPosts.objects.all().order_by('-created_at')
     for post in posts:
         post.saved_by_user = UserSavedPosts.objects.filter(user=request.user, post=post).exists()
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
+
+    
     for post in posts:
         if post.image_height is not None and post.image_width is not None:
             post.is_portrait = post.image_height > post.image_width
         else:
             post.is_portrait = False  # Default to landscape if dimensions are missing
-            
-        for post in posts:
-            post.liked_by_user = post.likes.filter(user=user).exists() if user else False
+     
+    for post in posts:
+        post.liked_by_user = post.likes.filter(user=user).exists() if user else False
 
     context = {
         'user_profile':user_profile,
         'user':user,
         'posts':posts,
         'notifications':notifications,
+        'total_posts':total_posts.count(),
+        'follow_requests':follow_requests,
+        'total_following':total_following,
+        'total_followers':total_followers,
 
     }
     return render(request,'list_posts/list_posts.html',context)
@@ -193,6 +214,7 @@ def save_post(request, post_id):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         try:
             post = get_object_or_404(UserPosts, id=post_id)
+            
             user = request.user
             if UserSavedPosts.objects.filter(user=user, post=post).exists():
                 UserSavedPosts.objects.filter(user=user, post=post).delete()
@@ -205,3 +227,18 @@ def save_post(request, post_id):
             return JsonResponse({'status': 'failed', 'message': 'Post does not exist'})
     else:
         return JsonResponse({'status': 'failed', 'message': 'Invalid request'})
+
+
+
+# user profile details
+
+def profile_details(request,user_id):
+    
+    profile = get_object_or_404(User,id=user_id)
+    posts = UserPosts.objects.filter(user=profile)
+    total_posts = posts.count()
+    context = {
+        'profile':profile,
+        'total_posts':total_posts,
+    }
+    return render(request,'list_posts/profile_details.html',context)

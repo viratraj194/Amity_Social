@@ -180,6 +180,48 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// adding the comment 
+// adding api for the collage name for the profile setting
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const apiEndpoint = "http://universities.hipolabs.com/search?country=India";
+
+    fetch(apiEndpoint)
+        .then((response) => response.json())
+        .then((data) => {
+            const collegeSelect = document.getElementById("id_collage_name");
+            data.forEach((college) => {
+                if (college.name && college.name !== "Amity University Greater Noida") { // Avoid adding the static option again
+                    const option = document.createElement("option");
+                    option.value = college.name;
+                    option.textContent = college.name;
+                    collegeSelect.appendChild(option);
+                }
+            });
+        })
+        .catch((error) => console.error("Error fetching college data:", error));
+});
+// adding api for the collage name for the profile setting
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const apiEndpoint = "http://universities.hipolabs.com/search?country=India";
+
+    fetch(apiEndpoint)
+        .then((response) => response.json())
+        .then((data) => {
+            const collegeSelect = document.getElementById("collage_name");
+            data.forEach((college) => {
+                if (college.name && college.name !== "Amity University Greater Noida") { // Avoid adding the static option again
+                    const option = document.createElement("option");
+                    option.value = college.name;
+                    option.textContent = college.name;
+                    collegeSelect.appendChild(option);
+                }
+            });
+        })
+        .catch((error) => console.error("Error fetching college data:", error));
+});
+
 
 
