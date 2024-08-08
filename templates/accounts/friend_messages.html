@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="messageContainer flex main_container_width"
+    style="margin: auto; width:  1010px; justify-content: space-between;">
+    <div class="messageUserList">
+        <div class="chat_title flex" style="border-bottom: 1px solid white; padding: 10px 5px;">
+            <h2>Chats</h2>
+            <div class="loggedInUserImage">
+                <img src="{{user.userprofile.profile_picture.url}}" alt="">
+            </div>
+        </div>
+        <div class="message_userLists">
+            <ul class="message_user_cards">
+                {% for friend in friends%}
+                <a href="{% url 'message_user' friend.following.id%}">
+                <li class="message_user_card">
+                    <div class="messageUserCard flex">
+                        <div class="userImg">
+                            <img src="{{friend.following.userprofile.profile_picture.url}}" alt="">
+                        </div>
+                        <div class="messageUsersDetails colum">
+                            <span
+                                style="margin: 2px 0px; display: flex; justify-content: space-between;width: 224px;"><strong
+                                    style="color: rgb(210, 208, 208);">{{friend.following.username}}</strong> <small
+                                    style="color: gray;">{% if friend.following.last_login %}{{ friend.following.last_login|date:"H:i" }}{% else %}Never logged in{% endif %}</small></span>
+                            <span
+                                style="font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-wrap: nowrap; overflow: hidden;">details
+                                of the user dsfsf sf dsf s and all the msg to</span>
+                        </div>
+                    </div>
+                </li>
+                </a>
+                {%endfor%}
+
+            </ul>
+        </div>
+    </div>
+    <div style="border-right: 1px solid rgb(62, 61, 61);"></div>
+    <div class="message_ChatContainer flex" style="justify-content: center;">
+        <div class="noUserSelectedForMsg" style="width: 300px; margin: auto; text-align: center;">
+            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+            <lord-icon
+                src="https://cdn.lordicon.com/fdxqrdfe.json"
+                trigger="hover"
+                colors="primary:#848484"
+                style="width:100px;height:100px">
+            </lord-icon>
+            <div class="colum">
+                <span style="color: gray; font-size: small;">wants to chat with friend! message them</span>
+                <strong>Select the user to message</strong>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+
+
+{% endblock %}

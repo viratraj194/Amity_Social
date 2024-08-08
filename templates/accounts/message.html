@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="messageContainer flex main_container_width"
+    style="margin: auto; width:  1010px; justify-content: space-between;">
+    <div class="messageUserList">
+        <div class="chat_title flex" style="border-bottom: 1px solid white; padding: 10px 5px;">
+            <h2>Chats</h2>
+            <div class="loggedInUserImage">
+                <img src="{{user.userprofile.profile_picture.url}}" alt="">
+            </div>
+        </div>
+        <div class="message_userLists">
+            <ul class="message_user_cards">
+                {% for friend in friends%}
+                <a href="{% url 'message_user' friend.following.id%}">
+                <li class="message_user_card">
+                    <div class="messageUserCard flex">
+                        <div class="userImg">
+                            <img src="{{friend.following.userprofile.profile_picture.url}}" alt="">
+                        </div>
+                        <div class="messageUsersDetails colum">
+                            <span
+                                style="margin: 2px 0px; display: flex; justify-content: space-between;width: 224px;"><strong
+                                    style="color: rgb(210, 208, 208);">{{friend.following.username}}</strong> <small
+                                    style="color: gray;">{% if friend.following.last_login %}{{ friend.following.last_login|date:"H:i" }}{% else %}Never logged in{% endif %}</small></span>
+                            <span
+                                style="font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-wrap: nowrap; overflow: hidden;">details
+                                of the user dsfsf sf dsf s and all the msg to</span>
+                        </div>
+                    </div>
+                </li>
+                </a>
+                {%endfor%}
+
+            </ul>
+        </div>
+    </div>
+    <div style="border-right: 1px solid rgb(62, 61, 61);"></div>
+    <div class="message_ChatContainer">
+        <div class="messageSelectedUser flex">
+            <div class="messageSelectedUserImg">
+                <img src="{{ receiver.userprofile.profile_picture.url}}" alt="">
+            </div>
+            <div class="messageSelectedUserDetails  colum">
+                <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
+                <span style="margin: 0px 10px; color: gray;">last seen {{formatted_time}}</span>
+            </div>
+        </div>
+        <div class="allTheMessages">
+            <div id="chatContainer" class="allTheMessage">
+                {% for message in messages %}
+                {% if message.sender == user %}
+                <div class="senderMessage">
+                    <p>{{ message.content }}</p>
+                    <div class="receiverMessageImg">
+                        <img src="{{ user.userprofile.profile_picture.url }}" alt="">
+                    </div>
+                </div>
+                {% else %}
+                <div class="receiverMessage">
+                    <div class="receiverMessageImg">
+                        <img src="{{ message.sender.userprofile.profile_picture.url }}" alt="">
+                    </div>
+                    <p>{{ message.content }}</p>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="messageSendingInputs flex">
+            <textarea id="messageInput" style="resize: none;" placeholder="Type here...."></textarea>
+            <button id="sendMessageButton" type="submit">Post
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    function scrollToBottom() {
+        var chatContainer = document.getElementById("chatContainer");
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Call the function when the page loads
+    window.onload = function () {
+        scrollToBottom();
+    };
+
+    const senderId = '{{ sender_id }}';
+    const receiverId = '{{ receiver_id }}';
+
+    const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/chat/${Math.min(senderId, receiverId)}/${Math.max(senderId, receiverId)}/`;
+
+    console.log("WebSocket URL:", wsEndpoint);
+
+    const socket = new WebSocket(wsEndpoint);
+
+    socket.onopen = function (event) {
+        console.log("WebSocket connection opened!");
+    };
+
+    socket.onmessage = function (event) {
+        console.log("Message received:", event.data);
+        const data = JSON.parse(event.data);
+        const message = data.message;
+        const messageSenderId = data.sender_id;
+        const senderProfilePic = data.sender_profile_pic;
+
+        // Create a message element
+        const messageElement = document.createElement('div');
+        const isSender = messageSenderId == senderId;
+
+        if (isSender) {
+            // For messages sent by the user
+            messageElement.className = 'senderMessage';
+            messageElement.innerHTML = `
+            <p>${message}</p>
+            <div class="receiverMessageImg">
+                <img src="${senderProfilePic}" alt="">
+            </div>
+        `;
+        } else {
+            // For messages received by the user
+            messageElement.className = 'receiverMessage';
+            messageElement.innerHTML = `
+            <div class="receiverMessageImg">
+                <img src="${senderProfilePic}" alt="">
+            </div>
+            <p>${message}</p>
+        `;
+        }
+
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.appendChild(messageElement);
+        scrollToBottom(); // Scroll to the bottom
+    };
+    socket.onerror = function (error) {
+        console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = function (event) {
+        console.log("WebSocket connection closed!");
+    };
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+
+        if (message) {
+            socket.send(JSON.stringify({
+                'message': message,
+                'sender_id': senderId,
+                'receiver_id': receiverId,
+                'sender_profile_pic': '{{ user.userprofile.profile_picture.url }}'
+            }));
+            messageInput.value = '';
+        }
+    }
+
+    document.getElementById('sendMessageButton').addEventListener('click', function (event) {
+        event.preventDefault();
+        sendMessage();
+    });
+
+    document.getElementById('messageInput').addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+</script>
+
+
+
+
+
+{% endblock %}

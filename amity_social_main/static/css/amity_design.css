@@ -1847,3 +1847,180 @@ h4 {
 
 }
 /* post details ends */
+
+
+/* message starts  */
+
+.messageUserList{
+    width: 400px;
+    padding: 10px;
+}
+.chat_title h2{
+    font-weight: bolder;
+
+
+}
+.chat_title{
+    justify-content: space-between;
+}
+.chat_title .loggedInUserImage {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+
+}
+.chat_title .loggedInUserImage img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+.message_userLists{
+    width: 350px;
+    overflow: hidden;
+   
+}
+.message_user_cards{
+    height: 505px;
+    padding: 5px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.message_user_card{
+    width: 285px;
+    background-color: #1a1a1a;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 15px auto;
+    box-shadow: -2px 2px 10px 0px rgba(98, 96, 96, 0.3)
+}
+.message_user_card:hover{
+
+    background-color: #c5c5c5;
+    
+    box-shadow: -2px 2px 10px 0px rgba(59, 59, 59, 0.3)
+}
+.message_user_card:hover{
+    width: 285px;
+    background-color: #2b263a;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 15px auto;
+    box-shadow: -2px 2px 10px 0px rgb(44, 42, 58)
+}
+.userImg{
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.userImg{
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.userImg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.messageUserCard{
+    align-items: center;
+}
+.messageUserCard .messageUsersDetails{
+    margin-left: 15px;
+
+}
+.message_ChatContainer{
+    width: 550px;
+}
+.messageSelectedUser{
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid white;
+}
+.messageSelectedUserImg{
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.messageSelectedUserImg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.allTheMessage{
+    height:480px;
+    overflow-y: auto;
+    padding: 10px;
+}
+.messageSendingInputs{
+    align-items: center;
+    position: relative;
+}
+.messageSendingInputs textarea{
+    border: 1px solid white;
+    border-radius: 8px;
+    outline: none;
+    background-color: transparent;
+    padding: 10px;
+    padding-right: 100px;
+    width: 520px;
+    color: white;
+    /* position: relative; */
+    
+}
+.messageSendingInputs button{
+    position: absolute;
+    z-index: 1;
+    right: 10px;
+    padding: 10px;
+    width: 80px;
+    border-radius: 8px;
+    font-size: large;
+    font-weight: bold;
+    background-color: #777b7b;
+    border: none;
+    outline: none;
+    
+}
+.receiverMessage{
+    display: flex;
+    align-items: end;
+}
+.receiverMessage p{
+    width: 300px;
+    margin-left: 10px;
+    background-color: rgb(209, 208, 208);
+    color: rgb(75, 75, 75);
+    padding: 10px;
+    border-radius: 16px 16px 16px 0px;
+}
+.receiverMessageImg{
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.receiverMessageImg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.senderMessage{
+    display: flex;
+    align-items: end;
+    justify-content: flex-end;
+}
+.senderMessage p{
+    width: 300px;
+    margin-right: 10px;
+    border: 1px solid white;
+    color: rgb(75, 75, 75);
+    padding: 10px;
+    border-radius: 16px 16px 0px 16px;
+}
+/* message ends */

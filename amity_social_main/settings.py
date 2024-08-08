@@ -34,17 +34,25 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'accounts',
     'list_posts',
     'compressor',
+
 ]
 
+
+
+CHANNEL_LAYERS = {
+    "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
+}
 
 STATICFILES_STORAGE = 'compressor.storage.CompressorFileStorage'
 
@@ -84,7 +92,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'amity_social_main.wsgi.application'
+# WSGI_APPLICATION = 'amity_social_main.wsgi.application'
+ASGI_APPLICATION = 'amity_social_main.asgi.application'
 
 
 # Database

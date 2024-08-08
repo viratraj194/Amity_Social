@@ -1,6 +1,6 @@
 from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
 from . forms import UserForm,userInfoForm,userProfileForm
-from .models import User,UserProfile,Follower,FollowRequest
+from .models import User,UserProfile,Follower,FollowRequest,Message
 from . utils import users_id_generator,send_email_verification,detectUser
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
@@ -10,6 +10,7 @@ from django.template.defaultfilters import slugify
 from list_posts .models import UserPosts,UserSavedPosts,Comment
 from list_posts . forms import addCommentForm
 from django.http import JsonResponse
+from django.db.models import Q
 
 
 
@@ -310,3 +311,55 @@ def deny_follow_request(request,request_id):
         follow_request.delete()
         return JsonResponse({'status': 'denied'})
     return JsonResponse({'status': 'error'}, status=400)
+
+
+
+@login_required(login_url='login')
+def message_user(request, user_id):
+    receiver = get_object_or_404(User, id=user_id)
+    
+    sender = request.user
+    user = request.user
+    if request.method == 'POST':
+        content = request.POST.get('message')  # Ensure this matches the name in your form
+        if content:
+            Message.objects.create(sender=sender, receiver=receiver, content=content)
+            return redirect('message_user', user_id=user_id)
+
+    receiver_last_login = receiver.last_login
+    if receiver_last_login:
+        formatted_time = receiver_last_login
+    else:
+        formatted_time = 'Never logged in'
+    
+
+    # fetching all the friend 
+    friends = Follower.objects.filter(follower=user)
+    
+    # Fetch messages between the sender and receiver
+    messages = Message.objects.filter(
+        Q(sender=sender, receiver=receiver) |
+        Q(sender=receiver, receiver=sender)
+    ).order_by('timestamp')
+    
+    context = {
+        'receiver': receiver,
+        'sender': sender,
+        'messages': messages,
+        'receiver_id': receiver.id,
+        'sender_id': sender.id,
+        'friends':friends,
+        'formatted_time':formatted_time
+        
+    }
+    return render(request, 'accounts/message.html', context)
+
+
+
+def friend_messages(request):
+    user = request.user
+    friends = Follower.objects.filter(follower=user)
+    context = {
+        'friends':friends
+    }
+    return render(request,'accounts/friend_messages.html',context)

@@ -4,7 +4,7 @@ from.import views
 urlpatterns = [
     path('',views.account),
     path('',include('list_posts.urls')),
-
+    
 
     path('RegisterUser/',views.RegisterUser,name='RegisterUser'),
     path('login/',views.login,name='login'),
@@ -33,8 +33,9 @@ urlpatterns = [
     path('deny-follow-request/<int:request_id>/',views.deny_follow_request, name='deny_follow_request'),
 
 
-
-
+    # message urls 
+    path('message/<int:user_id>/', views.message_user, name='message_user'),
+    path('messages',views.friend_messages,name='friend_messages'),
 
     
 ]

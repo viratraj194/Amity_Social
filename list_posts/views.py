@@ -242,3 +242,7 @@ def profile_details(request,user_id):
         'total_posts':total_posts,
     }
     return render(request,'list_posts/profile_details.html',context)
+
+
+
+
