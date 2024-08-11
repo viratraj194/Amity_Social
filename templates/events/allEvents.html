@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="eventListingContainer " style="background: url({% static 'img/pexels-wendywei-1190298.jpg' %});"  id="eventblur">
+    <div class="eventListingContainerBlur">
+        <div class="eventListingContainerDetails">
+            <div class="upcommingEventCard">
+                <h2 style="font-size:40px; font-weight:900; ">Upcoming Events</h2>
+                <div
+                    style="width: 100px;  margin-bottom: 20px;border-bottom: 4px solid white; border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;">
+                </div>
+                <span style="font-size: small; margin: 20px 0px;color: gray;">it is a long establish fact that a
+                    reader will it is a long</span>
+                <h4 style="font-size: 12px; font-weight: 400; margin: 20px 0px;">TIMETABLE</h4>
+            </div>
+            <div class="upcomingEventSlider">
+                <swiper-container class="mySwiper" slides-per-view="3" centered-slides="true" pagination="true"
+                    pagination-clickable="true" navigation="false" space-between="40" centered-slides="true"
+                    autoplay-delay="2500" autoplay-disable-on-interaction="false">
+                    {% for event in events_this_week%}
+                    <swiper-slide><img src="{{event.image.url}}" alt="">
+                        <div class="upcomingEventSliderDetails">
+                            <span>29.02.2024</span>
+                            <h5>{{event.title}}</h5>
+                        </div>
+                    </swiper-slide>
+                    {% endfor %}
+                    
+
+                </swiper-container>
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+                <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="addEvent "
+    style="width: 150px; margin: 10px auto; padding: 10px; border: 1px solid white; text-align: center; cursor: pointer;">
+
+    <a href="{%url 'addEvents'%}" style="cursor: pointer; cursor: pointer; text-align: center;">Add Event</a>
+</div>
+<div class="recentEventContainer">
+    <div class="recentEventTitle colum">
+        <h2 style="font-size: 50px; font-weight:800; color: rgb(255, 31, 255);">Recent Events</h2>
+        <span style="border-bottom: 5px solid  rgb(255, 31, 255); width: 100px;"></span>
+        <span style="font-size: small; font-weight: 300; color: rgb(185, 150, 185); margin: 30px 0px;">Lorem ipsum
+            dolor sit, amet consectetur adipisicing elit. Natus, delectus.</span>
+        <span style="color: gray;">4</span>
+    </div>
+    <div class="recentEventContainerSwiper">
+        <swiper-container class="mySwiper" slides-per-view="3" centered-slides="true" pagination="true"
+            pagination-clickable="true" navigation="false" space-between="40" centered-slides="true"
+            autoplay-delay="4000" autoplay-disable-on-interaction="false">
+           
+            {% for event in events_this_week%}
+            <swiper-slide>
+                <div class="eventCard ">
+                    <div class="eventCaedImg"
+                        style="width: 400px; height: 300px; overflow: hidden; border-radius: 8px;">
+                        <img src="{{event.image.url}}" alt="">
+                    </div>
+                    <div class="recentEventCardDetails colum">
+                        <span style="font-size: small; color: gray;">20.30.2024</span>
+                        <span style="color: #dfdfdf;">{{event.title}}</span>
+                    </div>
+                </div>
+            </swiper-slide>
+            {% endfor %}
+            
+
+        </swiper-container>
+
+    </div>
+</div>
+
+<section class="allEventsLists flex">
+    <div class="allEventsListsLeft colum">
+        <h1 style="font-weight: 900;font-size:40px; color: rgb(235, 58, 235);">ALL EVENT</h1>
+        <span style="border-bottom: 5px solid  rgb(255, 31, 255); width: 100px;"></span>
+
+    </div>
+    <div class="allEventsListsRights flex">
+        {% for event in allEvents%}
+        <div class="allEventsListsRight">
+            <div class="allEventsListsCard">
+                <img src="{{event.image.url}}" alt="">
+            </div>
+            <div class="upcomingEventSliderDetails" style="bottom: 0px;">
+                <span>29.02.2024</span>
+                <h5>{{event.title}}</h5>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiperContainer = document.querySelector('swiper-container');
+        const swiperSlides = document.querySelectorAll('swiper-slide img');
+        const eventblur = document.getElementById('eventblur');
+        let currentSlideIndex = 0;
+        let lastImageSrc = '';
+    
+        function updateBackgroundImage() {
+            if (swiperSlides.length > 0) {
+                const newBgImage = swiperSlides[currentSlideIndex].src;
+                eventblur.style.backgroundImage = `url(${newBgImage})`;
+                lastImageSrc = newBgImage;  // Update lastImageSrc with the current image
+                currentSlideIndex = (currentSlideIndex + 1) % swiperSlides.length;
+            } else {
+                // If there are no slides, keep the last image
+                eventblur.style.backgroundImage = `url(${lastImageSrc})`;
+            }
+        }
+    
+        // Initialize the background image
+        updateBackgroundImage();
+    
+        // Update the background image every 2 seconds
+        setInterval(updateBackgroundImage, 2780);
+    });
+    
+
+</script>
+
+{% endblock %}

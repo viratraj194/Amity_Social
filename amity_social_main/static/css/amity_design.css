@@ -2024,3 +2024,172 @@ h4 {
     border-radius: 16px 16px 0px 16px;
 }
 /* message ends */
+
+/* events listing page design starts  */
+swiper-container {
+    width: 100%;
+    height: 100%;
+}
+
+swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.upcomingEventSlider{
+    width: 820px;
+    height: 250px;
+}
+.eventListingContainerBlur{
+    width: 100%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.125);
+    height: 569px;
+}
+.eventListingContainer{
+    width: 100%;
+    height: 485px;
+    /* background: url(/img/pexels-wendywei-1190298.jpg); */
+    background-size: cover; /* Cover the entire element */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Make the background fixed on scroll */
+    position: relative;
+    top: -85px;
+    z-index: -1;
+}
+.eventListingContainerDetails{
+    width: 1200px;
+    height: 485px;
+    margin: 100px auto;
+    display: flex;
+    align-items: center;
+}
+.upcommingEventCard{
+    width: 250px;
+}
+
+.upcomingEventSliderDetails{
+    width: 100%;
+    position: absolute;
+    /* text-align:; */
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(6px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    bottom: 0px;
+    padding: 12px;
+    text-align: left;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.upcomingEventSliderDetails h5{
+    font-size: medium;
+    color: rgb(189, 187, 187);
+}
+.upcomingEventSliderDetails span{
+    font-size: small;
+    
+    color: gray;
+}
+.recentEventContainer{
+    display: flex;
+    margin: 20px auto;
+    width: 1200px;
+    align-items: center;
+    justify-content: space-between;
+}
+.recentEventContainerSwiper{
+    width: 900px;
+    
+}
+.eventCard{
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+.eventCaedImg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.recentEventCardDetails{
+    text-align: left;
+}
+
+.recentEventTitle{
+    width: 200px;
+
+}
+.swiperButtonSection{
+    overflow:hidden;
+    /* position: relative; */
+}
+swiper-slide{
+    width: 400px;
+    background-color:transparent;
+}
+.allEventsListsRight{
+    position: relative;
+    margin: 10px;
+}
+.allEventsLists{
+    width: 1200px;
+    margin: auto;
+    justify-content: space-between;
+}
+.allEventsListsLeft{
+    width: 200px;
+    height: 300px;
+}
+.allEventsListsCard{
+    width: 250px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+
+}
+
+.allEventsListsRights{
+    width: 1000px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.allEventsListsCard img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+/* events listing page design ends */
+/* add events form starts  */
+.addEventsFromBG{
+    width: 100%;
+    height: 100%;
+    /* top: -85px; */
+    padding: 20px;
+  
+}
+.addEnentsForm{
+    /* text-align:; */
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(6px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* add events form ends */

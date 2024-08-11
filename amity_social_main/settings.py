@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'channels',
     'accounts',
     'list_posts',
+    'events',
     'compressor',
 
 ]
