@@ -3,6 +3,8 @@ from .models import*
 from . forms import addEventsForm
 import datetime
 from django.utils import timezone
+from accounts.models import*
+from list_posts.models import*
 
 def get_current_week():
     today = timezone.now()
@@ -59,3 +61,40 @@ def addEvents(request):
         'form': form
     }
     return render(request, 'events/addEvents.html', context)
+
+
+def userEvents(request):
+    events = Event.objects.filter(eventCreator=request.user)
+    profile = UserProfile.objects.get(user=request.user)
+    user_posts = UserPosts.objects.filter(user=request.user)
+    saved_posts = UserSavedPosts.objects.filter(user=request.user)
+    total_posts =  user_posts.count()
+    total_saved = saved_posts.count()
+    total_events = events.count()
+    
+    context = {
+        'events':events,
+        'profile':profile,
+        'total_posts':total_posts,
+        'total_saved':total_saved,
+        'total_events':total_events
+
+    }
+    return render(request,'events/userEvents.html',context)
+
+def eventDetails(request,event_id):
+    start_of_month, end_of_month = get_current_month()
+    event = Event.objects.get(id = event_id)
+
+    # Filter events for the current month
+    events_this_month = Event.objects.filter(
+        start_datetime__gte=start_of_month,
+        start_datetime__lte=end_of_month
+    )
+    
+    
+    context = {
+        'event':event,
+        'events_this_month':events_this_month,
+    }
+    return render(request,'events/eventDetails.html',context)

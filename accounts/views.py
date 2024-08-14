@@ -11,6 +11,7 @@ from list_posts .models import UserPosts,UserSavedPosts,Comment
 from list_posts . forms import addCommentForm
 from django.http import JsonResponse
 from django.db.models import Q
+from events.models import Event
 
 
 
@@ -198,10 +199,11 @@ def UserDashboard(request):
     user_posts = UserPosts.objects.filter(user=user).order_by('-created_at')
     # Get all users who are following the logged-in user
     followers = Follower.objects.filter(following=user).select_related('follower')
-
     # Get all users the logged-in user is following
     following = Follower.objects.filter(follower=user).select_related('following')
-
+    # list event in hte dashboard
+    list_events = Event.objects.filter(eventCreator=user)
+    totalEvent = list_events.count()
     total_following = following.count()
     total_followers = followers.count()
     
@@ -217,6 +219,7 @@ def UserDashboard(request):
         'total_saved':total_saved,
         'total_following':total_following,
         'total_followers':total_followers,
+        'totalEvent':totalEvent,
 
     }
     return render(request,'accounts/UserDashboard.html',context)

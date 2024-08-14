@@ -2,9 +2,14 @@
 {% block content %}
 {% load static %}
 
-<script src="https://cdn.tailwindcss.com"></script>
-
-<div class="eventListingContainer " style="background: url({% static 'img/pexels-wendywei-1190298.jpg' %});"  id="eventblur">
+<style>
+    nav{
+        z-index: 1000; position: relative;
+    }
+</style>
+<div class="eventListingContainer " style="background: url({% static 'img/pexels-wendywei-1190298.jpg' %});"
+    id="eventblur">
+    <script src="https://cdn.tailwindcss.com"></script>
     <div class="eventListingContainerBlur">
         <div class="eventListingContainerDetails">
             <div class="upcommingEventCard">
@@ -21,14 +26,21 @@
                     pagination-clickable="true" navigation="false" space-between="40" centered-slides="true"
                     autoplay-delay="2500" autoplay-disable-on-interaction="false">
                     {% for event in events_this_week%}
-                    <swiper-slide><img src="{{event.image.url}}" alt="">
-                        <div class="upcomingEventSliderDetails">
-                            <span>29.02.2024</span>
-                            <h5>{{event.title}}</h5>
-                        </div>
+                    <swiper-slide style="width: 400px;">
+                        <a href="{% url 'eventDetails' event.id %}">
+                            <div class="upcomintEventSlideImg" style="width: 246px; height: 300px; margin: 10 auto;">
+                                <img src="{{event.image.url}}" alt="" style="width:100%;height: 100%; object-fit: cover;">
+                                <div class="upcomingEventSliderDetails">
+                                    <span>29.02.2024</span>
+                                    <h5>{{event.title}}</h5>
+                                </div>
+
+                            </div>
+
+                        </a>
                     </swiper-slide>
                     {% endfor %}
-                    
+
 
                 </swiper-container>
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
@@ -57,22 +69,28 @@
         <swiper-container class="mySwiper" slides-per-view="3" centered-slides="true" pagination="true"
             pagination-clickable="true" navigation="false" space-between="40" centered-slides="true"
             autoplay-delay="4000" autoplay-disable-on-interaction="false">
-           
-            {% for event in events_this_week%}
+
+            {% for event in events_this_month%}
+
             <swiper-slide>
+
                 <div class="eventCard ">
-                    <div class="eventCaedImg"
-                        style="width: 400px; height: 300px; overflow: hidden; border-radius: 8px;">
-                        <img src="{{event.image.url}}" alt="">
-                    </div>
-                    <div class="recentEventCardDetails colum">
-                        <span style="font-size: small; color: gray;">20.30.2024</span>
-                        <span style="color: #dfdfdf;">{{event.title}}</span>
-                    </div>
+                    <a href="{% url 'eventDetails' event.id %}">
+                        <div class="eventCaedImg"
+                            style="width: 400px; height: 300px; overflow: hidden; border-radius: 8px;">
+                            <img src="{{event.image.url}}" alt="">
+                        </div>
+                        <div class="recentEventCardDetails colum">
+                            <span style="font-size: small; color: gray;">20.30.2024</span>
+                            <span style="color: #dfdfdf;">{{event.title}}</span>
+                        </div>
+                    </a>
                 </div>
             </swiper-slide>
+
+
             {% endfor %}
-            
+
 
         </swiper-container>
 
@@ -87,17 +105,19 @@
     </div>
     <div class="allEventsListsRights flex">
         {% for event in allEvents%}
-        <div class="allEventsListsRight">
-            <div class="allEventsListsCard">
-                <img src="{{event.image.url}}" alt="">
+        <a href="{% url 'eventDetails' event.id %}">
+            <div class="allEventsListsRight">
+                <div class="allEventsListsCard">
+                    <img src="{{event.image.url}}" alt="">
+                </div>
+                <div class="upcomingEventSliderDetails" style="bottom: 0px;">
+                    <span>29.02.2024</span>
+                    <h5>{{event.title}}</h5>
+                </div>
             </div>
-            <div class="upcomingEventSliderDetails" style="bottom: 0px;">
-                <span>29.02.2024</span>
-                <h5>{{event.title}}</h5>
-            </div>
-        </div>
+        </a>
         {% endfor %}
-        
+
     </div>
 </section>
 
@@ -108,7 +128,7 @@
         const eventblur = document.getElementById('eventblur');
         let currentSlideIndex = 0;
         let lastImageSrc = '';
-    
+
         function updateBackgroundImage() {
             if (swiperSlides.length > 0) {
                 const newBgImage = swiperSlides[currentSlideIndex].src;
@@ -120,14 +140,14 @@
                 eventblur.style.backgroundImage = `url(${lastImageSrc})`;
             }
         }
-    
+
         // Initialize the background image
         updateBackgroundImage();
-    
+
         // Update the background image every 2 seconds
         setInterval(updateBackgroundImage, 2780);
     });
-    
+
 
 </script>
 

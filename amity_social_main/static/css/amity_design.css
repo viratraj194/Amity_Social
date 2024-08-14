@@ -2046,6 +2046,7 @@ swiper-slide img {
     height: 100%;
     object-fit: cover;
 }
+
 .upcomingEventSlider{
     width: 820px;
     height: 250px;
@@ -2057,6 +2058,8 @@ swiper-slide img {
     background-color: rgba(17, 25, 40, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.125);
     height: 569px;
+    position: relative;
+    
 }
 .eventListingContainer{
     width: 100%;
@@ -2067,8 +2070,9 @@ swiper-slide img {
     background-repeat: no-repeat; /* Prevent the image from repeating */
     background-attachment: fixed; /* Make the background fixed on scroll */
     position: relative;
-    top: -85px;
-    z-index: -1;
+    top: -95px;
+    z-index: 1;
+   
 }
 .eventListingContainerDetails{
     width: 1200px;
@@ -2193,3 +2197,67 @@ swiper-slide{
 }
 
 /* add events form ends */
+
+
+/* eventDetails starts  */
+.eventPoster{
+    width: 100%;
+    height: 720px;
+    background: url(/img/pexels-wendywei-1190298.jpg);
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;  
+    background-attachment: fixed; 
+    position: relative;
+
+}
+
+.eventPosterBackbtn{
+    width: 150px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+.eventPosterBackbtn .backButton{
+    width: 150px;
+}
+.eventPosterContentDetails{
+    width: 600px;
+    padding: 50px 20px;
+    position: absolute;
+    top: 50%;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(6px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius:8px ;
+}
+.eventFullDetails{
+    background-color: #111827;
+    padding: 60px 0px;
+}
+.eventFullDetailLeft{
+    width: 700px;
+}
+.eventFullDetail{
+    width:1200px;
+    margin: auto;
+}
+.eventFullDetailsLocation{
+    width: 400px;
+    /* height: 400px; */
+    height: fit-content;
+    padding: 20px;
+    margin: 10px;
+    background-color: rgb(31 41 55 );
+    border-radius: 8px;
+
+}
+.eventFullDetailsIcon {
+    padding: 20px;
+}
+.eventFullDetailsIcon svg{
+    margin: 10px;
+}
+
+/* eventDetails ends */

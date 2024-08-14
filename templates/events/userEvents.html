@@ -14,7 +14,7 @@
             <div class="user_profile_names">
                 <h1><strong>{{user.first_name}} {{user.last_name}}</strong> </h1>
                 <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
-                    <span>@_ {{user.username}}</span>
+                    <span>Living in Switzerland</span>
                     <a href="{% url 'userProfileSettings'%}" style="color: #86829a;">
                         <i class="bi bi-gear"></i>
                     </a>
@@ -30,21 +30,21 @@
     <div class="following_follow_posts flex">
         <div class=" posts ">
             <h5>
-                <strong>{{total_posts}}</strong>
+                <strong>234</strong>
             </h5>
             <a href="">Posts</a>
 
         </div>
         <div class=" followinrs">
             <h5>
-                <strong>{{total_followers}}</strong>
+                <strong>856</strong>
             </h5>
             <a href="">Followers</a>
 
         </div>
         <div class=" followings">
             <h5>
-                <strong>{{total_following}}</strong>
+                <strong>562</strong>
             </h5>
             <a href="">Following</a>
 
@@ -58,7 +58,7 @@
 
     <div class="post-saved_post flex">
         <div class="userAllPosts">
-            <a href="#" style="margin: 0px !important;">
+            <a href="{% url 'UserDashboard'%}" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
                     <div class="icon">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -66,14 +66,14 @@
                             colors="primary:#848484,secondary:#b4b4b4" style="width:25px;height:25px">
                         </lord-icon>
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;">{{total_posts}} Post</span>
+                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_posts}} Post</span>
 
                 </div>
             </a>
         </div>
         
         <div class="userAllSavePosts">
-            <a href="{% url 'SavedPosts' %}" style="margin: 0px !important;">
+            <a href="" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
                     <div class="icon">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -97,50 +97,53 @@
                         </lord-icon>
 
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;" >{{totalEvent}} Events</span>
+                    <span  style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;" >{{total_events}} Events</span>
 
                 </div>
             </a>
         </div>
     </div>
-
-
-
     <div class="usersAllPosts">
         <div class="UserAllPostList  flex ">
-            {% for post in user_posts %}
-            <a href="{%url 'post_details' post_slug=post.post_slug %}">
-            <div class="post_content ">
-                <div class="userPostContent" style="margin: 0px;">
-                    {% if post.post_image %}
-                    <img src="{{post.post_image.url}}" alt="" style="object-fit: cover;">
-                    {% else %}
-                    <p style="text-align: center; font-size:small;">{{post.content}}</p>
-                    {% endif %}
-                </div>
-                <div class="post_content-likes-comment flex">
-                    <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:white"
-                            style="width:30px;height:30px;font-weight: bold;">
-                        </lord-icon>
-                        <h4><strong>{{post.total_likes}}</strong></h4>
+            {% for event in events %}
+            <a href="{% url "eventDetails" event.id %}">
+                <div class="post_content ">
+                    <div class="userPostContent" style="margin: 0px;">
+                        {% if event.image %}
+                        <img src="{{event.image.url}}" alt="" style="object-fit: cover;">
+                        {% else %}
+                        {% comment %} <p style="text-align: center; font-size:small;">{{post.content}}</p> {% endcomment %}
+                        {% endif %}
+                        <div class="upcomingEventSliderDetails" style="width: 88%;">
+                            <span>{{event.start_datetime}}</span>
+                            <h5>{{event.title}}</h5>
+                        </div>
                     </div>
-                    <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
-                            style="width:30px;height:30px;font-weight: bold;">
-                        </lord-icon>
-                        <h4><strong>{{post.total_comments}}</strong></h4>
+                    
+                    <div class="post_content-likes-comment flex">
+                        
+                        {% comment %} <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:white"
+                                style="width:30px;height:30px;font-weight: bold;">
+                            </lord-icon>
+                            <h4><strong>{{save.post.total_likes}}</strong></h4>
+                        </div>
+                        <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
+                                style="width:30px;height:30px;font-weight: bold;">
+                            </lord-icon>
+                            <h4><strong>{{save.post.total_comments}}</strong></h4>
+                        </div> {% endcomment %}
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
             {% endfor %}
             
         </div>
     </div>
-
+    
 </body>
 {% include "includes/alerts.html" %}
 {% endblock %}
