@@ -1,10 +1,11 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import*
 from . forms import addEventsForm
 import datetime
 from django.utils import timezone
 from accounts.models import*
 from list_posts.models import*
+from django.contrib import messages
 
 def get_current_week():
     today = timezone.now()
@@ -98,3 +99,32 @@ def eventDetails(request,event_id):
         'events_this_month':events_this_month,
     }
     return render(request,'events/eventDetails.html',context)
+
+
+def editEvent(request,event_id=None):
+    event = get_object_or_404(Event,id=event_id)
+    if request.method == 'POST':
+        form = addEventsForm(request.POST,request.FILES,instance=event)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.eventCreator = request.user
+            event.save()
+            messages.success(request,'Event is updated successfully')
+            return redirect('account')
+        else:
+            print(form.errors)
+    else:
+        form = addEventsForm(instance=event)
+
+    context = {
+        'event':event,
+        'form':form,
+    }
+
+    return render(request,'events/editEvent.html',context)
+
+def deleteEvent(request,event_id):
+    event = get_object_or_404(Event,id=event_id)
+    event.delete()
+    messages.success(request,'Event is deleted successfully')
+    return redirect('account')

@@ -28,6 +28,28 @@
             <span class="eventPosterContentLocation"
                 style="font-weight: 200;font-size: 15px; color: rgb(192 132 252);padding: 10px 0px;">{{event.location}}</span>
         </div>
+        {% if event.eventCreator == user %}
+        <div class="eventEditDeleteBtn flex" >
+            <a href="{% url "editEvent" event.id %}">
+                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                <lord-icon
+                    src="https://cdn.lordicon.com/wuvorxbv.json"
+                    trigger="hover"
+                    colors="primary:#e4e4e4,secondary:#b4b4b4"
+                    style="width:30px;height:30px">
+                </lord-icon>
+            </a>
+            <a href="{% url "deleteEvent" event.id %}">
+                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                <lord-icon
+                    src="https://cdn.lordicon.com/drxwpfop.json"
+                    trigger="hover"
+                    colors="primary:#e4e4e4,secondary:#b4b4b4"
+                    style="width:30px;height:30px">
+                </lord-icon>
+            </a>
+        </div>
+        {%endif%}
     </div>
 </section>
 <section class="eventFullDetails">

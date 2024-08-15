@@ -3,13 +3,16 @@ body {
     color: white;
 
 }
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
     width: 10px;
 }
-::-webkit-scrollbar-track{
+
+::-webkit-scrollbar-track {
     background-color: #292929;
 }
-::-webkit-scrollbar-thumb{
+
+::-webkit-scrollbar-thumb {
     background-color: #c5bfbf;
     border-radius: 10px;
 }
@@ -505,16 +508,19 @@ footer {
     width: 123px;
     height: 20px;
 }
-.id_cards{
+
+.id_cards {
     width: 1010px;
     margin: auto;
     justify-content: space-between;
 }
-.id_cards{
+
+.id_cards {
     width: 1010px;
     margin: auto;
     justify-content: space-between;
 }
+
 .user_gender {
     width: 200px !important;
 }
@@ -809,10 +815,11 @@ footer {
     width: 100%;
     height: 100%;
 }
+
 .post_content .post_content-likes-comment {
     display: none;
     cursor: pointer;
-    
+
 }
 
 .post_content-likes-comment {
@@ -842,9 +849,12 @@ footer {
     color: red;
     display: none;
 }
-.UserSavedPosts,.UserAllThePosts{
+
+.UserSavedPosts,
+.UserAllThePosts {
     display: none;
 }
+
 /* user profile ends */
 
 /* userProfileSettings starts */
@@ -1317,9 +1327,9 @@ h4 {
 }
 
 .postContainer-Post_image {
-    
+
     width: 100%;
-   
+
     max-height: 500px;
     object-fit: contain;
     overflow: hidden;
@@ -1384,18 +1394,21 @@ h4 {
     border-radius: 30px;
     background: #1d1c1c;
 }
+
 .allnotificatons_scrol {
     max-height: 400px;
     overflow-y: auto;
 }
 
-.allnotificatons_scrol::-webkit-scrollbar{
+.allnotificatons_scrol::-webkit-scrollbar {
     width: 10px;
 }
-.allnotificatons_scrol::-webkit-scrollbar-track{
+
+.allnotificatons_scrol::-webkit-scrollbar-track {
     background-color: #292929;
 }
-.allnotificatons_scrol::-webkit-scrollbar-thumb{
+
+.allnotificatons_scrol::-webkit-scrollbar-thumb {
     background-color: #777676;
 }
 
@@ -1645,13 +1658,14 @@ h4 {
 
 /* post comments starts */
 
-.comment-close{
+.comment-close {
     cursor: pointer;
     position: absolute;
     top: 10px;
     left: 10px;
     color: white;
 }
+
 .PostComments-forPosts {
     display: none;
     position: fixed;
@@ -1661,7 +1675,7 @@ h4 {
     margin: auto;
     height: 640px;
     z-index: 1000;
-    background-color:#1d1c1c;
+    background-color: #1d1c1c;
     border-radius: 15px;
 }
 
@@ -1748,6 +1762,7 @@ h4 {
     padding-top: 5px;
     padding-right: 69px;
 }
+
 .PostComments-Input .Main-commentdiv {
     margin-left: 5px;
     justify-content: center;
@@ -1772,7 +1787,8 @@ h4 {
     font-size: large;
     cursor: pointer;
 }
-.Comment_details-time span{
+
+.Comment_details-time span {
     font-size: 11px;
 }
 
@@ -1780,43 +1796,51 @@ h4 {
 /* post comments ends */
 
 /* post details starts  */
-.indetails{
-    max-height:600px;
+.indetails {
+    max-height: 600px;
     overflow: hidden;
 }
-.PostDetailsContents{
+
+.PostDetailsContents {
     height: 500px;
 
 }
-.PostDetailsContent .postContainer-card{
+
+.PostDetailsContent .postContainer-card {
     margin: 0px;
 }
-.PostDetails-Allcomments{
+
+.PostDetails-Allcomments {
     height: 600px;
     margin: 20px auto;
 }
-.PostDetailsAll-comment{
+
+.PostDetailsAll-comment {
     height: 382px;
     padding: 10px;
     overflow-y: auto;
 }
-.PostDetailsAll-comment-img{
+
+.PostDetailsAll-comment-img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     overflow: hidden;
 }
-.PostDetailsAll-comment-img img{
+
+.PostDetailsAll-comment-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    
+
 }
-.PostDetailsAll-comment-details{
+
+.PostDetailsAll-comment-details {
     width: 380px;
     margin: 0px 5px;
 }
-.PostDetails-comments-add_btn textarea{
+
+.PostDetails-comments-add_btn textarea {
     position: relative;
     width: 380px;
     outline: none;
@@ -1831,7 +1855,8 @@ h4 {
     border-radius: 10px;
 
 }
-.PostDetails-comments-add_btn button{
+
+.PostDetails-comments-add_btn button {
     position: absolute;
     width: 80px;
     padding: 10px;
@@ -1846,23 +1871,27 @@ h4 {
 
 
 }
+
 /* post details ends */
 
 
 /* message starts  */
 
-.messageUserList{
+.messageUserList {
     width: 400px;
     padding: 10px;
 }
-.chat_title h2{
+
+.chat_title h2 {
     font-weight: bolder;
 
 
 }
-.chat_title{
+
+.chat_title {
     justify-content: space-between;
 }
+
 .chat_title .loggedInUserImage {
     width: 40px;
     height: 40px;
@@ -1870,24 +1899,28 @@ h4 {
     border-radius: 50%;
 
 }
-.chat_title .loggedInUserImage img{
+
+.chat_title .loggedInUserImage img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 
 }
-.message_userLists{
+
+.message_userLists {
     width: 350px;
     overflow: hidden;
-   
+
 }
-.message_user_cards{
+
+.message_user_cards {
     height: 505px;
     padding: 5px;
     overflow: hidden;
     overflow-y: auto;
 }
-.message_user_card{
+
+.message_user_card {
     width: 285px;
     background-color: #1a1a1a;
     padding: 10px;
@@ -1895,13 +1928,15 @@ h4 {
     margin: 15px auto;
     box-shadow: -2px 2px 10px 0px rgba(98, 96, 96, 0.3)
 }
-.message_user_card:hover{
+
+.message_user_card:hover {
 
     background-color: #c5c5c5;
-    
+
     box-shadow: -2px 2px 10px 0px rgba(59, 59, 59, 0.3)
 }
-.message_user_card:hover{
+
+.message_user_card:hover {
     width: 285px;
     background-color: #2b263a;
     padding: 10px;
@@ -1909,59 +1944,71 @@ h4 {
     margin: 15px auto;
     box-shadow: -2px 2px 10px 0px rgb(44, 42, 58)
 }
-.userImg{
+
+.userImg {
     width: 40px;
     height: 40px;
     overflow: hidden;
     border-radius: 50%;
 }
-.userImg{
+
+.userImg {
     width: 40px;
     height: 40px;
     overflow: hidden;
     border-radius: 50%;
 }
-.userImg img{
+
+.userImg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.messageUserCard{
+
+.messageUserCard {
     align-items: center;
 }
-.messageUserCard .messageUsersDetails{
+
+.messageUserCard .messageUsersDetails {
     margin-left: 15px;
 
 }
-.message_ChatContainer{
+
+.message_ChatContainer {
     width: 550px;
 }
-.messageSelectedUser{
+
+.messageSelectedUser {
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid white;
 }
-.messageSelectedUserImg{
+
+.messageSelectedUserImg {
     width: 50px;
     height: 50px;
     overflow: hidden;
     border-radius: 50%;
 }
-.messageSelectedUserImg img{
+
+.messageSelectedUserImg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.allTheMessage{
-    height:480px;
+
+.allTheMessage {
+    height: 480px;
     overflow-y: auto;
     padding: 10px;
 }
-.messageSendingInputs{
+
+.messageSendingInputs {
     align-items: center;
     position: relative;
 }
-.messageSendingInputs textarea{
+
+.messageSendingInputs textarea {
     border: 1px solid white;
     border-radius: 8px;
     outline: none;
@@ -1971,9 +2018,10 @@ h4 {
     width: 520px;
     color: white;
     /* position: relative; */
-    
+
 }
-.messageSendingInputs button{
+
+.messageSendingInputs button {
     position: absolute;
     z-index: 1;
     right: 10px;
@@ -1985,13 +2033,15 @@ h4 {
     background-color: #777b7b;
     border: none;
     outline: none;
-    
+
 }
-.receiverMessage{
+
+.receiverMessage {
     display: flex;
     align-items: end;
 }
-.receiverMessage p{
+
+.receiverMessage p {
     width: 300px;
     margin-left: 10px;
     background-color: rgb(209, 208, 208);
@@ -1999,23 +2049,27 @@ h4 {
     padding: 10px;
     border-radius: 16px 16px 16px 0px;
 }
-.receiverMessageImg{
+
+.receiverMessageImg {
     width: 40px;
     height: 40px;
     overflow: hidden;
     border-radius: 50%;
 }
-.receiverMessageImg img{
+
+.receiverMessageImg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.senderMessage{
+
+.senderMessage {
     display: flex;
     align-items: end;
     justify-content: flex-end;
 }
-.senderMessage p{
+
+.senderMessage p {
     width: 300px;
     margin-right: 10px;
     border: 1px solid white;
@@ -2023,6 +2077,7 @@ h4 {
     padding: 10px;
     border-radius: 16px 16px 0px 16px;
 }
+
 /* message ends */
 
 /* events listing page design starts  */
@@ -2047,11 +2102,12 @@ swiper-slide img {
     object-fit: cover;
 }
 
-.upcomingEventSlider{
+.upcomingEventSlider {
     width: 820px;
     height: 250px;
 }
-.eventListingContainerBlur{
+
+.eventListingContainerBlur {
     width: 100%;
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -2059,33 +2115,40 @@ swiper-slide img {
     border: 1px solid rgba(255, 255, 255, 0.125);
     height: 569px;
     position: relative;
-    
+
 }
-.eventListingContainer{
+
+.eventListingContainer {
     width: 100%;
     height: 485px;
     /* background: url(/img/pexels-wendywei-1190298.jpg); */
-    background-size: cover; /* Cover the entire element */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
-    background-attachment: fixed; /* Make the background fixed on scroll */
+    background-size: cover;
+    /* Cover the entire element */
+    background-position: center;
+    /* Center the image */
+    background-repeat: no-repeat;
+    /* Prevent the image from repeating */
+    background-attachment: fixed;
+    /* Make the background fixed on scroll */
     position: relative;
     top: -95px;
     z-index: 1;
-   
+
 }
-.eventListingContainerDetails{
+
+.eventListingContainerDetails {
     width: 1200px;
     height: 485px;
     margin: 100px auto;
     display: flex;
     align-items: center;
 }
-.upcommingEventCard{
+
+.upcommingEventCard {
     width: 250px;
 }
 
-.upcomingEventSliderDetails{
+.upcomingEventSliderDetails {
     width: 100%;
     position: absolute;
     /* text-align:; */
@@ -2098,67 +2161,80 @@ swiper-slide img {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
-.upcomingEventSliderDetails h5{
+
+.upcomingEventSliderDetails h5 {
     font-size: medium;
     color: rgb(189, 187, 187);
 }
-.upcomingEventSliderDetails span{
+
+.upcomingEventSliderDetails span {
     font-size: small;
-    
+
     color: gray;
 }
-.recentEventContainer{
+
+.recentEventContainer {
     display: flex;
     margin: 20px auto;
     width: 1200px;
     align-items: center;
     justify-content: space-between;
 }
-.recentEventContainerSwiper{
+
+.recentEventContainerSwiper {
     width: 900px;
-    
+
 }
-.eventCard{
+
+.eventCard {
     width: 400px;
     height: 400px;
     overflow: hidden;
     border-radius: 8px;
 }
-.eventCaedImg img{
+
+.eventCaedImg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.recentEventCardDetails{
+
+.recentEventCardDetails {
     text-align: left;
 }
 
-.recentEventTitle{
+.recentEventTitle {
     width: 200px;
 
 }
-.swiperButtonSection{
-    overflow:hidden;
+
+.swiperButtonSection {
+    overflow: hidden;
     /* position: relative; */
 }
-swiper-slide{
+
+swiper-slide {
     width: 400px;
-    background-color:transparent;
+    background-color: transparent;
 }
-.allEventsListsRight{
+
+.allEventsListsRight {
     position: relative;
     margin: 10px;
 }
-.allEventsLists{
+
+.allEventsLists {
     width: 1200px;
     margin: auto;
     justify-content: space-between;
 }
-.allEventsListsLeft{
+
+.allEventsListsLeft {
     width: 200px;
     height: 300px;
 }
-.allEventsListsCard{
+
+.allEventsListsCard {
     width: 250px;
     height: 200px;
     overflow: hidden;
@@ -2166,32 +2242,35 @@ swiper-slide{
 
 }
 
-.allEventsListsRights{
+.allEventsListsRights {
     width: 1000px;
     flex-wrap: wrap;
     justify-content: space-around;
 }
-.allEventsListsCard img{
+
+.allEventsListsCard img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 
 }
+
 /* events listing page design ends */
 /* add events form starts  */
-.addEventsFromBG{
+.addEventsFromBG {
     width: 100%;
     height: 100%;
     /* top: -85px; */
     padding: 20px;
-  
+
 }
-.addEnentsForm{
+
+.addEnentsForm {
     /* text-align:; */
     backdrop-filter: blur(10px) saturate(180%);
     -webkit-backdrop-filter: blur(6px) saturate(180%);
     background-color: rgba(17, 25, 40, 0.75);
-    
+
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
@@ -2200,64 +2279,86 @@ swiper-slide{
 
 
 /* eventDetails starts  */
-.eventPoster{
+.eventPoster {
     width: 100%;
     height: 720px;
     background: url(/img/pexels-wendywei-1190298.jpg);
-    background-size: cover; 
+    background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;  
-    background-attachment: fixed; 
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     position: relative;
 
 }
 
-.eventPosterBackbtn{
+.eventPosterBackbtn {
     width: 150px;
     padding: 20px;
     display: flex;
     align-items: center;
 }
-.eventPosterBackbtn .backButton{
+
+.eventPosterBackbtn .backButton {
     width: 150px;
 }
-.eventPosterContentDetails{
+
+.eventPosterContentDetails {
     width: 600px;
     padding: 50px 20px;
     position: absolute;
-    top: 50%;
+    top: 36%;
     backdrop-filter: blur(10px) saturate(180%);
     -webkit-backdrop-filter: blur(6px) saturate(180%);
     background-color: rgba(17, 25, 40, 0.75);
     border-top-right-radius: 8px;
-    border-bottom-right-radius:8px ;
+    border-bottom-right-radius: 8px;
 }
-.eventFullDetails{
+
+.eventFullDetails {
     background-color: #111827;
     padding: 60px 0px;
 }
-.eventFullDetailLeft{
+
+.eventFullDetailLeft {
     width: 700px;
 }
-.eventFullDetail{
-    width:1200px;
+
+.eventFullDetail {
+    width: 1200px;
     margin: auto;
 }
-.eventFullDetailsLocation{
+
+.eventFullDetailsLocation {
     width: 400px;
     /* height: 400px; */
     height: fit-content;
     padding: 20px;
     margin: 10px;
-    background-color: rgb(31 41 55 );
+    background-color: rgb(31 41 55);
     border-radius: 8px;
 
 }
+
 .eventFullDetailsIcon {
     padding: 20px;
 }
-.eventFullDetailsIcon svg{
+
+.eventFullDetailsIcon svg {
     margin: 10px;
+}
+
+.eventEditDeleteBtn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 10px;
+    width: 80px;
+    padding: 10px;
+    border-radius: 8px;
+    justify-content: space-between;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(6px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
 }
 
 /* eventDetails ends */

@@ -157,7 +157,7 @@ def userProfileSettings(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
     user = request.user
     # userInfo = get_object_or_404(User,user=user)
-    print(user.collage_name)
+   
     if request.method == 'POST':
         user_profile_form = userProfileForm(request.POST, request.FILES, instance=user_profile)
         user_info_form = userInfoForm(request.POST, instance=request.user)
@@ -168,14 +168,13 @@ def userProfileSettings(request):
             user_info_form.save()
         else:
             messages.error(request,'Form is invalid')
-            print('User Profile Form Errors:', user_profile_form.errors)
-            print('User Info Form Errors:', user_info_form.errors)
+            
     else:
         user_profile_form = userProfileForm(instance=user_profile)
         user_info_form = userInfoForm(instance=request.user)
      
     profile = UserProfile.objects.get(user=user)
-    print('here is the profile',profile.profile_picture)
+    
     context = {
         'user_profile_form': user_profile_form,
         'user_info_form': user_info_form,
