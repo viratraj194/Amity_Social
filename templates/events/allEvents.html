@@ -31,7 +31,7 @@
                             <div class="upcomintEventSlideImg" style="width: 246px; height: 300px; margin: 10 auto;">
                                 <img src="{{event.image.url}}" alt="" style="width:100%;height: 100%; object-fit: cover;">
                                 <div class="upcomingEventSliderDetails">
-                                    <span>29.02.2024</span>
+                                    <span>{{event.start_datetime}}</span>
                                     <h5>{{event.title}}</h5>
                                 </div>
 
@@ -81,7 +81,7 @@
                             <img src="{{event.image.url}}" alt="">
                         </div>
                         <div class="recentEventCardDetails colum">
-                            <span style="font-size: small; color: gray;">20.30.2024</span>
+                            <span style="font-size: small; color: gray;">{{event.start_datetime}}</span>
                             <span style="color: #dfdfdf;">{{event.title}}</span>
                         </div>
                     </a>
@@ -111,7 +111,7 @@
                     <img src="{{event.image.url}}" alt="">
                 </div>
                 <div class="upcomingEventSliderDetails" style="bottom: 0px;">
-                    <span>29.02.2024</span>
+                    <span>{{event.start_datetime}}</span>
                     <h5>{{event.title}}</h5>
                 </div>
             </div>

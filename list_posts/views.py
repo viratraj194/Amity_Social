@@ -232,14 +232,32 @@ def save_post(request, post_id):
 
 # user profile details
 
+
 def profile_details(request,user_id):
-    
+    user = request.user
     profile = get_object_or_404(User,id=user_id)
+
+    # Get all users who are following the logged-in user
+    followers = Follower.objects.filter(following=profile).select_related('follower')
+    # Get all users the logged-in user is following
+    following = Follower.objects.filter(follower=profile).select_related('following')
+    # list event in hte dashboard
+
+    # Check if the logged-in user is following the profile user
+    is_following = Follower.objects.filter(follower=user, following=profile).exists()
     posts = UserPosts.objects.filter(user=profile)
+
+
+    # all total 
+    total_following = following.count()
+    total_followers = followers.count()
     total_posts = posts.count()
     context = {
         'profile':profile,
         'total_posts':total_posts,
+        'total_following':total_following,
+        'total_followers':total_followers,
+        'is_following':is_following,
     }
     return render(request,'list_posts/profile_details.html',context)
 

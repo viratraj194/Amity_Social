@@ -31,10 +31,15 @@ class userProfileForm(forms.ModelForm):
     profile_picture = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
     cover_photo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
     collage_name = forms.CharField(widget=forms.HiddenInput()) 
+    # userBio = forms.Textarea(widget=forms.Textarea(attrs={'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-transparent border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring'}))
     class Meta:
         model = UserProfile
-        fields = ['profile_picture','cover_photo','collage_pin_code']
-
+        fields = ['profile_picture','cover_photo','collage_pin_code','userBio']
+        widgets = {
+             'userBio': forms.Textarea(attrs={
+                'class': ''
+            }),
+           }
 
 
 

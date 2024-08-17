@@ -22,10 +22,11 @@
                 </div>
             </div>
             <div class="user_profile_follow_msg_btn">
-                
-                    
-                
-                <button type="submit"><a href="{%url 'send_follow_request' profile.id%}">Follow</a></button>
+                {% if is_following %}
+                <button type="submit" style="background-color: #86829a;outline: none;border: none;"><a href="{%url 'unFollow' profile.id%}">Unfollow</a></button>
+                {% else %}
+                <button type="submit" style="background-color: #86829a;outline: none;border: none;"><a href="{%url 'send_follow_request' profile.id %}">Follow</a></button>
+                {% endif %}
                 <a href="{%url 'message_user' profile.id%}"><button>Message</button></a>
             </div>
         </div>
@@ -40,22 +41,22 @@
         </div>
         <div class=" followinrs">
             <h5>
-                <strong>856</strong>
+                <strong>{{total_followers}}</strong>
             </h5>
             <a href="">Followers</a>
 
         </div>
         <div class=" followings">
             <h5>
-                <strong>562</strong>
+                <strong>{{total_following}}</strong>
             </h5>
             <a href="">Following</a>
 
         </div>
     </div>
     <div class="users_all_posts">
-        <h2>About</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, illum?</p>
+        <h2>Bio</h2>
+        <p style="font-size:15px;color:#747475; margin: 10px;width: 700px; padding: 10px">{{profile.userprofile.userBio}}</p>
     </div>
     <div style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
 

@@ -183,7 +183,8 @@ DEFAULT_FROM_EMAIL = 'collage social  <collages.socialmedia@gmail.com>'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'amity.loca.lt'
+    'amity.loca.lt',
+    ' https://afraid-ads-swim.loca.lt'
     
 ]
 

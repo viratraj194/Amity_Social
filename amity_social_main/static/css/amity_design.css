@@ -449,24 +449,43 @@ footer {
 
 /* REGISTRATION PAGE STARTS  */
 .registration_form_cover_photo {
-    width: 1200px;
-    height: 300px;
+    width: 1500px;
+    height: 500px;
     margin: 20px auto;
     overflow: hidden;
     border-radius: 15px;
+    /* border-image: fill 0 linear-gradient(#0001,#000); */
 }
 
-.registration_form_cover_photo img {
-    width: 100%;
-    height: 100%;
+.registrationFormWords {
+    width: 800px;
+    margin: 100px 0px;
+    padding: 20px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(6px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
 }
+
+.registrationFormWords h2 {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.registrationFormWords p {
+    font-weight: 200;
+    color: #878487;
+    /* font-size:30px; */
+}
+
+
 
 .registration_form {
     padding: 20px;
     border-radius: 15px;
     width: 1200px;
     margin: 20px auto;
-    background-image: url(../img/image.png);
     background-size: cover;
     background-position: center;
 }
@@ -559,7 +578,7 @@ footer {
 .login_container {
     width: 1010px;
     margin: 20px auto;
-    padding: 10px;
+    padding: 100px;
     background-image: url(../img/Login-Screen-Background-Wood-5.jpg);
     background-size: cover;
     background-position: center;
@@ -718,7 +737,7 @@ footer {
     border-radius: 10px;
 }
 
-.user_profiles .user_profile_follow_msg_btn button {
+.user_profiles .user_profile_follow_msg_btn  .follow_BTn {
     background-color: #86829a;
     outline: none;
     border: none;
@@ -775,7 +794,7 @@ footer {
 
 .users_all_posts {
     width: 1010px;
-    margin: auto;
+    margin: 10px auto;
 }
 
 .post-saved_post {
@@ -924,6 +943,19 @@ h5 {
 .userProfileSettingsForm .M-10_0 {
     margin: 15px 0px;
 }
+
+.userProfileSettingsForm .M-10_0 textarea {
+    width: 450px;
+    resize: none;
+    outline: none;
+    border: none;
+    background-color: #636264;
+    height: 60px;
+    padding: 10px;
+    color: white;
+    border-radius: 8px;
+}
+
 
 .userProfileSettingsForm .M-10_0 label {
     font-size: large;
@@ -1163,11 +1195,22 @@ h4 {
     background-color: #2d2d2d;
 
 }
+.saySomethinInputSpan{
+    width: 380px;
+    height: 35px;
 
+    align-items: center;
+    display: flex;
+    
+    border-radius: 10px;
+    padding-left: 40px;
+    border: 1px solid #535252;
+    background-color: #2d2d2d;
+    color: #777b7b;
+}
 .saySomething-submain input::placeholder {
     margin-left: 40px;
     font-weight: 400;
-    color: #777b7b;
 
 }
 
@@ -1975,7 +2018,7 @@ h4 {
 }
 
 .message_ChatContainer {
-    width: 550px;
+    width: 750px;
 }
 
 .messageSelectedUser {
@@ -2043,6 +2086,9 @@ h4 {
 
 .receiverMessage p {
     width: 300px;
+    text-wrap: wrap;
+    overflow: hidden;
+    word-wrap: break-word;
     margin-left: 10px;
     background-color: rgb(209, 208, 208);
     color: rgb(75, 75, 75);
@@ -2071,6 +2117,9 @@ h4 {
 
 .senderMessage p {
     width: 300px;
+    text-wrap: wrap;
+    word-wrap: break-word;
+    overflow: hidden;
     margin-right: 10px;
     border: 1px solid white;
     color: rgb(75, 75, 75);
@@ -2362,3 +2411,87 @@ swiper-slide {
 }
 
 /* eventDetails ends */
+
+
+/* if not profile start */
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+}
+
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-dialog {
+    background-color: #ffffff;
+    border-radius: 10px;
+    width: 400px;
+    padding: 20px;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.warning-icon {
+    font-size: 2rem;
+    margin-right: 10px;
+    color: #FF4C4C;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #484848;
+}
+
+.modal-body {
+    margin: 15px 0;
+    color: #6b7280;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.cancel-btn {
+    background-color: #e0e0e0;
+    color: #6b7280;
+}
+
+.deactivate-btn {
+    background-color: #FF4C4C;
+    color: white;
+}
+
+.cancel-btn,
+.deactivate-btn {
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+
+/* if not profile end */

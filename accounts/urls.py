@@ -29,6 +29,7 @@ urlpatterns = [
 
     # adding following and follow systems
     path('send_follow_request/<int:user_id>/',views.send_follow_request,name='send_follow_request'),
+    path('unFollow/<int:user_id>/',views.unFollow,name='unFollow'),
     path('accept-follow-request/<int:request_id>/',views.accept_follow_request, name='accept_follow_request'),
     path('deny-follow-request/<int:request_id>/',views.deny_follow_request, name='deny_follow_request'),
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="messageContainer flex main_container_width"
-    style="margin: auto; width:  1010px; justify-content: space-between;">
+    style="margin: auto; width:  1310px; justify-content: space-between;">
     <div class="messageUserList">
         <div class="chat_title flex" style="border-bottom: 1px solid white; padding: 10px 5px;">
             <h2>Chats</h2>
@@ -37,15 +37,17 @@
     </div>
     <div style="border-right: 1px solid rgb(62, 61, 61);"></div>
     <div class="message_ChatContainer">
-        <div class="messageSelectedUser flex">
-            <div class="messageSelectedUserImg">
-                <img src="{{ receiver.userprofile.profile_picture.url}}" alt="">
+        <a href="{% url 'profile_details' receiver.id%}">
+            <div class="messageSelectedUser flex">
+                <div class="messageSelectedUserImg">
+                    <img src="{{ receiver.userprofile.profile_picture.url}}" alt="">
+                </div>
+                <div class="messageSelectedUserDetails  colum">
+                    <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
+                    <span style="margin: 0px 10px; color: gray;">last seen {{formatted_time}}</span>
+                </div>
             </div>
-            <div class="messageSelectedUserDetails  colum">
-                <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
-                <span style="margin: 0px 10px; color: gray;">last seen {{formatted_time}}</span>
-            </div>
-        </div>
+        </a>
         <div class="allTheMessages">
             <div id="chatContainer" class="allTheMessage">
                 {% for message in messages %}
@@ -92,16 +94,16 @@
     const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/chat/${Math.min(senderId, receiverId)}/${Math.max(senderId, receiverId)}/`;
 
-    console.log("WebSocket URL:", wsEndpoint);
+    // console.log("WebSocket URL:", wsEndpoint);
 
     const socket = new WebSocket(wsEndpoint);
 
     socket.onopen = function (event) {
-        console.log("WebSocket connection opened!");
+        // console.log("WebSocket connection opened!");
     };
 
     socket.onmessage = function (event) {
-        console.log("Message received:", event.data);
+        // console.log("Message received:", event.data);
         const data = JSON.parse(event.data);
         const message = data.message;
         const messageSenderId = data.sender_id;
@@ -136,11 +138,11 @@
         scrollToBottom(); // Scroll to the bottom
     };
     socket.onerror = function (error) {
-        console.error("WebSocket error:", error);
+        // console.error("WebSocket error:", error);
     };
 
     socket.onclose = function (event) {
-        console.log("WebSocket connection closed!");
+        // console.log("WebS    ocket connection closed!");
     };
 
     function sendMessage() {
@@ -163,12 +165,12 @@
         sendMessage();
     });
 
-    document.getElementById('messageInput').addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
+    // document.getElementById('messageInput').addEventListener('keypress', function (event) {
+    //     if (event.key === 'Enter') {
+    //         event.preventDefault();
+    //         sendMessage();
+    //     }
+    // });
 </script>
 
 

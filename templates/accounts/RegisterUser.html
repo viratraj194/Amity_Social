@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="registration_form_cover_photo">
-    <img src="{%static '/img/cartoon-nature-landscape-night-time-260nw-2187999189.jpg'%}" alt="">
+<div class="registration_form_cover_photo" style="background-image: url({%static '/img/cartoon-nature-landscape-night-time-260nw-2187999189.jpg'%});background-size: cover; 
+background-position: center;
+background-repeat: no-repeat;  
+background-attachment: fixed; 
+position: relative;">
+<div class="registrationFormWords">
+    <h2>Anonymity lets your true colors shine.Speak your mind without a name tag.</h2>
+    <p>In our college social media platform, anonymity empowers students to express themselves freely. Share your
+        thoughts, experiences, and opinions without fear of judgment. Connect authentically and engage in genuine
+        interactions. Here, your voice matters, fostering a supportive and dynamic community where true
+        personalities shine. Welcome to your anonymous haven.
+    </p>
+</div>
 </div>
 <div class="registration_form">
     <form action="{%url 'RegisterUser'%}" method="post" enctype="multipart/form-data">
@@ -31,7 +42,7 @@
         <div class="id_cards flex ">
             <div class="id_no colum" style="width: 400px; margin: 5px 0px;">
                 <label>Collage Name</label>
-                <select id="collage_name" name="collage_name"
+                <select id="collage_names" name="collage_name"
                         style="outline: none; border: none; background-color: #636264; height: 35px; width: 415px; padding-left: 10px; color: white; border-radius: 8px;">
                         <option value="">Select your college</option>
                         <option value="Amity University Greater Noida"
@@ -74,7 +85,7 @@
         <div class="agree_to_terms flex">
 
             <label>Agree to terms and conditons</label>
-            <input type="checkbox" name="agree_to_terms" id="">
+            <input type="checkbox" name="agree_to_terms" >
         </div>
         <div class="errors_handle" style="width: 1010px;">
             {% for field in form %}
@@ -114,6 +125,32 @@
             lock.classList.toggle('bi-unlock');
             lock.classList.toggle('bi-lock-fill');
         }
+            
+    document.addEventListener("DOMContentLoaded", function () {
+        const apiEndpoint = "http://universities.hipolabs.com/search?country=India";
+        const collegeSelect = document.getElementById("collage_names");
+
+        if (!collegeSelect) {
+            console.error("The select element with ID 'id_collage_name' was not found.");
+            return;
+        }
+
+        fetch(apiEndpoint)
+            .then((response) => response.json())
+            .then((data) => {
+                data.forEach((college) => {
+                    if (college.name && college.name !== "Amity University Greater Noida") { // Avoid adding the static option again
+                        const option = document.createElement("option");
+                        option.value = college.name;
+                        option.textContent = college.name;
+                        collegeSelect.appendChild(option);
+                    }
+                });
+            })
+            .catch((error) => console.error("Error fetching college data:", error));
+    });
+
+
     </script>
 </div>
 {% endblock %}

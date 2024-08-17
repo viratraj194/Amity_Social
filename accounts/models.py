@@ -110,7 +110,7 @@ class UserProfile(models.Model):
     # profile picture  width and height 
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
-
+    userBio = models.TextField(blank=True, null=True)
     cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True,width_field='cover_width',height_field='cover_height')
     # cover photo width and height 
     cover_width = models.PositiveIntegerField(null=True, blank=True, editable=False)

@@ -72,13 +72,26 @@ def userEvents(request):
     total_posts =  user_posts.count()
     total_saved = saved_posts.count()
     total_events = events.count()
+
+
+    user = request.user
+    # Get all users who are following the logged-in user
+    followers = Follower.objects.filter(following=user).select_related('follower')
+    # Get all users the logged-in user is following
+    following = Follower.objects.filter(follower=user).select_related('following')
+    # list event in hte dashboard
+
+    total_following = following.count()
+    total_followers = followers.count()
     
     context = {
         'events':events,
         'profile':profile,
         'total_posts':total_posts,
         'total_saved':total_saved,
-        'total_events':total_events
+        'total_events':total_events,
+        'total_following':total_following,
+        'total_followers':total_followers,
 
     }
     return render(request,'events/userEvents.html',context)
@@ -86,7 +99,7 @@ def userEvents(request):
 def eventDetails(request,event_id):
     start_of_month, end_of_month = get_current_month()
     event = Event.objects.get(id = event_id)
-
+    
     # Filter events for the current month
     events_this_month = Event.objects.filter(
         start_datetime__gte=start_of_month,

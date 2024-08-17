@@ -107,6 +107,13 @@
                 </div>
                 <h6>Through your collage name you will have specialized post mainly from your collage Pin Code</h6>
             </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label for="">Bio</label>
+                    {{user_profile_form.userBio}}
+                </div>
+                <h6>*Note: This will be visible to all users</h6>
+            </div>
             <div class="userProfileSettingsForm-button">
                 <button type="submit">Update</button>
             </div>
@@ -117,7 +124,34 @@
         <a href="{% url 'logout'%}" style="margin: 0px;"><button>LOG OUT</button></a>
     </div>
 </div>
+<script>
+    // adding api for the collage name for the profile setting
 
+document.addEventListener("DOMContentLoaded", function () {
+    const apiEndpoint = "http://universities.hipolabs.com/search?country=India";
+    const collegeSelect = document.getElementById("id_collage_name");
+
+    if (!collegeSelect) {
+        console.error("The select element with ID 'id_collage_name' was not found.");
+        return;
+    }
+
+    fetch(apiEndpoint)
+        .then((response) => response.json())
+        .then((data) => {
+            data.forEach((college) => {
+                if (college.name && college.name !== "Amity University Greater Noida") { // Avoid adding the static option again
+                    const option = document.createElement("option");
+                    option.value = college.name;
+                    option.textContent = college.name;
+                    collegeSelect.appendChild(option);
+                }
+            });
+        })
+        .catch((error) => console.error("Error fetching college data:", error));
+});
+
+</script>
 {% include "includes/alerts.html" %}
 <!-- login page design  ends here  -->
 {% endblock %}

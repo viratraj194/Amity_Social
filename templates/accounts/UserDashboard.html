@@ -15,15 +15,15 @@
                 <h1><strong>{{user.first_name}} {{user.last_name}}</strong> </h1>
                 <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
                     <span>@_ {{user.username}}</span>
-                    <a href="{% url 'userProfileSettings'%}" style="color: #86829a;">
-                        <i class="bi bi-gear"></i>
-                    </a>
+                    
 
                 </div>
             </div>
             <div class="user_profile_follow_msg_btn">
-                <button type="submit">Follow</button>
-                <a href="#"><button>Message</button></a>
+                <a href="{% url 'userProfileSettings'%}" >
+                    <button class="follow_BTn" type="submit">Edit</button>
+                </a>
+                <a href="{% url 'friend_messages'%}"><button>Message</button></a>
             </div>
         </div>
     </div>
@@ -50,9 +50,9 @@
 
         </div>
     </div>
-    <div class="users_all_posts">
-        <h2>About</h2>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, illum?</p>
+    <div class="users_all_posts" >
+        <h2>Bio</h2>
+        <p style="font-size:15px;color:#747475; margin: 10px;width: 700px; padding: 10px">{{profile.userBio}}</p>
     </div>
     <div style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
 

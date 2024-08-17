@@ -229,12 +229,26 @@ def SavedPosts(request):
     saved_posts = UserSavedPosts.objects.filter(user=request.user).order_by('-created_at')
     total_posts =  user_posts.count()
     total_saved = saved_posts.count()
+    user = request.user
+    # Get all users who are following the logged-in user
+    followers = Follower.objects.filter(following=user).select_related('follower')
+    # Get all users the logged-in user is following
+    following = Follower.objects.filter(follower=user).select_related('following')
+    # list event in hte dashboard
+    list_events = Event.objects.filter(eventCreator=user)
+    totalEvent = list_events.count()
+    total_following = following.count()
+    total_followers = followers.count()
+    
 
     context = {
         'profile':profile,
         'saved_posts':saved_posts,
         'total_posts':total_posts,
-        'total_saved':total_saved
+        'total_saved':total_saved,
+        'total_following':total_following,
+        'total_followers':total_followers,
+        'totalEvent':totalEvent,
     }
     return render(request,'accounts/SavedPosts.html',context)
 
@@ -296,15 +310,20 @@ def accept_follow_request(request,request_id):
             # Create a new Follower instance if not already following
             Follower.objects.create(follower=follow_request.from_user, following=follow_request.to_user)
             follow_request.is_accepted = True
-            follow_request.save()
+            follow_request.delete()
             return JsonResponse({'status': 'accepted'})
         else:
             # If already following, just mark the follow request as accepted
             follow_request.is_accepted = True
-            follow_request.save()
+            follow_request.delete()
             return JsonResponse({'status': 'already_following'})
     return JsonResponse({'status': 'error'}, status=400)
 
+def unFollow(request,user_id):
+    profile = get_object_or_404(User,id=user_id)
+    Follower.objects.filter(follower=request.user, following=profile).delete()
+    messages.success(request,'UnFollowed')
+    return redirect('profile_details',user_id=user_id)
 
 def deny_follow_request(request,request_id):
     

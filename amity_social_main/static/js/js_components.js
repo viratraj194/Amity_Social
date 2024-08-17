@@ -1,15 +1,6 @@
 
 
 // postcontainer scroolbar 
-document.addEventListener('DOMContentLoaded', function () {
-    let postContainer = document.querySelector('.PostContainer');
-
-    // Check if content height exceeds max-height and apply scrollbar
-    if (postContainer.scrollHeight > postContainer.clientHeight) {
-        postContainer.style.overflowY = 'auto';
-    }
-
-})
 
 // pop us posts page 
 function redirectToPath(path) {
@@ -17,18 +8,20 @@ function redirectToPath(path) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const openButton = document.querySelector('.open');
+    const openButtons = document.querySelectorAll('.open'); // Select all elements with the class 'open'
     const postDiv = document.querySelector('.PostContainers');
     const closeButton = postDiv.querySelector('.close');
 
-    openButton.addEventListener('click', function () {
-        postDiv.style.display = 'block';
+    // Attach click event listener to each open button
+    openButtons.forEach(function (openButton) {
+        openButton.addEventListener('click', function () {
+            postDiv.style.display = 'block';
+        });
     });
 
     closeButton.addEventListener('click', function () {
         if (confirm('Are you sure you want to discard the post?')) {
             postDiv.style.display = 'none';
-
         }
     });
 });
@@ -180,48 +173,28 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
 // adding api for the collage name for the profile setting
 
 
+
+// if not the profile start
 document.addEventListener("DOMContentLoaded", function () {
-    const apiEndpoint = "http://universities.hipolabs.com/search?country=India";
+    const modal = document.getElementById("deactivateModal");
+    const cancelBtn = document.querySelector(".cancel-btn");
 
-    fetch(apiEndpoint)
-        .then((response) => response.json())
-        .then((data) => {
-            const collegeSelect = document.getElementById("id_collage_name");
-            data.forEach((college) => {
-                if (college.name && college.name !== "Amity University Greater Noida") { // Avoid adding the static option again
-                    const option = document.createElement("option");
-                    option.value = college.name;
-                    option.textContent = college.name;
-                    collegeSelect.appendChild(option);
-                }
-            });
-        })
-        .catch((error) => console.error("Error fetching college data:", error));
-});
-// adding api for the collage name for the profile setting
+    function closeModal() {
+        modal.style.display = "none";
+    }
 
+    cancelBtn.addEventListener("click", closeModal);
 
-document.addEventListener("DOMContentLoaded", function () {
-    const apiEndpoint = "http://universities.hipolabs.com/search?country=India";
-
-    fetch(apiEndpoint)
-        .then((response) => response.json())
-        .then((data) => {
-            const collegeSelect = document.getElementById("collage_name");
-            data.forEach((college) => {
-                if (college.name && college.name !== "Amity University Greater Noida") { // Avoid adding the static option again
-                    const option = document.createElement("option");
-                    option.value = college.name;
-                    option.textContent = college.name;
-                    collegeSelect.appendChild(option);
-                }
-            });
-        })
-        .catch((error) => console.error("Error fetching college data:", error));
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
 });
 
 
-
+// share event to friend 
