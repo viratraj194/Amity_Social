@@ -1,18 +1,17 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
+import base64
 import json
 import logging
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from .models import Message
 
 logger = logging.getLogger(__name__)
-
-from .models import Message
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.sender_id = self.scope['url_route']['kwargs']['sender_id']
         self.receiver_id = self.scope['url_route']['kwargs']['receiver_id']
 
-        # Create a consistent room name
         self.room_group_name = f'chat_{min(self.sender_id, self.receiver_id)}_{max(self.sender_id, self.receiver_id)}'
 
         await self.channel_layer.group_add(
@@ -30,6 +29,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         receiver_id = text_data_json.get('receiver_id', '')
         sender_profile_pic = text_data_json.get('sender_profile_pic', '')
 
+        # Encode the message before saving and broadcasting
+        encoded_message = base64.b64encode(message.encode('utf-8')).decode('utf-8')
+        print(f'--------------->{encoded_message}')
         logger.info(f"Received message from {sender_id}: {message}")
 
         # Save the message to the database
@@ -40,7 +42,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message,
+                'message': encoded_message,  # Send the encoded message
                 'sender_id': sender_id,
                 'receiver_id': receiver_id,
                 'sender_profile_pic': sender_profile_pic
@@ -48,10 +50,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        message = event['message']
+        encoded_message = event['message']
         sender_id = event['sender_id']
         receiver_id = event['receiver_id']
         sender_profile_pic = event['sender_profile_pic']
+
+        # Decode the message before sending it to the client
+        message = base64.b64decode(encoded_message).decode('utf-8')
 
         await self.send(text_data=json.dumps({
             'message': message,
