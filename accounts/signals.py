@@ -1,6 +1,10 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from . models import User, UserProfile
+import redis
+from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.dispatch import receiver
+
 
 @receiver(post_save, sender=User)
 def post_save_create_profile_receiver(sender, instance, created, **kwargs):
@@ -23,3 +27,15 @@ def post_save_create_profile_receiver(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=User)
 def pre_save_profile_receiver(sender, instance, **kwargs0):
     pass
+
+
+
+# @receiver(user_logged_in)
+# def handle_user_logged_in(sender, request, user, **kwargs):
+#     r = redis.Redis()
+#     r.set(f'user:{user.id}:status', 'online')
+
+# @receiver(user_logged_out)
+# def handle_user_logged_out(sender, request, user, **kwargs):
+#     r = redis.Redis()
+#     r.set(f'user:{user.id}:status', 'offline')

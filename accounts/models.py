@@ -40,16 +40,16 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    gender = models.CharField(max_length=20,null=True,blank=True)
-    username = models.CharField(max_length=50, unique=True)
+    gender = models.CharField(max_length=20,null=True,blank=True,db_index=True)
+    username = models.CharField(max_length=50, unique=True,db_index=True)
     # userSlug = models.SlugField(max_length=100,blank=True,unique=True)
-    email = models.EmailField(max_length=100, unique=True)
-    phone_number = models.CharField(max_length=12, blank=True)
-    collage_name = models.CharField(blank=True,null=True)
-    users_id = models.CharField(max_length=20,blank=True,null=True)
-    agree_to_terms = models.BooleanField(default=False)
-    is_approved = models.BooleanField(default=False)
-    
+    email = models.EmailField(max_length=100, unique=True,db_index=True)
+    phone_number = models.CharField(max_length=12, blank=True,db_index=True)
+    collage_name = models.CharField(blank=True,null=True,db_index=True)
+    users_id = models.CharField(max_length=20,blank=True,null=True,db_index=True)
+    agree_to_terms = models.BooleanField(default=False,db_index=True)
+    is_approved = models.BooleanField(default=False,db_index=True)
+    is_online = models.BooleanField(default=False,db_index=True)
     # REQUIRED_FIELDS 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -112,7 +112,10 @@ class UserProfile(models.Model):
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     userBio = models.TextField(blank=True, null=True)
     cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True,width_field='cover_width',height_field='cover_height')
-    # cover photo width and height 
+    # cover photo width and height
+    # user is privet 
+    is_privet = models.BooleanField(default=False, db_index=True)
+
     cover_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     cover_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     collage_pin_code = models.CharField(max_length=6, blank=True, null=True)
@@ -156,11 +159,50 @@ class FollowRequest(models.Model):
 
 
 
+
+class Room(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True,db_index=True)
+    slug = models.SlugField(unique=True, blank=True, null=True,db_index=True)
+    participants = models.ManyToManyField(User, related_name='rooms',db_index=True)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_rooms',db_index=True)
+    is_private = models.BooleanField(default=False,db_index=True)
+    is_group = models.BooleanField(default=False,db_index=True)
+    description = models.TextField(blank=True, null=True,db_index=True)
+    room_picture = models.ImageField(upload_to='room_pictures/', blank=True, null=True,db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name or f'Room {self.id}'
+
+    def get_active_users(self):
+        """Get the list of active users in this room."""
+        try:
+            r = redis.Redis()  # Configure Redis if needed
+            # Fetch online user IDs from Redis for this room
+            online_user_ids = r.smembers(f'room:{self.slug}:users')
+            # Convert bytes to integers and return as a list
+            return list(map(int, online_user_ids))
+        except redis.RedisError as e:
+            logger.error(f"Error getting active users from Redis: {e}")
+            return []
+
+    def get_last_message(self):
+        return self.messages.order_by('-timestamp').first()
+
+
+
+
+
+
 class Message(models.Model):
+    room = models.ForeignKey(Room, related_name='messages', on_delete=models.CASCADE)
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
     content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at =models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return f'{self.sender} to {self.receiver}: {self.content}'

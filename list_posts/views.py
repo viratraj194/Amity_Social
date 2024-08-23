@@ -247,6 +247,7 @@ def profile_details(request,user_id):
     is_following = Follower.objects.filter(follower=user, following=profile).exists()
     posts = UserPosts.objects.filter(user=profile)
 
+    
 
     # all total 
     total_following = following.count()

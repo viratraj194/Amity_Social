@@ -34,11 +34,12 @@ class userProfileForm(forms.ModelForm):
     # userBio = forms.Textarea(widget=forms.Textarea(attrs={'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-transparent border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring'}))
     class Meta:
         model = UserProfile
-        fields = ['profile_picture','cover_photo','collage_pin_code','userBio']
+        fields = ['profile_picture','cover_photo','collage_pin_code','userBio','is_privet']
         widgets = {
              'userBio': forms.Textarea(attrs={
                 'class': ''
             }),
+            'is_private': forms.CheckboxInput(attrs={'class': 'toggle-button form-check-input'}),
            }
 
 

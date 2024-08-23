@@ -1,6 +1,6 @@
 from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
 from . forms import UserForm,userInfoForm,userProfileForm
-from .models import User,UserProfile,Follower,FollowRequest,Message
+from .models import *
 from . utils import users_id_generator,send_email_verification,detectUser
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
@@ -79,7 +79,8 @@ def login(request):
         user = auth.authenticate(email=email,password=password)
         if user is not None:
             auth.login(request,user)
-            
+            user.is_online = True
+            user.save()
 
             messages.success(request,'You are now logged in.')
             return redirect('list_posts')
@@ -90,6 +91,9 @@ def login(request):
 
 
 def logout(request):
+    user = request.user
+    user.is_online = False
+    user.save()
     auth.logout(request)
     messages.success(request, 'you have logged out successfully'.title())
     return redirect('login')
@@ -334,53 +338,79 @@ def deny_follow_request(request,request_id):
     return JsonResponse({'status': 'error'}, status=400)
 
 
+@login_required(login_url='login')
+def room_chat(request,slug):
+
+     # Fetch the room based on the slug
+    room = get_object_or_404(Room, slug=slug)
+    
+    # Fetch all messages related to this room, ordered by timestamp
+    messages = room.messages.order_by('updated_at')
+    sender = request.user
+    receiver = room.participants.exclude(id=sender.id).first() # For private chats
+        # fetching all the friend 
+    friends = Follower.objects.filter(follower=request.user)
+    context = {
+        'room': room,
+        'messages': messages,
+        'sender': sender,
+        'receiver': receiver,  
+        'friends': friends,
+    }
+    return render(request, 'accounts/message.html', context)
+
+
 
 @login_required(login_url='login')
 def message_user(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
-    
     sender = request.user
-    user = request.user
-    if request.method == 'POST':
-        content = request.POST.get('message')  # Ensure this matches the name in your form
-        if content:
-            Message.objects.create(sender=sender, receiver=receiver, content=content)
-            return redirect('message_user', user_id=user_id)
+    
+    room = Room.objects.filter(
+        is_private = True,
+        participants = sender
+    ).filter(participants=receiver).first()
 
-    receiver_last_login = receiver.last_login
-    if receiver_last_login:
-        formatted_time = receiver_last_login
-    else:
-        formatted_time = 'Never logged in'
-    
-
-    # fetching all the friend 
-    friends = Follower.objects.filter(follower=user)
-    
-    # Fetch messages between the sender and receiver
-    messages = Message.objects.filter(
-        Q(sender=sender, receiver=receiver) |
-        Q(sender=receiver, receiver=sender)
-    ).order_by('timestamp')
-    
-    context = {
-        'receiver': receiver,
-        'sender': sender,
-        'messages': messages,
-        'receiver_id': receiver.id,
-        'sender_id': sender.id,
-        'friends':friends,
-        'formatted_time':formatted_time
-        
-    }
-    return render(request, 'accounts/message.html', context)
+    if not room:
+        room = Room.objects.create(
+            is_private=True,
+            is_group=False,
+            creator=sender,
+            
+        )
+        room.participants.add(sender,receiver)
+        room.slug = f"privet-{sender.id}-{receiver.id}"
+        room.save()
+    return redirect('room_chat',slug = room.slug)
 
 
 
 def friend_messages(request):
     user = request.user
     friends = Follower.objects.filter(follower=user)
+    
     context = {
         'friends':friends
     }
     return render(request,'accounts/friend_messages.html',context)
+
+
+# Create a Redis instance
+
+# In your Django views.py
+# In your Django views.py
+from django.http import JsonResponse
+import redis
+redis_instance = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+
+def get_user_status(request, user_id):
+    try:
+        r = redis.Redis()
+        status = r.get(f'user:{user_id}:status')
+        if status:
+            return JsonResponse({'status': status.decode('utf-8')})
+        else:
+            return JsonResponse({'status': 'offline'})
+    except Exception as e:
+        return JsonResponse({'status': 'offline'})
+

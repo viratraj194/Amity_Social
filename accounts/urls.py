@@ -35,8 +35,8 @@ urlpatterns = [
 
 
     # message urls 
+    path('room/<slug:slug>/', views.room_chat, name='room_chat'),
     path('message/<int:user_id>/', views.message_user, name='message_user'),
     path('messages',views.friend_messages,name='friend_messages'),
-
-    
+    path('get_user_status/<int:user_id>/', views.get_user_status, name='get_user_status'),    
 ]

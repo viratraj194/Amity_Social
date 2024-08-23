@@ -9,7 +9,7 @@ class CustomUserAdmin(UserAdmin):
     filter_horizontal = ()
     list_filter = ()
     fieldsets = ()
-
+admin.site.register(Room)
 admin.site.register(Message)
 admin.site.register(Follower)
 admin.site.register(FollowRequest)

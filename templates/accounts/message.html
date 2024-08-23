@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{%load static%}
 <div class="messageContainer flex main_container_width"
     style="margin: auto; width:  1310px; justify-content: space-between;">
     <div class="messageUserList">
@@ -13,22 +14,26 @@
             <ul class="message_user_cards">
                 {% for friend in friends%}
                 <a href="{% url 'message_user' friend.following.id%}">
-                <li class="message_user_card">
-                    <div class="messageUserCard flex">
-                        <div class="userImg">
-                            <img src="{{friend.following.userprofile.profile_picture.url}}" alt="">
+
+                    <li class="message_user_card">
+                        <div class="messageUserCard flex">
+                            <div class="userImg">
+                                <img src="{{friend.following.userprofile.profile_picture.url}}" alt="">
+                            </div>
+                            <div class="messageUsersDetails colum">
+                                <span
+                                    style="margin: 2px 0px; display: flex; justify-content: space-between;width: 224px;"><strong
+                                        style="color: rgb(210, 208, 208);">{{friend.following.username}}</strong> <small
+                                        style="color: gray;">{% if friend.following.last_login %}
+                                        {{friend.following.last_login|date:"H:i" }}{% else %}Never logged
+                                        in{%endif%}</small></span>
+                                <span
+                                    style="font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-wrap: nowrap; overflow: hidden;">details
+                                    of the user dsfsf sf dsf s and all the msg to</span>
+                            </div>
                         </div>
-                        <div class="messageUsersDetails colum">
-                            <span
-                                style="margin: 2px 0px; display: flex; justify-content: space-between;width: 224px;"><strong
-                                    style="color: rgb(210, 208, 208);">{{friend.following.username}}</strong> <small
-                                    style="color: gray;">{% if friend.following.last_login %}{{ friend.following.last_login|date:"H:i" }}{% else %}Never logged in{% endif %}</small></span>
-                            <span
-                                style="font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-wrap: nowrap; overflow: hidden;">details
-                                of the user dsfsf sf dsf s and all the msg to</span>
-                        </div>
-                    </div>
-                </li>
+                    </li>
+
                 </a>
                 {%endfor%}
 
@@ -45,6 +50,11 @@
                 <div class="messageSelectedUserDetails  colum">
                     <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
                     <span style="margin: 0px 10px; color: gray;">last seen {{formatted_time}}</span>
+                </div>
+                <div id="{{receiver.id}}">
+                    <!-- Status elements will be dynamically created here -->
+                    <!-- <div id="senderStatus" class="userStatus"></div> -->
+                    <div id="receiverStatus" class="userStatus">offline</div>
                 </div>
             </div>
         </a>
@@ -69,7 +79,6 @@
                 {% endfor %}
             </div>
         </div>
-
         <div class="messageSendingInputs flex">
             <textarea id="messageInput" style="resize: none;" placeholder="Type here...."></textarea>
             <button id="sendMessageButton" type="submit">Post
@@ -77,6 +86,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function scrollToBottom() {
         var chatContainer = document.getElementById("chatContainer");
@@ -87,62 +97,91 @@
     window.onload = function () {
         scrollToBottom();
     };
+    // Retrieve room slug and sender ID from the template context
+    const roomSlug = '{{ room.slug }}';
+    const senderId = '{{ user.id }}';
+    const receiverId = '{{ receiver.id }}'; // Receiver's ID
 
-    const senderId = '{{ sender_id }}';
-    const receiverId = '{{ receiver_id }}';
-
+    // Determine the correct WebSocket protocol
     const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/chat/${Math.min(senderId, receiverId)}/${Math.max(senderId, receiverId)}/`;
 
-    // console.log("WebSocket URL:", wsEndpoint);
+    // Update the WebSocket endpoint to use the room slug
+    const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/chat/${roomSlug}/`;
 
     const socket = new WebSocket(wsEndpoint);
 
-    socket.onopen = function (event) {
-        // console.log("WebSocket connection opened!");
+    socket.onopen = function () {
+        console.log("WebSocket connection opened");
+        console.log("Current User ID:", senderId);
     };
 
     socket.onmessage = function (event) {
-        // console.log("Message received:", event.data);
-        const data = JSON.parse(event.data);
-        const message = data.message;
-        const messageSenderId = data.sender_id;
-        const senderProfilePic = data.sender_profile_pic;
+        try {
+            const data = JSON.parse(event.data);
+            console.log("WebSocket message received:", data);
 
-        // Create a message element
-        const messageElement = document.createElement('div');
-        const isSender = messageSenderId == senderId;
+            // Handle user status updates
+            if (data.status) {
+                const userId = data.user_id;
+                const status = data.status;
 
-        if (isSender) {
-            // For messages sent by the user
-            messageElement.className = 'senderMessage';
-            messageElement.innerHTML = `
-            <p>${message}</p>
-            <div class="receiverMessageImg">
-                <img src="${senderProfilePic}" alt="">
-            </div>
-        `;
-        } else {
-            // For messages received by the user
-            messageElement.className = 'receiverMessage';
-            messageElement.innerHTML = `
-            <div class="receiverMessageImg">
-                <img src="${senderProfilePic}" alt="">
-            </div>
-            <p>${message}</p>
-        `;
+                if (userId !== senderId) {
+                    // Update the receiver's status if it's the receiverId
+                    if (userId == receiverId) {
+                        const receiverStatusElement = document.getElementById('receiverStatus');
+                        if (receiverStatusElement) {
+                            receiverStatusElement.textContent = status === 'online' ? 'Online' : 'Offline';
+                        }
+                    }
+
+                    // Update the status for other participants in the room
+                    const participantStatusElement = document.getElementById(userId);
+                    if (participantStatusElement) {
+                        participantStatusElement.querySelector('.userStatus').textContent = status === 'online' ? 'Online' : 'Offline';
+                    }
+                }
+            } else if (data.message) {
+                // Handle incoming messages
+                const message = data.message;
+                const messageSenderId = data.sender_id;
+                const senderProfilePic = data.sender_profile_pic;
+
+                const messageElement = document.createElement('div');
+                const isSender = messageSenderId == senderId;
+
+                if (isSender) {
+                    messageElement.className = 'senderMessage';
+                    messageElement.innerHTML = `
+                    <p>${message}</p>
+                    <div class="receiverMessageImg">
+                        <img src="${senderProfilePic}" alt="">
+                    </div>
+                `;
+                } else {
+                    messageElement.className = 'receiverMessage';
+                    messageElement.innerHTML = `
+                    <div class="receiverMessageImg">
+                        <img src="${senderProfilePic}" alt="">
+                    </div>
+                    <p>${message}</p>
+                `;
+                }
+
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.appendChild(messageElement);
+                scrollToBottom();
+            }
+        } catch (error) {
+            console.error("Error processing WebSocket message:", error);
         }
-
-        const chatContainer = document.getElementById('chatContainer');
-        chatContainer.appendChild(messageElement);
-        scrollToBottom(); // Scroll to the bottom
     };
+
     socket.onerror = function (error) {
-        // console.error("WebSocket error:", error);
+        console.error("WebSocket error:", error);
     };
 
-    socket.onclose = function (event) {
-        // console.log("WebS    ocket connection closed!");
+    socket.onclose = function () {
+        console.log("WebSocket connection closed!");
     };
 
     function sendMessage() {
@@ -165,14 +204,12 @@
         sendMessage();
     });
 
-    // document.getElementById('messageInput').addEventListener('keypress', function (event) {
-    //     if (event.key === 'Enter') {
-    //         event.preventDefault();
-    //         sendMessage();
-    //     }
-    // });
-</script>
+    function scrollToBottom() {
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
 
+</script>
 
 
 
