@@ -15,12 +15,12 @@
                 <h1><strong>{{user.first_name}} {{user.last_name}}</strong> </h1>
                 <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
                     <span>@_ {{user.username}}</span>
-                    
+
 
                 </div>
             </div>
             <div class="user_profile_follow_msg_btn">
-                <a href="{% url 'userProfileSettings'%}" >
+                <a href="{% url 'userProfileSettings'%}">
                     <button class="follow_BTn" type="submit">Edit</button>
                 </a>
                 <a href="{% url 'friend_messages'%}"><button>Message</button></a>
@@ -39,22 +39,26 @@
             <h5>
                 <strong>{{total_followers}}</strong>
             </h5>
-            <a href="">Followers</a>
+            <a href="#">
+                <span id="load-followers-btn">Followers</span>
+            </a>
 
         </div>
         <div class=" followings">
             <h5>
                 <strong>{{total_following}}</strong>
             </h5>
-            <a href="">Following</a>
+            <a href="#">
+                <span id="load-following-btnS">Following</span>
+            </a>
 
         </div>
     </div>
-    <div class="users_all_posts" >
+    <div class="users_all_posts">
         <h2>Bio</h2>
         <p style="font-size:15px;color:#747475; margin: 10px;width: 700px; padding: 10px">{{profile.userBio}}</p>
     </div>
-    <div style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
+    <div class="dashborard-line" style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
 
     <div class="post-saved_post flex">
         <div class="userAllPosts">
@@ -66,12 +70,14 @@
                             colors="primary:#848484,secondary:#b4b4b4" style="width:25px;height:25px">
                         </lord-icon>
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;">{{total_posts}} Post</span>
+                    <span
+                        style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;">{{total_posts}}
+                        Post</span>
 
                 </div>
             </a>
         </div>
-        
+
         <div class="userAllSavePosts">
             <a href="{% url 'SavedPosts' %}" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
@@ -82,7 +88,7 @@
                         </lord-icon>
 
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;" >{{total_saved}} Saved</span>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_saved}} Saved</span>
 
                 </div>
             </a>
@@ -97,7 +103,7 @@
                         </lord-icon>
 
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;" >{{totalEvent}} Events</span>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">{{totalEvent}} Events</span>
 
                 </div>
             </a>
@@ -110,37 +116,203 @@
         <div class="UserAllPostList  flex ">
             {% for post in user_posts %}
             <a href="{%url 'post_details' post_slug=post.post_slug %}">
-            <div class="post_content ">
-                <div class="userPostContent" style="margin: 0px;">
-                    {% if post.post_image %}
-                    <img src="{{post.post_image.url}}" alt="" style="object-fit: cover;">
-                    {% else %}
-                    <p style="text-align: center; font-size:small;">{{post.content}}</p>
-                    {% endif %}
-                </div>
-                <div class="post_content-likes-comment flex">
-                    <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:white"
-                            style="width:30px;height:30px;font-weight: bold;">
-                        </lord-icon>
-                        <h4><strong>{{post.total_likes}}</strong></h4>
+                <div class="post_content ">
+                    <div class="userPostContent" style="margin: 0px;">
+                        {% if post.post_image %}
+                        <img src="{{post.post_image.url}}" alt="" style="object-fit: cover;">
+                        {% else %}
+                        <p style="text-align: center; font-size:small;">{{post.content}}</p>
+                        {% endif %}
                     </div>
-                    <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
-                            style="width:30px;height:30px;font-weight: bold;">
-                        </lord-icon>
-                        <h4><strong>{{post.total_comments}}</strong></h4>
+                    <div class="post_content-likes-comment flex">
+                        <div class="post_content-likes-commentIcons flex"
+                            style="align-items: center; text-align: center;">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                                colors="primary:white" style="width:30px;height:30px;font-weight: bold;">
+                            </lord-icon>
+                            <h4><strong>{{post.total_likes}}</strong></h4>
+                        </div>
+                        <div class="post_content-likes-commentIcons flex"
+                            style="align-items: center; text-align: center;">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                                colors="primary:white" style="width:30px;height:30px;font-weight: bold;">
+                            </lord-icon>
+                            <h4><strong>{{post.total_comments}}</strong></h4>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
             {% endfor %}
-            
+
         </div>
     </div>
+    <div id="followers-list" style="display: none;">
+        <div class="close-button close-button-follow  " style="cursor: pointer;margin: 10px;">
+            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+            <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+                style="width:20px;height:20px">
+            </lord-icon>
+        </div>
+        <!-- Followers will be displayed here -->
+        <input type="text" id="search-followers" placeholder="Search followers by username" style="padding: 5px;
+            width: 80%;
+            border-radius: 5px;
+            outline: none;
+            background-color: #d3d3d3;
+            margin-left: 45px;">
+
+        <ul class="followers-lists">
+        </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#load-followers-btn').click(function () {
+                var userId = $(this).data('user-id'); // Get the user ID from the button's data attribute
+
+                // Show the hidden div
+                $('#followers-list').css('display', 'block');
+
+                // Make the Ajax request to get the followers
+                $.ajax({
+                    url: "{% url 'followers' %}",  // Django URL pattern for the followers view
+                    type: 'GET',
+                    data: {
+                        user_id: userId  // Pass the user ID to the view
+                    },
+                    success: function (response) {
+                        if (response.followers) {
+                            var followersHtml = '';
+                            $.each(response.followers, function (index, follower) {
+                                // Construct the profile URL dynamically
+                                var profileUrl = "/profile_details/" + follower.id + "/";  // Assuming the URL pattern is something like '/profile/<id>/'
+
+                                followersHtml +=
+                                    '<li class="flex follower-item">' +  // Add the `follower-item` class here
+                                    '<div class="flex" style="align-items: center;">' +
+                                    '<div class="followersImg">' +
+                                    '<img src="' + follower.profile_picture + '" alt="' + follower.username + '">' +
+                                    '</div>' +
+                                    '<div class="followersDetails" style="margin-left: 15px;">' +
+                                    '<h5 id="follower-username-' + follower.id + '">' + follower.username + '</h5>' +
+                                    '<span style="font-size: small;color: #898989;">' + follower.first_name + ' ' + follower.last_name + '</span>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<div class="followAndUnfollowBtn">' +
+                                    '<a href="' + profileUrl + '" style="background-color: #918d8d;padding: 5px;border-radius: 8px;">View</a>' +
+                                    '</div>' +
+                                    '</li>';
+                            });
+                            $('.followers-lists').html(followersHtml);  // Update the HTML with the list of followers
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            });
+
+            // Search and filter followers by username using the h5 id
+            $('#search-followers').on('keyup', function () {
+                var searchQuery = $(this).val().toLowerCase();  // Get the search input and convert to lowercase
+
+                // Loop through all the follower items and hide those that don't match the search
+                $('.follower-item').each(function () {
+                    var userId = $(this).find('h5[id^="follower-username"]').attr('id'); // Get the h5 tag with the id that starts with 'follower-username'
+                    var username = $('#' + userId).text().toLowerCase();  // Get the username text from the id
+
+                    // If the username includes the search query, show the item, else hide it
+                    if (username.includes(searchQuery)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- following  -->
+    <script>
+        $(document).ready(function () {
+            $('#load-following-btnS').click(function () {
+                var userId = $(this).data('user-id'); // Get the user ID from the button's data attribute
+
+                // Show the hidden div
+                $('#followers-list').css('display', 'block');
+
+                // Make the Ajax request to get the followings
+                $.ajax({
+                    url: "{% url 'following' %}",  // Django URL pattern for the following view
+                    type: 'GET',
+                    data: {
+                        user_id: userId  // Pass the user ID to the view
+                    },
+                    success: function (response) {
+                        if (response.followers) {  // Ensure this key is correct based on your response
+                            var followersHtml = '';
+                            $.each(response.followers, function (index, follower) {  // Fix: using 'follower'
+                                // Construct the profile URL dynamically
+                                var profileUrl = "/profile_details/" + follower.id + "/";  // Assuming the URL pattern is something like '/profile/<id>/'
+
+                                followersHtml +=
+                                    '<li class="flex following-item">' +  // Add the `following-item` class here
+                                    '<div class="flex" style="align-items: center;">' +
+                                    '<div class="followersImg">' +
+                                    '<img src="' + follower.profile_picture + '" alt="' + follower.username + '">' +
+                                    '</div>' +
+                                    '<div class="followersDetails" style="margin-left: 15px;">' +
+                                    '<h5 id="following-username-' + follower.id + '">' + follower.username + '</h5>' +  // Add the unique ID here
+                                    '<span style="font-size: small;color: #898989;">' + follower.first_name + ' ' + follower.last_name + '</span>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<div class="followAndUnfollowBtn">' +
+                                    '<a href="' + profileUrl + '" style="background-color: #918d8d;padding: 5px;border-radius: 8px;">View</a>' +
+                                    '</div>' +
+                                    '</li>';
+                            });
+                            $('.followers-lists').html(followersHtml);  // Update the HTML with the list of followers
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            });
+
+            // Search and filter following by username using the h5 id
+            $('#search-followers').on('keyup', function () {
+                var searchQuery = $(this).val().toLowerCase();  // Get the search input and convert to lowercase
+
+                // Loop through all the following items and hide those that don't match the search
+                $('.following-item').each(function () {
+                    var userId = $(this).find('h5[id^="following-username"]').attr('id'); // Get the h5 tag with the id that starts with 'following-username'
+                    var username = $('#' + userId).text().toLowerCase();  // Get the username text from the id
+
+                    // If the username includes the search query, show the item, else hide it
+                    if (username.includes(searchQuery)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.close-button-follow').click(function () {
+                $('#followers-list').css('display', 'none'); // Hide the followers list
+            });
+        });
+    </script>
+
 
 </body>
 {% include "includes/alerts.html" %}
+
 {% endblock %}

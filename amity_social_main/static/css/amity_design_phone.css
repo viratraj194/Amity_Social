@@ -1,450 +1,425 @@
-/* Smartphones (portrait) */
-@media (max-width: 599px) {
-    .postingPage {
-        width: 100%;
-        margin: 20px auto;
-        padding: 0 10px;
+@media (max-width: 480px) {
+    * {
+        box-sizing: border-box;
     }
 
-    .postingPageLeft {
-        width: 100%;
-        position: static;
-        margin-bottom: 20px;
-    }
-
-    .postingPage_cover_photo {
-        width: 100%;
-        height: 80px;
-    }
-
-    .postingPage_profile_photo {
-        width: 50px;
-        height: 50px;
-        top: 50px;
-    }
-
-    .saySomething {
-        width: 100%;
-        padding: 15px;
-    }
-
-    .saySomething-input {
-        width: 100%;
-    }
-
-    .saySomething-attachments {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    .allPostLists {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .postContainer {
-        width: 100%;
-    }
-
-    .postContainer-card {
-        width: 100%;
-    }
-
-    .allNotifications {
-        width: 100%;
-    }
-}
-
-/* Tablets (portrait) and larger smartphones */
-@media (min-width: 600px) and (max-width: 899px) {
-    .postingPage {
-        width: 90%;
-        margin: 30px auto;
-    }
-
-    .postingPageLeft {
-        width: 100%;
-        position: static;
-        margin-bottom: 20px;
-    }
-
-    .postingPage_cover_photo {
-        width: 100%;
-        height: 90px;
-    }
-
-    .postingPage_profile_photo {
-        width: 55px;
-        height: 55px;
-        top: 60px;
-    }
-
-    .saySomething {
-        width: 100%;
-        padding: 15px;
-    }
-
-    .saySomething-input {
-        width: 100%;
-    }
-
-    .saySomething-attachments {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    .allPostLists {
-        width: 100%;
-        padding: 25px;
-    }
-
-    .postContainer {
-        width: 100%;
-    }
-
-    .postContainer-card {
-        width: 100%;
-    }
-
-    .allNotifications {
-        width: 100%;
-    }
-}
-
-/* Tablets (landscape) and smaller desktops */
-@media (min-width: 900px) and (max-width: 1199px) {
-    .postingPage {
-        width: 100%;
-        margin: 40px auto;
-    }
-
-    .postingPageLeft {
-        width: 100%;
-        position: static;
-        margin-bottom: 20px;
-    }
-
-    .postingPage_cover_photo {
-        width: 100%;
-        height: 100px;
-    }
-
-    .postingPage_profile_photo {
-        width: 60px;
-        height: 60px;
-        top: 65px;
-    }
-
-    .saySomething {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .saySomething-input {
-        width: 100%;
-    }
-
-    .saySomething-attachments {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    .allPostLists {
-        width: 100%;
-        padding: 30px;
-    }
-
-    .postContainer {
-        width: 100%;
-    }
-
-    .postContainer-card {
-        width: 100%;
-    }
-
-    .allNotifications {
-        width: 100%;
-    }
-}
-/* list post styel for phone end  */
-/* home page style for phone starts here  */
-/* Smartphones (portrait) */
-@media (max-width: 599px) {
-    /* NAV */
     .nav {
-        border-bottom: 1px solid rgba(99, 99, 99, 0.753);
+        width: 100%;
     }
 
-    .nav_image,
-    .login {
-        margin: 5px;
+    /* Styles for smartphones in portrait orientation */
+    footer {
+        /* display: none; */
+        width: 80%;
+    }
+
+    /* list style page starts */
+
+    .loggedInUserProfile {
+        display: none;
+    }
+
+    .postingPageLinks_phone,
+    .postingPageLeft {
+        display: none;
+    }
+
+    .postingPageLinks_phone-block {
+        position: fixed;
+        display: block;
+        bottom: -5px;
+        width: 100%;
+        padding: 0px;
+        /* transform: translate(-16%, 22%); */
+        z-index: 1;
+        margin: auto;
+    }
+
+    .postingPageLinks ul {
+        padding: 0px;
+        display: flex;
+    }
+
+    .postingPageLinks ul li {
+        width: 40px;
+    }
+
+    .postingPageLinks ul li a span {
+        display: none;
+    }
+
+    .postingPage {
+        width: 100%;
+    }
+
+    .postContainer-card {
+        width: 333px;
+    }
+
+    .allPostLists {
+        padding: 0px;
+        width: 100%;
+    }
+
+    .saySomething {
+        display: none;
+    }
+
+    .saySomething-input {
+        width: 300px;
+    }
+
+    .postContainer {
+        width: 100%;
         padding: 5px;
     }
 
-    .login a {
-        font-size: 18px;
-        padding: 8px;
-    }
-
-    /* CONTAINER */
-    .container {
+    .PostContainers {
+        background-color: rgb(35, 35, 35);
         width: 100%;
-        height: auto;
-        margin: 20px auto;
-        position: relative;
+        display: none;
+        transform: translate(1%, 2%);
+        padding: 20px;
+        position: fixed;
+        top: 25px;
+        max-height: 600px;
+        overflow: hidden;
+        z-index: 1000;
+        border-radius: 15px;
     }
 
-    .container .display_img {
-        height: 300px;
+    .PostContainer-postContent textarea {
+        width: 394px;
     }
 
-    .quot {
-        font-size: 14px;
-        top: 30%;
+    .hidden-image {
+        display: none;
+        width: 150px;
+        height: 150px;
     }
 
-    .quot a {
-        font-size: medium;
+    .PostContainer-caption textarea {
+        width: 390px;
+    }
+
+    /* list style page ends */
+
+    /* home page desing starts  */
+    .container {
+        width: 95%;
     }
 
     .quot h1 {
-        font-size: 24px;
+        font-size: 28px;
+        font-weight: bolder;
     }
 
     .quot h4 {
-        font-size: 18px;
-    }
-
-    /* home_title_l */
-    .home_title_l {
-        width: 100%;
-    }
-
-    .home_title_l h1 {
-        font-size: 30px;
-    }
-
-    .home_title_l span {
-        font-size: 20px;
-    }
-
-    /* cards flex */
-    .cards {
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card {
-        width: 90%;
-        margin: 10px 0;
-    }
-
-    .cards .card_img {
-        width: 100%;
-        height: 200px;
-    }
-
-    .card span {
         font-size: medium;
     }
 
-    /* sign_up_container */
-    .sign_up_container {
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .sign_up_img {
-        width: 100%;
-        height: auto;
-    }
-
-    .sign_up a {
-        font-size: 25px;
-        padding: 8px;
-    }
-
-    .sign_up h1 {
-        font-size: 30px;
-    }
-
-    /* footer */
-    footer {
-        width: 100%;
-    }
-
-    .footer_container {
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer_img {
-        width: 100%;
-        height: auto;
-    }
-
-    .footer_content {
-        width: 100%;
-    }
-
-    .footer_content .f_email input {
-        width: 90%;
-        height: 40px;
-    }
-
-    .footer_link ul {
-        flex-direction: column;
-    }
-
-    .footer_link ul a {
-        margin: 10px 0;
-    }
-
-    .f_social {
-        width: 100%;
-    }
-}
-
-/* Tablets (portrait) and larger smartphones */
-@media (min-width: 600px) and (max-width: 899px) {
-    /* NAV */
-    .nav {
-        border-bottom: 1px solid rgba(99, 99, 99, 0.753);
-    }
-
-    .nav_image,
-    .login {
-        margin: 8px;
-        padding: 8px;
-    }
-
-    .login a {
-        font-size: 22px;
-        padding: 8px;
-    }
-
-    /* CONTAINER */
-    .container {
-        width: 100%;
-        height: auto;
-        margin: 20px auto;
-    }
-
-    .container .display_img {
-        height: 500px;
-    }
-
-    .quot {
-        font-size: 16px;
-        top: 35%;
-    }
-
     .quot a {
-        font-size: large;
+        width: 150px;
     }
 
-    .quot h1 {
-        font-size: 32px;
-    }
-
-    .quot h4 {
-        font-size: 22px;
-    }
-
-    /* home_title_l */
     .home_title_l {
-        width: 100%;
-    }
-
-    .home_title_l h1 {
-        font-size: 40px;
-    }
-
-    .home_title_l span {
-        font-size: 22px;
-    }
-
-    /* cards flex */
-    .cards {
-        width: 100%;
-        flex-wrap: wrap;
-        justify-content: space-around;
-    }
-
-    .card {
-        width: 45%;
-        margin: 10px;
-    }
-
-    .cards .card_img {
-        width: 100%;
-        height: 230px;
-    }
-
-    .card span {
-        font-size: large;
-    }
-
-    /* sign_up_container */
-    .sign_up_container {
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .sign_up_img {
-        width: 100%;
-        height: auto;
-    }
-
-    .sign_up a {
-        font-size: 30px;
-        padding: 10px;
-    }
-
-    .sign_up h1 {
-        font-size: 35px;
-    }
-
-    /* footer */
-    footer {
-        width: 100%;
-    }
-
-    .footer_container {
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer_img {
-        width: 100%;
-        height: auto;
-    }
-
-    .footer_content {
-        width: 100%;
-    }
-
-    .footer_content .f_email input {
         width: 80%;
-        height: 45px;
     }
 
-    .footer_link ul {
+    .home_title_l h1 {
+        font-size: 25px;
+        font-weight: 20px;
+    }
+
+    .home_title_l span {
+        font-size: 14px;
+    }
+
+    .cards {
+        width: 80%;
         flex-direction: column;
     }
 
+    .sign_up_container {
+        width: 80%;
+        flex-direction: column;
+    }
+
+    .sign_up_container .sign_up_img {
+        width: 303px;
+        height: 400px;
+        overflow: hidden;
+        border-radius: 15px;
+    }
+
+    .footer_link ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
     .footer_link ul a {
-        margin: 10px 0;
+        margin: 10px;
+        font-size: medium;
+    }
+
+    .footer_content .f_email input {
+        width: 100%;
+    }
+
+    .footer_content strong {
+        font-size: medium;
     }
 
     .f_social {
         width: 100%;
     }
+
+    .footer_container {
+        width: 100%;
+    }
+
+    .cards .card_img {
+        width: 244px;
+        height: 168px;
+    }
+
+    .card h2 {
+        font-size: medium;
+    }
+
+    .card span {
+        font-size: medium;
+    }
+
+    /* home page desing ends */
+    /* login page desing start  */
+
+    .login_container {
+        width: 100%;
+        padding: 10px;
+
+    }
+
+    .login_container form {
+        width: 83%;
+
+
+    }
+
+    .login_container .login_welcom {
+        width: 100%;
+        text-align: center;
+    }
+
+    .login_card {
+        width: 120%;
+    }
+
+    /* login page desing start  */
+    /* user dashboard start */
+    .user_profiles {
+        width: 95%;
+    }
+
+    .following_follow_posts {
+        width: 95%;
+    }
+
+    .following_follow_posts div {
+        width: 85%;
+        margin: 10px auto;
+    }
+
+    .users_all_posts,
+    h2,
+    p {
+        width: 95% !important;
+    }
+
+    .post-saved_post {
+        width: 95%;
+    }
+
+    .UserAllPostList,
+    .dashborard-line {
+        width: 100% !important;
+    }
+
+    .user_profiles .user_profile {
+        width: 95%;
+    }
+
+    #followers-list {
+
+        position: fixed;
+        background-color: #222121e1;
+        width: 95%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 500px;
+        border-radius: 8px;
+    }
+
+    .followers-lists {
+        overflow-y: auto;
+        height: 400px;
+    }
+
+    #followers-list li {
+
+        align-items: center;
+        justify-content: space-between;
+        width: 80%;
+        background-color: #343434;
+        padding: 10px;
+        margin: 10px auto;
+        border-radius: 8px;
+
+    }
+
+
+    #followers-list .followersImg {
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        border-radius: 50%;
+
+
+    }
+
+    #followers-list .followersImg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+
+
+    }
+
+    /* .postingPageMiddle{
+        width: 95%;
+    } */
+    .postingPage {
+        margin: 0px;
+    }
+
+    .usersAllPosts {
+        width: 95%;
+    }
+
+    .PostComments-All,
+    .PostComments-forPosts {
+        width: 100%;
+        margin-left: 18px;
+    }
+
+    .ListsComments-All {
+        width: 100%;
+        margin: auto;
+    }
+
+    .userPostContent,
+    .post_content {
+        width: 100px;
+        height: 100px;
+    }
+
+    .user_profile .user_profile_image {
+        width: 110px;
+        height: 110px;
+    }
+
+    .userProfileSettings {
+        width: 95%;
+    }
+
+    .userProfileSettings-image {
+        width: 102px;
+        height: 102px;
+    }
+
+    /* user dashboard end */
+    /* user registration page  */
+    .registration_form_cover_photo {
+        width: 100%;
+    }
+
+    .registrationFormWords {
+        width: 100%;
+    }
+
+    .registrationFormWords h2 {
+        font-size: 16px;
+    }
+
+    .registrationFormWords p {
+        font-size: 14px;
+        color: #c2c0c2;
+    }
+
+    .registration_form div {
+        width: 100%;
+        flex-direction: column;
+        margin: 0%;
+
+    }
+
+    .registration_form {
+        width: 25%;
+        margin: 5px 0px;
+
+    }
+
+    .collage_name {
+        width: 405px !important;
+
+    }
+
+    .collage_name select {
+        width: 50%;
+
+    }
+
+    .agree_to_terms label {
+        width: 236px !important;
+    }
+
+    .main_container_width_phone {
+        width: 95% !important;
+    }
+
+    .message_ChatContainer {
+        width: 100%;
+    }
+
 }
 
-/* home page style for phone end here  */
+@media (min-width: 481px) and (max-width: 767px) {
+    /* Styles for smartphones in landscape orientation */
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    /* Styles for tablets in portrait orientation */
+    .postingPageLinks_phone-block {
+        display: block;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .postingPageLinks_phone-block {
+        display: none;
+    }
+
+    /* Styles for tablets in landscape orientation */
+}
+
+@media (min-width: 1280px) {
+    .postingPageLinks_phone-block {
+        display: none;
+    }
+
+    /* Styles for large desktops */
+}

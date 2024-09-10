@@ -24,10 +24,10 @@ def list_posts(request):
     posts = UserPosts.objects.filter(user__collage_name=collage).order_by('-created_at')
     total_posts = UserPosts.objects.filter(user=user)
     
-    # sending the follow request
-    follow_requests = FollowRequest.objects.filter(to_user = user, is_accepted=False)
+    # Sending the follow request
+    follow_requests = FollowRequest.objects.filter(to_user=user, is_accepted=False)
     
-        # Get all users who are following the logged-in user
+    # Get all users who are following the logged-in user
     followers = Follower.objects.filter(following=user).select_related('follower')
 
     # Get all users the logged-in user is following
@@ -36,33 +36,26 @@ def list_posts(request):
     total_following = following.count()
     total_followers = followers.count()
     
-    # posts = UserPosts.objects.all().order_by('-created_at')
+    # Add attributes to posts: is_saved, is_portrait, is_liked, is_following
     for post in posts:
         post.saved_by_user = UserSavedPosts.objects.filter(user=request.user, post=post).exists()
-    notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
-
-    
-    for post in posts:
-        if post.image_height is not None and post.image_width is not None:
-            post.is_portrait = post.image_height > post.image_width
-        else:
-            post.is_portrait = False  # Default to landscape if dimensions are missing
-     
-    for post in posts:
+        post.is_portrait = post.image_height > post.image_width if post.image_height and post.image_width else False
         post.liked_by_user = post.likes.filter(user=user).exists() if user else False
+        post.is_following = Follower.objects.filter(follower=user, following=post.user).exists()  # Add is_following attribute to each post
 
+    notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
+    
     context = {
-        'user_profile':user_profile,
-        'user':user,
-        'posts':posts,
-        'notifications':notifications,
-        'total_posts':total_posts.count(),
-        'follow_requests':follow_requests,
-        'total_following':total_following,
-        'total_followers':total_followers,
-
+        'user_profile': user_profile,
+        'user': user,
+        'posts': posts,  # Pass the modified posts list
+        'notifications': notifications,
+        'total_posts': total_posts.count(),
+        'follow_requests': follow_requests,
+        'total_following': total_following,
+        'total_followers': total_followers,
     }
-    return render(request,'list_posts/list_posts.html',context)
+    return render(request, 'list_posts/list_posts.html', context)
 
 
 @login_required(login_url='login')

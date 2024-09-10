@@ -188,9 +188,10 @@ class Room(models.Model):
             return []
 
     def get_last_message(self):
-        return self.messages.order_by('-timestamp').first()
+        return self.messages.order_by('-created_at').first()
 
-
+    def has_unread_messages(self, user):
+        return self.messages.filter(receiver=user, read=False).exists()
 
 
 
@@ -200,6 +201,7 @@ class Message(models.Model):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
     content = models.TextField()
+    read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at =models.DateTimeField(auto_now=True)
 

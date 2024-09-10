@@ -39,4 +39,10 @@ urlpatterns = [
     path('message/<int:user_id>/', views.message_user, name='message_user'),
     path('messages',views.friend_messages,name='friend_messages'),
     path('get_user_status/<int:user_id>/', views.get_user_status, name='get_user_status'),    
+
+
+
+    # list friends 
+    path('followers',views.followers, name='followers'),
+    path('following',views.following, name='following'),
 ]

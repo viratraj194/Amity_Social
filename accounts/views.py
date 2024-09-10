@@ -260,6 +260,21 @@ def SavedPosts(request):
 def post_details(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug=post_slug)
     comments = Comment.objects.filter(post=post)
+    profile = UserProfile.objects.get(user=request.user)
+    user_posts = UserPosts.objects.filter(user=request.user)
+    saved_posts = UserSavedPosts.objects.filter(user=request.user).order_by('-created_at')
+    total_posts =  user_posts.count()
+    total_saved = saved_posts.count()
+    user = request.user
+    # Get all users who are following the logged-in user
+    followers = Follower.objects.filter(following=user).select_related('follower')
+    # Get all users the logged-in user is following
+    following = Follower.objects.filter(follower=user).select_related('following')
+    # list event in hte dashboard
+    list_events = Event.objects.filter(eventCreator=user)
+    totalEvent = list_events.count()
+    total_following = following.count()
+    total_followers = followers.count()
     if request.method == 'POST':
         form = addCommentForm(request.POST)
         if form.is_valid():
@@ -272,7 +287,15 @@ def post_details(request,post_slug):
     context = {
         'post':post,
         'comments':comments,
-        'comment_form':comment_form
+        'comment_form':comment_form,
+        'profile':profile,
+        'saved_posts':saved_posts,
+        'total_posts':total_posts,
+        'total_saved':total_saved,
+        'total_following':total_following,
+        'total_followers':total_followers,
+        'totalEvent':totalEvent,
+        
         
     }
 
@@ -340,22 +363,38 @@ def deny_follow_request(request,request_id):
 
 @login_required(login_url='login')
 def room_chat(request,slug):
-
+    
      # Fetch the room based on the slug
     room = get_object_or_404(Room, slug=slug)
     
     # Fetch all messages related to this room, ordered by timestamp
     messages = room.messages.order_by('updated_at')
+    messages.update(read = True)
     sender = request.user
     receiver = room.participants.exclude(id=sender.id).first() # For private chats
-        # fetching all the friend 
-    friends = Follower.objects.filter(follower=request.user)
+    # listing all the room user is connected with 
+    rooms = Room.objects.filter(participants=sender)
+    rooms_with_photos = []
+    for rom in rooms:
+        
+        other_participants = rom.participants.exclude(id = sender.id)
+        other_user = other_participants.first()
+        last_message = rom.get_last_message()
+        unread_msg = rom.has_unread_messages(sender)
+        rooms_with_photos.append({
+            'rom': rom,
+            'other_user': other_user,
+            'profile_photo': other_user.userprofile.profile_picture.url,
+            'last_message':last_message,
+            'unread_msg':unread_msg,
+            'room_id':room.id
+        })
     context = {
         'room': room,
         'messages': messages,
         'sender': sender,
         'receiver': receiver,  
-        'friends': friends,
+        'rooms_with_photos':rooms_with_photos,
     }
     return render(request, 'accounts/message.html', context)
 
@@ -365,7 +404,7 @@ def room_chat(request,slug):
 def message_user(request, user_id):
     receiver = get_object_or_404(User, id=user_id)
     sender = request.user
-    
+
     room = Room.objects.filter(
         is_private = True,
         participants = sender
@@ -387,10 +426,26 @@ def message_user(request, user_id):
 
 def friend_messages(request):
     user = request.user
-    friends = Follower.objects.filter(follower=user)
-    
+    rooms = Room.objects.filter(participants=user)
+    rooms_with_photos = []
+    for room in rooms:
+        
+        other_participants = room.participants.exclude(id = user.id)
+        other_user = other_participants.first()
+        last_message = room.get_last_message()
+        unread_msg = room.has_unread_messages(user)
+        rooms_with_photos.append({
+            'room': room,
+            'other_user': other_user,
+            'profile_photo': other_user.userprofile.profile_picture.url,
+            'last_message':last_message,
+            'unread_msg':unread_msg,
+        })
+        # print(room.message.receiver.username)
+
     context = {
-        'friends':friends
+
+        'rooms_with_photos':rooms_with_photos,
     }
     return render(request,'accounts/friend_messages.html',context)
 
@@ -414,3 +469,44 @@ def get_user_status(request, user_id):
     except Exception as e:
         return JsonResponse({'status': 'offline'})
 
+
+
+
+def followers(request):
+    if request.method == 'GET':
+        user_id = request.user.id
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        followers = Follower.objects.filter(following=user).select_related('follower')
+       
+
+        followers_list = [{'id': follower.follower.id, 'username': follower.follower.username,'profile_picture': follower.follower.userprofile.profile_picture.url,'first_name': follower.follower.first_name,'last_name': follower.follower.last_name} for follower in followers]
+
+        return JsonResponse({'followers': followers_list}, status=200)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def following(request):
+    if request.method == 'GET':
+        user_id = request.user.id
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        followings = Follower.objects.filter(follower=user).select_related('following')
+
+        followers_list = [{'id': following.following.id, 'username': following.following.username,
+                           'profile_picture': following.following.userprofile.profile_picture.url,
+                           'first_name': following.following.first_name, 'last_name': following.following.last_name}
+                          for following in followings]
+
+        return JsonResponse({'followers': followers_list}, status=200)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    # Get all users the logged-in user is following
+    # following = Follower.objects.filter(follower=user).select_related('following')

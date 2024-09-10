@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 {%load static%}
-<div class="messageContainer flex main_container_width"
+
+<style>
+    @media (max-width: 480px) {
+        .messageUserList {
+            display: none;
+        }
+
+        footer {
+            display: none;
+        }
+    }
+</style>
+
+<div class="messageContainer flex main_container_width main_container_width_phone"
     style="margin: auto; width:  1310px; justify-content: space-between;">
     <div class="messageUserList">
         <div class="chat_title flex" style="border-bottom: 1px solid white; padding: 10px 5px;">
@@ -12,32 +25,51 @@
         </div>
         <div class="message_userLists">
             <ul class="message_user_cards">
-                {% for friend in friends%}
-                <a href="{% url 'message_user' friend.following.id%}">
-
-                    <li class="message_user_card">
-                        <div class="messageUserCard flex">
-                            <div class="userImg">
-                                <img src="{{friend.following.userprofile.profile_picture.url}}" alt="">
-                            </div>
-                            <div class="messageUsersDetails colum">
-                                <span
-                                    style="margin: 2px 0px; display: flex; justify-content: space-between;width: 224px;"><strong
-                                        style="color: rgb(210, 208, 208);">{{friend.following.username}}</strong> <small
-                                        style="color: gray;">{% if friend.following.last_login %}
-                                        {{friend.following.last_login|date:"H:i" }}{% else %}Never logged
-                                        in{%endif%}</small></span>
-                                <span
-                                    style="font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-wrap: nowrap; overflow: hidden;">details
-                                    of the user dsfsf sf dsf s and all the msg to</span>
-                            </div>
+                {% for item in rooms_with_photos %}
+                <li class="message_user_card">
+                    <a href="{% url 'room_chat' item.rom.slug %}" class="messageUserCard flex">
+                        <div class="userImg">
+                            <img src="{{ item.profile_photo }}" alt="">
                         </div>
-                    </li>
-
-                </a>
-                {%endfor%}
-
+                        <div class="messageUsersDetails column">
+                            <div class="flex">
+                                <span
+                                    style="margin: 2px 0px; display: flex; justify-content: space-between; width: 174px; font-size: 15px;">
+                                    <strong style="color: rgb(210, 208, 208);">
+                                        {% for participant in item.rom.participants.all %}
+                                        {% if participant != user %}
+                                        {{ participant.username }}
+                                        {% endif %}
+                                        {% endfor %}
+                                    </strong>
+                                </span>
+                                <small style="color: gray;">{{ item.last_message.created_at|date:"H:i" }}</small>
+                                <div id="room-{{ item.rom.slug }}" class="room-container">
+                                    {% if item.unread_msg %}
+                                    <small class="notification-icon" style="display: block;">
+                                        <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover"
+                                            colors="primary:#16c72e" style="width:20px;height:20px">
+                                        </lord-icon>
+                                    </small>
+                                    {% else %}
+                                    <small class="notification-icon" style="display: none;">
+                                        <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover"
+                                            colors="primary:#16c72e" style="width:20px;height:20px">
+                                        </lord-icon>
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <span
+                                style=" display: block; font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                                {{ item.last_message.content }}
+                            </span>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
             </ul>
+
         </div>
     </div>
     <div style="border-right: 1px solid rgb(62, 61, 61);"></div>
@@ -49,12 +81,10 @@
                 </div>
                 <div class="messageSelectedUserDetails  colum">
                     <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
-                    <span style="margin: 0px 10px; color: gray;">last seen {{formatted_time}}</span>
+                    <span style="margin: 0px 10px; color: gray;">last seen {{room.get_last_message.created_at}}</span>
                 </div>
-                <div id="{{receiver.id}}">
-                    <!-- Status elements will be dynamically created here -->
-                    <!-- <div id="senderStatus" class="userStatus"></div> -->
-                    <div id="receiverStatus" class="userStatus">offline</div>
+                <div id="receiver-{{ receiver.id }}">
+                    <div id="receiverStatus" class="userStatus">Offline</div>
                 </div>
             </div>
         </a>
@@ -98,116 +128,221 @@
         scrollToBottom();
     };
     // Retrieve room slug and sender ID from the template context
-    const roomSlug = '{{ room.slug }}';
-    const senderId = '{{ user.id }}';
-    const receiverId = '{{ receiver.id }}'; // Receiver's ID
+    document.addEventListener('DOMContentLoaded', () => {
+        const roomSlug = '{{ room.slug }}';
+        const senderId = '{{ user.id }}';
+        const receiverId = '{{ receiver.id }}'; // Receiver's ID
 
-    // Determine the correct WebSocket protocol
-    const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/chat/${roomSlug}/`;
 
-    // Update the WebSocket endpoint to use the room slug
-    const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/chat/${roomSlug}/`;
+        const socket = new WebSocket(wsEndpoint);
 
-    const socket = new WebSocket(wsEndpoint);
+        let receiverOnlineStatus = 'Offline'; // Track receiver's online status
 
-    socket.onopen = function () {
-        console.log("WebSocket connection opened");
-        console.log("Current User ID:", senderId);
-    };
+        socket.onopen = function () {
+            console.log("WebSocket connection opened");
+            console.log("Current User ID:", senderId);
+        };
 
-    socket.onmessage = function (event) {
-        try {
-            const data = JSON.parse(event.data);
-            console.log("WebSocket message received:", data);
+        socket.onmessage = function (event) {
+            try {
+                const data = JSON.parse(event.data);
+                console.log("WebSocket message received:", data);
 
-            // Handle user status updates
-            if (data.status) {
-                const userId = data.user_id;
-                const status = data.status;
+                if (data.hasOwnProperty('status')) {
+                    handleUserStatus(data);
+                } else if (data.hasOwnProperty('message')) {
+                    handleMessage(data);
+                }
+            } catch (error) {
+                console.error("Error processing WebSocket message:", error);
+            }
+        };
 
-                if (userId !== senderId) {
-                    // Update the receiver's status if it's the receiverId
-                    if (userId == receiverId) {
-                        const receiverStatusElement = document.getElementById('receiverStatus');
-                        if (receiverStatusElement) {
-                            receiverStatusElement.textContent = status === 'online' ? 'Online' : 'Offline';
+        socket.onerror = function (error) {
+            console.error("WebSocket error:", error);
+        };
+
+        socket.onclose = function () {
+            console.log("WebSocket connection closed!");
+        };
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (message && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    'message': message,
+                    'sender_id': senderId,
+                    'receiver_id': receiverId,
+                    'sender_profile_pic': '{{ user.userprofile.profile_picture.url }}'
+                }));
+                messageInput.value = '';
+            } else {
+                console.error("WebSocket is not open. Message not sent.");
+            }
+        }
+
+        document.getElementById('sendMessageButton').addEventListener('click', function (event) {
+            event.preventDefault();
+            sendMessage();
+        });
+
+        function handleUserStatus(data) {
+            const userId = data.user_id;
+            const status = data.status;
+
+            console.log(`User ${userId} status: ${status}`); // Log user status
+
+            if (userId == receiverId) {
+                const receiverStatusElement = document.getElementById('receiverStatus');
+                if (receiverStatusElement) {
+                    receiverStatusElement.textContent = status === 'online' ? 'Online' : 'Offline';
+                }
+                receiverOnlineStatus = status === 'online' ? 'Online' : 'Offline';
+                updateNotificationIcons();
+            }
+
+            // Update status of other participants
+            const participantStatusElement = document.getElementById(userId);
+            if (participantStatusElement) {
+                participantStatusElement.querySelector('.userStatus').textContent = status === 'online' ? 'Online' : 'Offline';
+            }
+        }
+
+        function handleMessage(data) {
+            const message = data.message;
+            const messageSenderId = data.sender_id;
+            const senderProfilePic = data.sender_profile_pic;
+            const isSender = messageSenderId == senderId;
+
+            if (!isSender) {
+                // If the message is from the other user, append it and update the unread message indicator
+                appendMessage(message, senderProfilePic, isSender);
+
+                // Show unread message notification only if receiver is offline
+                if (receiverOnlineStatus === 'Offline') {
+                    console.log(`Receiver ${receiverId} is offline, showing notification.`);
+                    updateUnreadMessageIndicator(roomSlug);
+                } else {
+                    console.log(`Receiver ${receiverId} is online, no notification.`);
+                    hideUnreadMessageIndicator(roomSlug); // Ensure notification is hidden if online
+                }
+            } else {
+                // If the message is from the current user (sender), just append it, no notification
+                appendMessage(message, senderProfilePic, isSender);
+            }
+
+            scrollToBottom();
+        }
+
+        function appendMessage(message, senderProfilePic, isSender) {
+            const messageElement = document.createElement('div');
+
+            if (isSender) {
+                messageElement.className = 'senderMessage';
+                messageElement.innerHTML = `
+                <p>${message}</p>
+                <div class="receiverMessageImg">
+                    <img src="${senderProfilePic}" alt="Profile Picture">
+                </div>
+            `;
+            } else {
+                messageElement.className = 'receiverMessage';
+                messageElement.innerHTML = `
+                <div class="receiverMessageImg">
+                    <img src="${senderProfilePic}" alt="Profile Picture">
+                </div>
+                <p>${message}</p>
+            `;
+            }
+
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.appendChild(messageElement);
+        }
+
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function updateUnreadMessageIndicator(roomSlug) {
+            const roomElement = document.querySelector(`#room-${roomSlug}`);
+            if (roomElement) {
+                const notificationElement = roomElement.querySelector('.notification-icon');
+                if (notificationElement) {
+                    notificationElement.style.display = 'block'; // Show the notification icon
+                }
+            }
+        }
+
+        function hideUnreadMessageIndicator(roomSlug) {
+            const roomElement = document.querySelector(`#room-${roomSlug}`);
+            if (roomElement) {
+                const notificationElement = roomElement.querySelector('.notification-icon');
+                if (notificationElement) {
+                    notificationElement.style.display = 'none'; // Hide the notification icon
+                }
+            }
+        }
+
+        function updateNotificationIcons() {
+            const rooms = document.querySelectorAll('.room-container');
+            rooms.forEach(room => {
+                const roomId = room.id.split('-')[1];
+                const notificationElement = room.querySelector('.notification-icon');
+                if (notificationElement) {
+                    const statusElement = document.querySelector(`#${roomId} .userStatus`);
+                    if (statusElement) {
+                        const status = statusElement.textContent.trim();
+                        notificationElement.style.display = status === 'Online' ? 'none' : 'block';
+
+                        // For testing purposes, add a visual indicator inside the receiver's room
+                        if (status === 'Offline') {
+                            const testIndicator = document.createElement('div');
+                            testIndicator.textContent = 'Test Indicator: Receiver Offline';
+                            testIndicator.style.color = 'red';
+                            testIndicator.style.fontWeight = 'bold';
+                            testIndicator.style.marginTop = '10px';
+
+                            // Append the test indicator only if it doesn't already exist
+                            if (!room.querySelector('.test-indicator')) {
+                                testIndicator.className = 'test-indicator';
+                                room.appendChild(testIndicator);
+                            }
+                        } else {
+                            // Remove the test indicator if the receiver is online
+                            const existingIndicator = room.querySelector('.test-indicator');
+                            if (existingIndicator) {
+                                existingIndicator.remove();
+                            }
                         }
                     }
-
-                    // Update the status for other participants in the room
-                    const participantStatusElement = document.getElementById(userId);
-                    if (participantStatusElement) {
-                        participantStatusElement.querySelector('.userStatus').textContent = status === 'online' ? 'Online' : 'Offline';
-                    }
                 }
-            } else if (data.message) {
-                // Handle incoming messages
-                const message = data.message;
-                const messageSenderId = data.sender_id;
-                const senderProfilePic = data.sender_profile_pic;
-
-                const messageElement = document.createElement('div');
-                const isSender = messageSenderId == senderId;
-
-                if (isSender) {
-                    messageElement.className = 'senderMessage';
-                    messageElement.innerHTML = `
-                    <p>${message}</p>
-                    <div class="receiverMessageImg">
-                        <img src="${senderProfilePic}" alt="">
-                    </div>
-                `;
-                } else {
-                    messageElement.className = 'receiverMessage';
-                    messageElement.innerHTML = `
-                    <div class="receiverMessageImg">
-                        <img src="${senderProfilePic}" alt="">
-                    </div>
-                    <p>${message}</p>
-                `;
-                }
-
-                const chatContainer = document.getElementById('chatContainer');
-                chatContainer.appendChild(messageElement);
-                scrollToBottom();
-            }
-        } catch (error) {
-            console.error("Error processing WebSocket message:", error);
+            });
         }
-    };
 
-    socket.onerror = function (error) {
-        console.error("WebSocket error:", error);
-    };
 
-    socket.onclose = function () {
-        console.log("WebSocket connection closed!");
-    };
-
-    function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const message = messageInput.value.trim();
-
-        if (message) {
+        function markMessagesAsRead() {
             socket.send(JSON.stringify({
-                'message': message,
-                'sender_id': senderId,
-                'receiver_id': receiverId,
-                'sender_profile_pic': '{{ user.userprofile.profile_picture.url }}'
+                'command': 'mark_as_read',
+                'room_slug': roomSlug
             }));
-            messageInput.value = '';
+
+            hideUnreadMessageIndicator(roomSlug);
         }
-    }
 
-    document.getElementById('sendMessageButton').addEventListener('click', function (event) {
-        event.preventDefault();
-        sendMessage();
+        function enterRoom() {
+            socket.send(JSON.stringify({
+                'command': 'mark_as_read',
+                'room_slug': roomSlug
+            }));
+
+            hideUnreadMessageIndicator(roomSlug);
+        }
     });
-
-    function scrollToBottom() {
-        const chatContainer = document.getElementById('chatContainer');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
 
 </script>
 

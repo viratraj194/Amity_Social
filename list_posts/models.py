@@ -6,7 +6,7 @@ from django.utils import timezone
 class UserPosts(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,db_index=True)
     content = models.TextField(blank=True,null=True)
-    caption = models.TextField(max_length=40,blank=True,null=True)
+    caption = models.TextField(max_length=200,blank=True,null=True)
 
     post_image = models.ImageField(upload_to = 'users/posts/post_image',blank=True, null = True, width_field='image_width', height_field='image_height')   
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
@@ -65,6 +65,7 @@ class Comment(models.Model):
 
 # test notification 
 class Notification(models.Model):
+    # notification_title = models.CharField(blank=True,null=True,db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications')
     notification_msg = models.CharField(blank=True,null=True)

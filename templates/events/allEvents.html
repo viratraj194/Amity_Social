@@ -3,9 +3,7 @@
 {% load static %}
 
 <style>
-    nav{
-        z-index: 1000; position: relative;
-    }
+
 </style>
 <div class="eventListingContainer " style="background: url({% static 'img/pexels-wendywei-1190298.jpg' %});"
     id="eventblur">
@@ -25,6 +23,7 @@
                 <swiper-container class="mySwiper" slides-per-view="3" centered-slides="true" pagination="true"
                     pagination-clickable="true" navigation="false" space-between="40" centered-slides="true"
                     autoplay-delay="2500" autoplay-disable-on-interaction="false">
+                    {% if events_this_week %}
                     {% for event in events_this_week%}
                     <swiper-slide style="width: 400px;">
                         <a href="{% url 'eventDetails' event.id %}">
@@ -40,6 +39,21 @@
                         </a>
                     </swiper-slide>
                     {% endfor %}
+                    {% else %}
+                    <swiper-slide style="width: 400px;">
+                        <a href="sfs">
+                            <div class="upcomintEventSlideImg" style="width: 246px; height: 300px; margin: 10 auto;">
+                                <img src="{% static "img/add_img.jpeg" %}" alt="" style="width:100%;height: 100%; object-fit: cover;">
+                                <div class="upcomingEventSliderDetails">
+                                    <span>{{event.start_datetime}}</span>
+                                    <h5>add you event to the list of this week event</h5>
+                                </div>
+
+                            </div>
+
+                        </a>
+                    </swiper-slide>
+                    {% endif %}
 
 
                 </swiper-container>
