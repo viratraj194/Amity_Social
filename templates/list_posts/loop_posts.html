@@ -1,0 +1,12 @@
+        <!-- listing post one by one here starts  -->
+        {% for post in posts %}
+        {% include "list_posts/post.html" %}
+        {% endfor %}
+        <div hx-get="{% url 'list_posts' %}?page={{ page|add:1 }}"
+            hx-trigger="revealed"
+            hx-target="this"
+            hx-swap="outerHTML">
+        </div>
+        <!-- listing post one by one here ends  -->
+
+    

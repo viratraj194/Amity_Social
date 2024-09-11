@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .forms import addCommentForm
 from django.views.decorators.cache import cache_page
-
+from django.core.paginator import Paginator
 
 
 
@@ -44,7 +44,14 @@ def list_posts(request):
         post.is_following = Follower.objects.filter(follower=user, following=post.user).exists()  # Add is_following attribute to each post
 
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
-    
+    # implement pagination
+
+    paginator = Paginator(posts,15)
+    page = int(request.GET.get('page', 1))
+    try:
+        posts = paginator.page(page)
+    except:
+        return HttpResponse('')
     context = {
         'user_profile': user_profile,
         'user': user,
@@ -54,7 +61,10 @@ def list_posts(request):
         'follow_requests': follow_requests,
         'total_following': total_following,
         'total_followers': total_followers,
+        'page':page,
     }
+    if request.headers.get('HX-Request') == 'true':
+        return render(request,'list_posts\loop_posts.html',context)
     return render(request, 'list_posts/list_posts.html', context)
 
 

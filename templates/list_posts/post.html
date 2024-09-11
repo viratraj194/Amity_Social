@@ -1,7 +1,9 @@
+{% load static %}
 <div class="allPostLists">
     <div class="postContainer">
         <a href="{%url 'profile_details' post.user.id %}">
             <div class="posting-user-Image_details flex">
+                {% if post.is_following  %}
                 {%if post.user.userprofile.profile_picture%}
                 <div class="posting-user-Image">
                     <img style="object-fit: cover; " src="{{post.user.userprofile.profile_picture.url}}" alt="">
@@ -11,10 +13,24 @@
                     <img src="{%static 'img/images.jpeg'%}" alt="">
                 </div>
                 {%endif%}
+                {% else %}
+                {%if post.user.userprofile.profile_picture%}
+                <div class="posting-user-Image">
+                    <img style="object-fit: cover; filter: blur(4px);" src="{{post.user.userprofile.profile_picture.url}}" alt="">
+                </div>
+                {%else%}
+                <div class="posting-user-Image">
+                    <img src="{%static 'img/images.jpeg'%}" alt="">
+                </div>
+                {%endif%}
+
+                {%endif%}
                 <div style="display:flex; flex-direction: column;">
-
+                    {% if post.is_following %}
                     <span style="font-size: small; font-weight: 400;">{{post.user.username}}</span>
-
+                    {% else %}
+                    <span style="font-size: small; font-weight: 400;">{{post.user.users_id}}</span>
+                    {% endif %}
                     <span style="font-size: small; font-weight: 300;">{{post.created_at}}</span>
                 </div>
             </div>
@@ -183,7 +199,11 @@
 
         <div class="postsCaptions">
             <div class="post-caption">
+                {% if post.is_following %}
                 <h4><strong style="font-size: smaller;font-weight: 100;">@{{post.user.username}}</strong>
+                {% else %}
+                <h4><strong style="font-size: smaller;font-weight: 100;">@{{post.user.users_id}}</strong>
+                {% endif %}
                     <span style="font-size: small;color: #bdb6b6;">{{post.caption}}</span></h4>
             </div>
             <!-- <div class="postAll-comments">
