@@ -52,3 +52,25 @@ $(document).ready(function() {
         });
     });
 });
+
+
+// search box showing 
+document.addEventListener("DOMContentLoaded", function() {
+    // Show the div with class searchUserHtml when clicking on elements with classes searchUsersByUID and searchUsersByPhoneUID
+    const searchUserBtns = document.querySelectorAll(".searchUsersByUID, .searchUsersByPhoneUID"); // Select both elements
+    const closeBtn = document.getElementById("searchUsers-close");
+
+    // Loop through the selected elements and add event listeners to each
+    searchUserBtns.forEach(function(button) {
+        button.addEventListener("click", function() {
+            console.log('working');
+            document.querySelector(".searchUserHtml").style.display = "block";
+        });
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", function() {
+            document.querySelector(".searchUserHtml").style.display = "none";
+        });
+    }
+});

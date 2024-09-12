@@ -268,3 +268,23 @@ def profile_details(request,user_id):
 
 
 
+from django.urls import reverse
+
+def search_user(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "GET":
+        users_id = request.GET.get('users_id', None)
+        if users_id:
+            user = get_object_or_404(User, users_id=users_id)
+            profile_url = reverse('profile_details', args=[user.id])  # Dynamically create the profile URL
+            data = {
+                'user_id': user.id,
+                'users_id': user.users_id,
+                'username': user.username,
+                'bio': user.userprofile.userBio,
+                'profile_picture': user.userprofile.profile_picture.url if user.userprofile.profile_picture else None,
+                'profile_url': profile_url,  # Add the profile URL to the response
+            }
+            return JsonResponse(data, status=200)
+        else:
+            return JsonResponse({'error': 'User not found'}, status=404)
+    return JsonResponse({'error': 'Invalid request'}, status=400)

@@ -6,9 +6,17 @@
         footer{
             display:none;
         }
+        
     }
 
 </style>
+
+{% comment %} hidden search  {% endcomment %}
+<div class="searchUserHtml" style="display:none;">
+    {% include "list_posts/search_user.html" %}
+</div>
+{% comment %} hidden search  {% endcomment %}
+
 <!-- post popup start  -->
 <script src="{% static 'js/js_components_for_ajax.js'%}"></script>
 <div class="PostContainers">
@@ -159,7 +167,7 @@
                                 <span>Home</span></a>
                         </li>
                         <li class="border-animation">
-                            <a href="{% url 'friend_messages'%}">
+                            <a href="{% url 'friend_messages'%}" >
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                 <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
                                     colors="primary:#ffffff" style="width:20px;height:20px">
@@ -171,12 +179,27 @@
                             <a class="open" style="cursor: pointer;">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                 <lord-icon src="https://cdn.lordicon.com/mecwbjnp.json" trigger="hover"
-                                    colors="primary:#ffffff,secondary:#ffffff"
+                                    colors="primary:#ffffff"
                                     style="width:25px;height:25px">
                                 </lord-icon>
                                 <span>Post</span>
                             </a>
                         </li>
+                        <li class="border-animation">
+                            <a class="searchUsersByUID" >
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/kkvxgpti.json"
+                                    trigger="hover"
+                                    colors="primary:#ffffff"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Search</span>
+                            </a>
+                        </li>
+                        
+
+                        
                         <li class="border-animation">
                             <a href="{% url "allEvents" %}">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -204,7 +227,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="postingPageMiddle">
         <div class="saySomething">
             <div class=" saySomething-submain  ">
@@ -443,6 +466,18 @@
                             style="width:25px;height:25px">
                         </lord-icon>
                         <span>Post</span>
+                    </a>
+                </li>
+                <li class="border-animation">
+                    <a class="searchUsersByPhoneUID" >
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/kkvxgpti.json"
+                            trigger="hover"
+                            colors="primary:#ffffff"
+                            style="width:20px;height:20px">
+                        </lord-icon>
+                        <span>Search</span>
                     </a>
                 </li>
                 <li class="border-animation">

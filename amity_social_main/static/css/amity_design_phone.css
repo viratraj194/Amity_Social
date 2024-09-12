@@ -27,7 +27,7 @@
     .postingPageLinks_phone-block {
         position: fixed;
         display: block;
-        bottom: -5px;
+        bottom: -22px;
         width: 100%;
         padding: 0px;
         /* transform: translate(-16%, 22%); */
@@ -60,7 +60,12 @@
         padding: 0px;
         width: 100%;
     }
-
+    #searchUsers {
+        width: 95% !important;
+    }
+    .searchUserDetails{
+        width: 50%!important;
+    }
     .saySomething {
         display: none;
     }
@@ -389,7 +394,9 @@
     .main_container_width_phone {
         width: 95% !important;
     }
-
+    .message_user_card{
+        width: 95% !important;
+    }
     .message_ChatContainer {
         width: 100%;
     }

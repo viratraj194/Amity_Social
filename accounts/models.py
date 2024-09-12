@@ -46,7 +46,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True,db_index=True)
     phone_number = models.CharField(max_length=12, blank=True,db_index=True)
     collage_name = models.CharField(blank=True,null=True,db_index=True)
-    users_id = models.CharField(max_length=20,blank=True,null=True,db_index=True)
+    users_id = models.CharField(max_length=20,unique=True,db_index=True)
     agree_to_terms = models.BooleanField(default=False,db_index=True)
     is_approved = models.BooleanField(default=False,db_index=True)
     is_online = models.BooleanField(default=False,db_index=True)

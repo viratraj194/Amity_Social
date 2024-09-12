@@ -1,0 +1,139 @@
+{%load static%}
+<style>
+    #searchUsers {
+        position: fixed;
+        background-color: #222121e1;
+        width: 25%;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 500px;
+        border-radius: 8px;
+        z-index: 2;
+    }
+
+    .searchUserImg {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .searchUserImg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .searchUserResults {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        border: 1px solid #4a4a4a;
+
+    }
+
+    .searchUserResults a {
+        background-color: #878787;
+        padding: 5px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .searchUserResults p {
+        display: block;
+        font-size: small;
+        color: rgb(134, 135, 135);
+        margin: 2px 0px;
+        width: 100px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .searchUsers input {
+
+        width: 85%;
+        margin: auto;
+        outline: none;
+        border: none;
+        background-color: #5c59599c;
+        padding-left: 10px;
+        border-radius: 8px;
+        height: 35px;
+        color: white;
+    }
+
+    .searchUsers input::placeholder {
+        padding-left: 10px;
+        color: white;
+    }
+</style>
+
+
+<section id="searchUsers">
+    <span id="searchUsers-close" style="padding-left: 10px; margin-top: 5px;">
+        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+        <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+            style="width:20px;height:20px"></lord-icon>
+        </lord-icon>
+    </span>
+    <div class="searchUsers">
+        <div class="searchUserInput flex">
+            <input type="search" name="users_id" id="user_id_input" placeholder="Search User By UID">
+        </div>
+        <!-- Add an ID to the <ul> element for JavaScript to target -->
+        <ul id="searchResults">
+            <!-- This will be dynamically populated by the JavaScript -->
+        </ul>
+    </div>
+</section>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("user_id_input").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+
+                let usersId = document.getElementById("user_id_input").value;
+
+                if (usersId) {
+                    fetch(`/search-user/?users_id=${usersId}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            let searchResults = document.getElementById("searchResults");
+                            searchResults.innerHTML = ''; // Clear previous results
+
+                            if (data.error) {
+                                searchResults.innerHTML = `<li class="searchUserResults">User not found</li>`;
+                            } else {
+                                searchResults.innerHTML = `
+                            <li class="searchUserResults" style="width: 95%;border-radius: 8px;">
+                                <div class="searchUserImg">
+                                    <img src="${data.profile_picture}" alt="Profile Picture">
+                                </div>
+                                <div class="searchUserDetails">
+                                    <h5>${data.username}</h5>
+                                    <p>${data.bio}</p>
+                                </div>
+                                <a href="${data.profile_url}">View</a>  <!-- Use the profile_url from JSON -->
+                            </li>
+                        `;
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    alert("Please enter a valid User ID.");
+                }
+            }
+        });
+    });
+
+</script>
