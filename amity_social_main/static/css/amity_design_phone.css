@@ -400,6 +400,33 @@
     .message_ChatContainer {
         width: 100%;
     }
+    /* post details starts  */
+    .PostDetails-Allcomments{
+        border-radius: 8px;
+        position:absolute;
+        z-index: 2;
+        background-color: #222222f6;
+        width: 90%;
+        height: 509px;
+        padding: 5px;
+        overflow: hidden;
+    }
+    .PostDetailsAll-comments .phone_comment{
+        word-wrap:break-word;
+        display: inline-block;
+        width: 271px !important;
+   
+    }
+    .PostDetailsContents{
+        height: 540px;
+    }
+    .PostDetailsAll-comment-details {
+        width: 271px;
+    }
+    .PostDetails-comments-add_btn textarea {
+        width: 341px;
+    }
+    /* post details ends  */
 
 }
 
@@ -413,19 +440,27 @@
     .postingPageLinks_phone-block {
         display: block;
     }
+    .phone_post_details_comment_close{
+        display:none;
+    }
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
     .postingPageLinks_phone-block {
         display: none;
     }
-
+    .phone_post_details_comment_close{
+        display:none;
+    }
     /* Styles for tablets in landscape orientation */
 }
 
 @media (min-width: 1280px) {
     .postingPageLinks_phone-block {
         display: none;
+    }
+    .phone_post_details_comment_close{
+        display:none;
     }
 
     /* Styles for large desktops */

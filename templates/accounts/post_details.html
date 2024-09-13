@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-    <style>
-        @media (max-width: 480px) {
-        .usersAllPosts{
-            display: none !important;
+<style>
+    @media (max-width: 480px) {
+        .PostDetails-Allcomments {
+            display: none;
+        }
+
+        .phone_post_details_comment_close {
+            display: block;
         }
     }
-    </style>
+</style>
+
 <body>
     <div class="user_profiles ">
         <div class="user_profile">
@@ -25,7 +30,7 @@
                 </div>
             </div>
             <div class="user_profile_follow_msg_btn">
-                <a href="{% url 'userProfileSettings'%}" >
+                <a href="{% url 'userProfileSettings'%}">
                     <button class="follow_BTn" type="submit">Edit</button>
                 </a>
                 <a href="{% url 'friend_messages' %}"><button>Message</button></a>
@@ -55,7 +60,7 @@
 
         </div>
     </div>
-    <div class="users_all_posts" >
+    <div class="users_all_posts">
         <h2>Bio</h2>
         <p style="font-size:15px;color:#747475; margin: 10px;width: 700px; padding: 10px">{{profile.userBio}}</p>
     </div>
@@ -63,7 +68,7 @@
 
     <div class="post-saved_post flex">
         <div class="userAllPosts">
-            <a href="{% url 'UserDashboard'%}" style="margin: 0px !important;">
+            <a href="#" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
                     <div class="icon">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -71,14 +76,16 @@
                             colors="primary:#848484,secondary:#b4b4b4" style="width:25px;height:25px">
                         </lord-icon>
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_posts}} Post</span>
+                    <span
+                        style="font-size: large; margin-left: 5px; font-weight: 300; border-bottom: 2px solid #86829a;">{{total_posts}}
+                        Post</span>
 
                 </div>
             </a>
         </div>
-        
+
         <div class="userAllSavePosts">
-            <a href="#" style="margin: 0px !important;">
+            <a href="{% url 'SavedPosts' %}" style="margin: 0px !important;">
                 <div class="flex" style="align-items: center;">
                     <div class="icon">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -87,7 +94,7 @@
                         </lord-icon>
 
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;  border-bottom: 2px solid #86829a;" >{{total_saved}} Saved</span>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">{{total_saved}} Saved</span>
 
                 </div>
             </a>
@@ -102,7 +109,7 @@
                         </lord-icon>
 
                     </div>
-                    <span  style="font-size: large; margin-left: 5px; font-weight: 300;" >{{totalEvent}} Events</span>
+                    <span style="font-size: large; margin-left: 5px; font-weight: 300;">{{totalEvent}} Events</span>
 
                 </div>
             </a>
@@ -119,14 +126,10 @@
 
                                 <div class="swiper-slide">
                                     <div class="postContainer-Post_Big-image">
-                                        <img src="{{post.post_image.url}}"
-                                            alt="">
+                                        <img src="{{post.post_image.url}}" alt="">
                                     </div>
                                 </div>
                                 {%endif%}
-
-
-
                                 {%if post.content%}
                                 <div class="swiper-slide">
                                     <style>
@@ -152,26 +155,64 @@
                         </div>
                     </div>
 
-                </div>
+                    <div class="post_details_likes_comments flex">
+                        <div class="post_details_like flex" style="align-items: center;">
+                            <a href="{% url 'post_details_like' post.id %}" >
+                                <div class=""style="align-items: center;">
+                                    {% if liked_by_user %}
+                                    <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
+                                        colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>
+                                    {% else %}
+                                    <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                                        colors="primary:#848484" style="width:30px;height:30px"></lord-icon>
+                                    {% endif %}
+                                    
+                                </div>
+                            </a>
+                            <small style="color: gray; margin: 0px 5px;">{{total_likes}}</small>
 
+                        </div>
+                        <div class="post_details_comment flex" style="align-items: center;">
+                            <lord-icon class="Comment-onPost show-comments-btn" data-post-id="35" data-id="35"
+                                data-url="/comments/35/" src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                                colors="primary:#777b7b" style="width:30px;height:30px">
+                            </lord-icon>
+                            <small style="color: gray; margin:0px 5px;">{{total_comments}}</small>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="PostDetails-Allcomments">
                 <div class="postDetails_title">
-                    <h4 style="text-align: center; font-size: large; font-weight: 400;">Comments</h4>
+                    <span class="phone_post_details_comment_close" id="phone_post_details">
+                        <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+                            style="width:20px;height:20px">
+                        </lord-icon>
+                    </span>
+                    <h4
+                        style="text-align: center; font-size: large; font-weight: 400;border-bottom: 1px solid #595765;">
+                        Comments</h4>
                 </div>
                 <div class="PostDetailsAll-comments ">
-                    
+
                     <div class="PostDetailsAll-comment ">
                         {%if comments%}
                         {%for comment in comments%}
                         <div class="postDetailsAll-comment-lists flex" style="margin: 10px auto;">
                             <div class="PostDetailsAll-comment-img">
-                                <img src="{{comment.user.userprofile.profile_picture.url}}"  alt="">
+                                <img src="{{comment.user.userprofile.profile_picture.url}}" alt="">
                             </div>
-                            
+
                             <div class="PostDetailsAll-comment-details">
-                                <h4><strong style="font-size: small;font-weight: 400;">@{{comment.user.users_id}}</strong> <span>{{comment.comment}}</span></h4>
-                                <h6><span style="margin: 0px 10px; font-weight: 300;">{{comment.created_at}}</span> <span style="font-weight: 300;">replay</span></h6>
+                                <h4 class="flex"><strong
+                                        style="font-size: small;font-weight: 400;">@{{comment.user.users_id}}</strong>
+                                    <span class="phone_comment"
+                                        style="word-wrap: break-word;font-size: small;font-weight: 300;color:#939393; width:390px;">{{comment.comment}}</span>
+                                </h4>
+                                <h6 style="color: #625f5f;">
+                                    <span style="margin: 0px 10px; font-weight: 300;">{{comment.created_at}}</span>
+                                    <span style="font-weight: 300;">replay</span>
+                                </h6>
                             </div>
                         </div>
                         {%endfor%}
@@ -183,8 +224,7 @@
                         {%csrf_token%}
                         <div class="PostDetails-comments-add_btn" style="align-items: center;">
                             <textarea name="comment" style="resize: none;"></textarea>
-                            <button class="add_comments" data-id="{{ post.id }}"
-                                data-url="" type="submit">Post</button>
+                            <button class="add_comments" data-id="{{ post.id }}" data-url="" type="submit">Post</button>
                         </div>
 
                     </form>
@@ -194,206 +234,33 @@
         </div>
     </div>
     <!-- post details for phone responsive start  -->
-    {% for post in posts %}
-        <div class="allPostLists">
-            <div class="postContainer">
-                <a href="{%url 'profile_details' post.user.id %}">
-                    <div class="posting-user-Image_details flex">
-                        {%if post.user.userprofile.profile_picture%}
-                        <div class="posting-user-Image">
-                            <img style="object-fit: cover; filter: blur(4px);" src="{{post.user.userprofile.profile_picture.url}}" alt="">
-                        </div>
-                        {%else%}
-                        <div class="posting-user-Image">
-                            <img src="{%static 'img/images.jpeg'%}" alt="">
-                        </div>
-                        {%endif%}
-                        <div style="display:flex; flex-direction: column;">
 
-                            <span style="font-size: small; font-weight: 400;">{{post.user.users_id}}</span>
-
-                            <span style="font-size: small; font-weight: 300;">{{post.created_at}}</span>
-                        </div>
-                    </div>
-                </a>
-                <div class="postContainer-card">
-                    <div class="swiper-container">
-                        <div class="swiper-wrapper">
-                            {% if post.post_image %}
-                            {% if post.is_portrait %}
-                            <div class="swiper-slide">
-                                <div class="postContainer-Post_Big-image">
-                                    <img src="{{post.post_image.url}}" alt="">
-                                </div>
-                            </div>
-                            {%else%}
-                            <div class="swiper-slide">
-                                <div class="postContainer-Post_image">
-                                    <img src="{{post.post_image.url}}" alt="">
-                                </div>
-                            </div>
-                            {%endif%}
-                            {% endif %}
-                            {% if post.content %}
-                            <div class="swiper-slide">
-                                <style>
-                                    .swiper-slide-active {
-                                        margin: auto;
-                                    }
-                                </style>
-                                <div class="postContainer-Post_image "
-                                    style="justify-content: center;align-items: center;">
-                                    <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; ">
-                                        {{post.content}}</p>
-                                </div>
-                            </div>
-                            {% endif %}
-                            <!-- Add more swiper slides as needed -->
-                        </div>
-                        <!-- Pagination -->
-
-                        <div class="Pagination-Dots">
-                            <div class="swiper-pagination"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="posts-likes-comments-saves flex">
-                    <div class="flex">
-                        <div class="posts-like-comment-save">
-                            <a href="#" class="like_post" data-id="{{ post.id }}"
-                                data-url="{% url 'post_like' post.id %}">
-                                <div class="post_icon flex {% if post.liked_by_user %}postLiked_icon{% else %}postUnliked_icon{% endif %}"
-                                    style="align-items: center;">
-                                    {% if post.liked_by_user %}
-                                    <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
-                                        colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>
-                                    {% else %}
-                                    <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                        colors="primary:#848484" style="width:30px;height:30px"></lord-icon>
-                                    {% endif %}
-                                </div>
-                                {% if post.total_likes%}
-                                <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
-                                    Likes</span>
-                                {%else%}
-                                <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
-                                    Likes</span>
-                                {%endif%}
-                            </a>
-                        </div>
-
-                        <div class="posts-like-comment-save Comment-onPost">
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon class="Comment-onPost show-comments-btn" data-post-id="{{ post.id }}"
-                                data-id="{{post.id}}" data-url="{% url 'get_comments' post.id %}"
-                                src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:#777b7b"
-                                style="width:30px;height:30px">
-                            </lord-icon>
-                        </div>
-
-                    </div>
-                    <!-- adding comment  starts  -->
-
-                    <div class="PostComments-forPosts" data-id="{{post.id}}" style="display: none;">
-
-                        <div class="comment-close " style="cursor: pointer;">
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon src="https://cdn.lordicon.com/jkppkiom.json" trigger="hover"
-                                colors="primary:#848484" style="width:20px;height:20px">
-                            </lord-icon>
-                        </div>
-
-                        <div class="PostComments-forPostsTitle">
-                            <h3>Comments</h3>
-                        </div>
-                        <div class="PostComments-All">
-                            <div class="ListsComments-All">
-
-                                <div id="comments-container-{{ post.id }}"
-                                    class="ListComments-All comments-container flex">
-                                    <div class="ListComments-UserProfile">
-                                        <img src="" alt="">
-                                    </div>
-                                    <div class="Comments_contents">
-                                        <div>
-                                            <small><strong></strong>
-                                                <span></span></small>
-                                        </div>
-
-                                        <div class="Comment_details-time flex">
-                                            <span style="margin: 0px 10px;">36/25/</span>
-                                            <span style="margin: 0px 10px;">Replay</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <!-- Add more comments as needed -->
-                            </div>
-
-                            <div class="PostComments-Input flex">
-                                {%if user_profile.profile_picture %}
-                                <div class="comment-posting-user">
-                                    <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
-                                </div>
-                                {%else%}
-
-                                <div class="comment-posting-user">
-                                    <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
-                                </div>
-                                {%endif%}
-                                <div class=" Main-commentdiv flex">
-                                    <textarea class="textareamain" name="comment" style="resize: none;"
-                                        placeholder="Comment......"></textarea>
-                                    <div class="Comment-PostButton">
-
-                                        <button class="add_comments" data-id="{{ post.id }}"
-                                            data-url="{% url 'add_comment' post.id %}" type="submit">Post</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- adding comment  ends -->
-
-                    <div >
-                        <a class="posts-save" href="#like" data-id="{{post.id}}" data-url="{% url 'save_post' post.id %}">
-                            {% if post.saved_by_user %}
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon class="save_post_icon" src="https://cdn.lordicon.com/oiiqgosg.json" trigger="hover"
-                            colors="primary:#777b7b" style="width:30px;height:30px">
-                            </lord-icon>
-                            {%else%}
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon class="save_post_icon" src="https://cdn.lordicon.com/prjooket.json" trigger="hover"
-                                colors="primary:#777b7b" style="width:30px;height:30px">
-                            </lord-icon>
-                            {%endif%}
-                        </a>
-                    </div>
-
-                </div>
-
-
-
-
-                <div class="postsCaptions">
-                    <div class="post-caption">
-                        <h4><strong style="font-size: smaller;font-weight: 100;">@{{post.user.users_id}}</strong>
-                            <span style="font-size: small;color: #bdb6b6;">{{post.caption}}</span></h4>
-                    </div>
-                    <!-- <div class="postAll-comments">
-                        <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
-                    </div> -->
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
 
     <!-- post details for phone responsive end  -->
+    <script>
 
+        // search box showing 
+        document.addEventListener("DOMContentLoaded", function () {
+            // Show the div with class searchUserHtml when clicking on elements with classes searchUsersByUID and searchUsersByPhoneUID
+            const searchUserBtns = document.querySelectorAll(".post_details_comment"); // Select both elements
+            const closeBtn = document.getElementById("phone_post_details");
+
+            // Loop through the selected elements and add event listeners to each
+            searchUserBtns.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    console.log('working');
+                    document.querySelector(".PostDetails-Allcomments").style.display = "block";
+                });
+            });
+
+            if (closeBtn) {
+                closeBtn.addEventListener("click", function () {
+                    document.querySelector(".PostDetails-Allcomments").style.display = "none";
+                });
+            }
+        });
+
+    </script>
 </body>
 {% include "includes/alerts.html" %}
 {% endblock %}

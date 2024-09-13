@@ -21,6 +21,7 @@ urlpatterns = [
 
     # post details 
     path('post_details/<slug:post_slug>/',views.post_details,name='post_details'),
+    path('post_details_like/<int:post_id>',views.post_details_like,name='post_details_like'),
     # path('post_details_addComment',views.post_details_addComment,name='post_details_addComment'),
     # deleting the post
     path('deletePost/<slug:post_slug>/',views.deletePost,name='deletePost'),

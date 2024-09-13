@@ -288,3 +288,6 @@ def search_user(request):
         else:
             return JsonResponse({'error': 'User not found'}, status=404)
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+

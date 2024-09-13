@@ -92,14 +92,14 @@
                                 colors="primary:#848484" style="width:30px;height:30px"></lord-icon>
                             {% endif %}
                         </div>
-                        {% if post.total_likes%}
-                        <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
-                            Likes</span>
-                        {%else%}
-                        <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
-                            Likes</span>
-                        {%endif%}
                     </a>
+                    {% if post.total_likes%}
+                    <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
+                        Likes</span>
+                    {%else%}
+                    <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
+                        Likes</span>
+                    {%endif%}
                 </div>
 
                 <div class="posts-like-comment-save Comment-onPost">

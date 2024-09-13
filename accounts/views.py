@@ -1,4 +1,5 @@
 from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
+from list_posts.models import UserPosts
 from . forms import UserForm,userInfoForm,userProfileForm
 from .models import *
 from . utils import users_id_generator,send_email_verification,detectUser
@@ -7,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
-from list_posts .models import UserPosts,UserSavedPosts,Comment
+from list_posts .models import UserPosts,UserSavedPosts,Comment,Like
 from list_posts . forms import addCommentForm
 from django.http import JsonResponse
 from django.db.models import Q
@@ -260,6 +261,9 @@ def SavedPosts(request):
 def post_details(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug=post_slug)
     comments = Comment.objects.filter(post=post)
+    likes = Like.objects.filter(post=post)
+    total_likes = likes.count()
+    total_comments = comments.count()
     profile = UserProfile.objects.get(user=request.user)
     user_posts = UserPosts.objects.filter(user=request.user)
     saved_posts = UserSavedPosts.objects.filter(user=request.user).order_by('-created_at')
@@ -284,6 +288,7 @@ def post_details(request,post_slug):
             new_comment.save()
             return redirect('post_details',post_slug=post_slug)
     comment_form = addCommentForm()
+    liked_by_user = Like.objects.filter(user=user, post=post).exists()
     context = {
         'post':post,
         'comments':comments,
@@ -295,12 +300,29 @@ def post_details(request,post_slug):
         'total_following':total_following,
         'total_followers':total_followers,
         'totalEvent':totalEvent,
+        'total_comments':total_comments,
+        'total_likes':total_likes,
+        'liked_by_user':liked_by_user,
         
         
     }
 
     return render(request,'accounts/post_details.html',context)
 
+
+def post_details_like(request,post_id):
+    user = request.user
+    post = get_object_or_404(UserPosts,id = post_id)
+    if Like.objects.filter(user=user,post=post).exists():
+        Like.objects.filter(user=user,post=post).delete()
+        liked = False
+    else:
+        Like.objects.create(user=user,post=post)
+        liked = True
+        if post.user != user:
+            Notification.objects.create(user=post.user,post = post,actor=user, notification_msg='Liked your Post.')
+
+    return redirect('post_details',post_slug=post.post_slug)
 
 def deletePost(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug = post_slug,user=request.user)
