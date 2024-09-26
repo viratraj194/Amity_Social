@@ -105,7 +105,7 @@ def add_posts(request):
     }
     return render(request, 'list_posts/list_posts.html', context)
 
-
+@login_required(login_url='login')
 def mark_notification_as_read(request, notification_id):
     notification = Notification.objects.get(id=notification_id, user=request.user)
     notification.read = True
@@ -153,7 +153,7 @@ def add_comment(request, post_id):
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import UserPosts, Comment
-
+@login_required(login_url='login')
 def get_comments(request, post_id):
     post = get_object_or_404(UserPosts, id=post_id)
     comments = Comment.objects.filter(post=post).select_related('user__userprofile')
@@ -180,7 +180,7 @@ def get_comments(request, post_id):
     ]  
     return JsonResponse({'comments': comments_data})
 
-
+@login_required(login_url='login')
 def post_like(request, post_id):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -212,7 +212,7 @@ def post_like(request, post_id):
         return JsonResponse({'status': 'failed', 'message': 'Please login to continue'})
 
 
-
+@login_required(login_url='login')
 def save_post(request, post_id):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         try:
@@ -235,7 +235,7 @@ def save_post(request, post_id):
 
 # user profile details
 
-
+@login_required(login_url='login')
 def profile_details(request,user_id):
     user = request.user
     profile = get_object_or_404(User,id=user_id)
@@ -269,7 +269,7 @@ def profile_details(request,user_id):
 
 
 from django.urls import reverse
-
+@login_required(login_url='login')
 def search_user(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "GET":
         users_id = request.GET.get('users_id', None)

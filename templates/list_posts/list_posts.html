@@ -6,7 +6,6 @@
         footer{
             display:none;
         }
-        
     }
 
 </style>
@@ -94,7 +93,7 @@
     <ul class="messages" style="color: red;">
         {% for message in messages %}
         <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-            {% endfor %}
+        {% endfor %}
     </ul>
     {% endif %}
 </div>
@@ -337,7 +336,14 @@
     
     <div class="postingPageLast">
         <div class="sticky">
+            
             <div class="allNotifications">
+                <span id="notification-close" >
+                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                    <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+                        style="width:20px;height:20px"></lord-icon>
+                    </lord-icon>
+                </span>
                 <div class="flex">
                     <h4>Notifications</h4>
                     {%if notifications or follow_requests%}
@@ -509,16 +515,17 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('.like_post').on('click', function (e) {
+        // Use event delegation to handle the click event
+        $(document).on('click', '.like_post', function (e) {
             e.preventDefault();
             const postId = $(this).attr('data-id');
             const url = $(this).attr('data-url');
             const csrfToken = getCookie('csrftoken');
-
+    
             const data = {
                 post_id: postId
             };
-
+    
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -529,11 +536,10 @@
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
-
+    
                     // Select the icon div and like count span
                     const iconDiv = $(`.like_post[data-id="${postId}"] .post_icon`);
-
-
+    
                     // Toggle icon based on liked status
                     if (response.liked) {
                         iconDiv.removeClass('postUnliked_icon').addClass('postLiked_icon');
@@ -543,89 +549,86 @@
                         iconDiv.removeClass('postLiked_icon').addClass('postUnliked_icon');
                         iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
                         colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
-
                     }
-
-                    // Update the likes count
-
+    
+                    // Update the likes count (if needed)
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
                 }
             });
         });
-
-
+    
+        // Function to get CSRF token
         function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
-        }
-        return cookieValue;
-        };  
+            return cookieValue;
+        };
     });
-
-    // saving the post 
-  
-
+    
 </script>
 <script>
-  $(document).ready(function () {
-    $('.posts-save').on('click', function (e) {
-        e.preventDefault();
-        const postId = $(this).attr('data-id');
-        const url = $(this).attr('data-url');
-        const csrfToken = getCookie('csrftoken');
-
-        $.ajax({
-            type: 'POST',
-            url: url,
-            headers: {
-                'X-CSRFToken': csrfToken
-            },
-            data: JSON.stringify({ post_id: postId }),
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.status === 'success') {
-                    const postIcon = $(`.posts-save[data-id="${postId}"] .save_post_icon`);
-                    if (response.post_saved) {
-                        postIcon.attr('src', 'https://cdn.lordicon.com/oiiqgosg.json');
+    $(document).ready(function () {
+        // Use event delegation to handle the click event
+        $(document).on('click', '.posts-save', function (e) {
+            e.preventDefault();
+            const postId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const csrfToken = getCookie('csrftoken');
+    
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify({ post_id: postId }),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        const postIcon = $(`.posts-save[data-id="${postId}"] .save_post_icon`);
+                        if (response.post_saved) {
+                            postIcon.attr('src', 'https://cdn.lordicon.com/oiiqgosg.json');
+                        } else {
+                            postIcon.attr('src', 'https://cdn.lordicon.com/prjooket.json');
+                        }
                     } else {
-                        postIcon.attr('src', 'https://cdn.lordicon.com/prjooket.json');
+                        console.error('Failed to save post');
                     }
-                } else {
-                    console.error('Failed to save post');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error:', error);
-            }
+            });
         });
-    });
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+    
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
-});
-
+    });
+    
 </script>
 <!-- POSTING PAGE ENDS -->
 
@@ -649,15 +652,21 @@
         });
     });
 
-    // adding teh comment 
+    // Adding the comment using event delegation
     $(document).ready(function () {
-        $('.add_comments').on('click', function (e) {
+        // Use event delegation to handle the click event
+        $(document).on('click', '.add_comments', function (e) {
             e.preventDefault();
 
             const postId = $(this).attr('data-id');
             const url = $(this).attr('data-url');
             const commentText = $(this).closest('.PostComments-Input').find('.textareamain').val().trim();
             const csrfToken = getCookie('csrftoken');
+
+            if (!commentText) {
+                console.log('Comment text is empty.');
+                return;
+            }
 
             const data = {
                 comment: commentText,
@@ -709,6 +718,7 @@
             });
         });
 
+        // Function to get CSRF token
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -725,14 +735,14 @@
         }
     });
 
-
 </script>
 
 <!-- showing comments  -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('.show-comments-btn').on('click', function (e) {
+        // Use event delegation for dynamically loaded posts
+        $(document).on('click', '.show-comments-btn', function (e) {
             e.preventDefault();
 
             var postId = $(this).data('post-id');  // Get post ID from data attribute
@@ -761,7 +771,7 @@
                                     </div>
                                 </div>
                             </div>
-                            `;
+                        `;
                     });
 
                     // Update the specific comments container for the current post

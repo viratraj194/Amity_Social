@@ -90,7 +90,7 @@ def login(request):
             return redirect('list_posts')
     return render(request,'accounts/login.html')
 
-
+@login_required(login_url='login')
 def logout(request):
     user = request.user
     user.is_online = False
@@ -227,7 +227,7 @@ def UserDashboard(request):
 
     }
     return render(request,'accounts/UserDashboard.html',context)
-
+@login_required(login_url='login')
 def SavedPosts(request):
     profile = UserProfile.objects.get(user=request.user)
     user_posts = UserPosts.objects.filter(user=request.user)
@@ -257,7 +257,7 @@ def SavedPosts(request):
     }
     return render(request,'accounts/SavedPosts.html',context)
 
-
+@login_required(login_url='login')
 def post_details(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug=post_slug)
     comments = Comment.objects.filter(post=post)
@@ -309,7 +309,7 @@ def post_details(request,post_slug):
 
     return render(request,'accounts/post_details.html',context)
 
-
+@login_required(login_url='login')
 def post_details_like(request,post_id):
     user = request.user
     post = get_object_or_404(UserPosts,id = post_id)
@@ -329,7 +329,7 @@ def deletePost(request,post_slug):
     post.delete()
     return redirect('UserDashboard')
 
-
+@login_required(login_url='login')
 # follow systems 
 def send_follow_request(request,user_id):
     to_user = get_object_or_404(User,id=user_id)
@@ -346,7 +346,7 @@ def send_follow_request(request,user_id):
         return redirect('profile_details',user_id=user_id)
 
     return redirect('profile_details',user_id=user_id)
-
+@login_required(login_url='login')
 # accepting the request 
 def accept_follow_request(request,request_id):
     follow_request = get_object_or_404(FollowRequest, id=request_id, to_user=request.user)
@@ -367,7 +367,7 @@ def accept_follow_request(request,request_id):
             follow_request.delete()
             return JsonResponse({'status': 'already_following'})
     return JsonResponse({'status': 'error'}, status=400)
-
+@login_required(login_url='login')
 def unFollow(request,user_id):
     profile = get_object_or_404(User,id=user_id)
     Follower.objects.filter(follower=request.user, following=profile).delete()
@@ -445,7 +445,7 @@ def message_user(request, user_id):
     return redirect('room_chat',slug = room.slug)
 
 
-
+@login_required(login_url='login')
 def friend_messages(request):
     user = request.user
     rooms = Room.objects.filter(participants=user)
@@ -493,7 +493,7 @@ def get_user_status(request, user_id):
 
 
 
-
+@login_required(login_url='login')
 def followers(request):
     if request.method == 'GET':
         user_id = request.user.id
@@ -510,7 +510,7 @@ def followers(request):
 
         return JsonResponse({'followers': followers_list}, status=200)
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
+@login_required(login_url='login')
 def following(request):
     if request.method == 'GET':
         user_id = request.user.id

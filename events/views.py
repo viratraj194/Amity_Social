@@ -6,6 +6,8 @@ from django.utils import timezone
 from accounts.models import*
 from list_posts.models import*
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 
 def get_current_week():
     today = timezone.now()
@@ -20,7 +22,7 @@ def get_current_month():
     end_of_month = next_month - datetime.timedelta(days=next_month.day)
     return start_of_month, end_of_month
 
-
+@login_required(login_url='login')
 def allEvents(request):
      # Get the date ranges
     start_of_week, end_of_week = get_current_week()
@@ -44,7 +46,7 @@ def allEvents(request):
         'events_this_month': events_this_month,
     }
     return render(request,'events/allEvents.html',context)
-
+@login_required(login_url='login')
 def addEvents(request):
     if request.method == 'POST':
         form = addEventsForm(request.POST,request.FILES)
@@ -63,7 +65,7 @@ def addEvents(request):
     }
     return render(request, 'events/addEvents.html', context)
 
-
+@login_required(login_url='login')
 def userEvents(request):
     events = Event.objects.filter(eventCreator=request.user)
     profile = UserProfile.objects.get(user=request.user)
@@ -95,7 +97,7 @@ def userEvents(request):
 
     }
     return render(request,'events/userEvents.html',context)
-
+@login_required(login_url='login')
 def eventDetails(request,event_id):
     start_of_month, end_of_month = get_current_month()
     event = Event.objects.get(id = event_id)
@@ -113,7 +115,7 @@ def eventDetails(request,event_id):
     }
     return render(request,'events/eventDetails.html',context)
 
-
+@login_required(login_url='login')
 def editEvent(request,event_id=None):
     event = get_object_or_404(Event,id=event_id)
     if request.method == 'POST':
@@ -135,7 +137,7 @@ def editEvent(request,event_id=None):
     }
 
     return render(request,'events/editEvent.html',context)
-
+@login_required(login_url='login')
 def deleteEvent(request,event_id):
     event = get_object_or_404(Event,id=event_id)
     event.delete()

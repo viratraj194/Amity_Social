@@ -134,42 +134,33 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
 // comment sections
+// Event delegation for toggling comments
 document.addEventListener('DOMContentLoaded', function () {
-    $('.Comment-onPost').on('click', function (e) {
-        e.preventDefault();
-        const post_id = $(this).attr('data-id');
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('Comment-onPost')) {
+            e.preventDefault();
+            const post_id = e.target.getAttribute('data-id');
 
-        // Find the div with class 'Comment-container' that has the matching data-id
-        const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
-
-        if (targetDiv) {
-            // Toggle the display property
-            if (targetDiv.style.display === 'block') {
-                targetDiv.style.display = 'none';
-            } else {
-                targetDiv.style.display = 'block';
+            const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+            if (targetDiv) {
+                targetDiv.style.display = targetDiv.style.display === 'block' ? 'none' : 'block';
             }
         }
     });
 });
-
+// close the comment section
 document.addEventListener('DOMContentLoaded', function () {
-    // Get all elements with the class 'comment-close'
-    const closeComments = document.getElementsByClassName('comment-close');
-    // Get all elements with the class 'PostComments-forPosts'
-    const postComments = document.getElementsByClassName('PostComments-forPosts');
-
-    // Add a click event listener to each element with the class 'comment-close'
-    for (let i = 0; i < closeComments.length; i++) {
-        closeComments[i].addEventListener('click', function () {
-            // Hide all elements with the class 'PostComments-forPosts'
-            for (let j = 0; j < postComments.length; j++) {
-                postComments[j].style.display = 'none';
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('Comment-Close')) {
+            e.preventDefault();
+            const post_id = e.target.getAttribute('data-id');
+            const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+            if (targetDiv) {
+                targetDiv.style.display = targetDiv.style.display === 'block' ? 'none' : 'block';
             }
-        });
-    }
+        }
+    });
 });
 
 
@@ -198,3 +189,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // share event to friend 
+
+
+
+
+

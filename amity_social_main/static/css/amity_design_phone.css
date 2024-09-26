@@ -34,7 +34,9 @@
         z-index: 1;
         margin: auto;
     }
-
+    .postContainer-Post_Big-image{
+        height:410px !important;
+    }
     .postingPageLinks ul {
         padding: 0px;
         display: flex;
@@ -60,12 +62,626 @@
         padding: 0px;
         width: 100%;
     }
+
     #searchUsers {
         width: 95% !important;
     }
-    .searchUserDetails{
-        width: 50%!important;
+
+    .searchUserDetails {
+        width: 50% !important;
     }
+
+    .saySomething {
+        display: none;
+    }
+
+    .saySomething-input {
+        width: 300px;
+    }
+
+    .postContainer {
+        width: 100%;
+        padding: 5px;
+    }
+
+    .PostContainers {
+        background-color: rgb(35, 35, 35);
+        width: 100%;
+        display: none;
+        transform: translate(1%, 2%);
+        padding: 20px;
+        position: fixed;
+        top: 25px;
+        max-height: 600px;
+        overflow: hidden;
+        z-index: 1000;
+        border-radius: 15px;
+    }
+
+    .PostContainer-postContent textarea {
+        width: 394px;
+    }
+
+    .hidden-image {
+        display: none;
+        width: 150px;
+        height: 150px;
+    }
+
+    .PostContainer-caption textarea {
+        width: 390px;
+    }
+
+    /* list style page ends */
+
+    /* home page desing starts  */
+    .container {
+        width: 95%;
+    }
+
+    .quot h1 {
+        font-size: 28px;
+        font-weight: bolder;
+    }
+
+    .quot h4 {
+        font-size: medium;
+    }
+
+    .quot a {
+        width: 150px;
+    }
+
+    .home_title_l {
+        width: 80%;
+    }
+
+    .home_title_l h1 {
+        font-size: 25px;
+        font-weight: 20px;
+    }
+
+    .home_title_l span {
+        font-size: 14px;
+    }
+
+    .cards {
+        width: 80%;
+        flex-direction: column;
+    }
+
+    .sign_up_container {
+        width: 80%;
+        flex-direction: column;
+    }
+
+    .sign_up_container .sign_up_img {
+        width: 303px;
+        height: 400px;
+        overflow: hidden;
+        border-radius: 15px;
+    }
+
+    .footer_link ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer_link ul a {
+        margin: 10px;
+        font-size: medium;
+    }
+
+    .footer_content .f_email input {
+        width: 100%;
+    }
+
+    .footer_content strong {
+        font-size: medium;
+    }
+
+    .f_social {
+        width: 100%;
+    }
+
+    .footer_container {
+        width: 100%;
+    }
+
+    .cards .card_img {
+        width: 244px;
+        height: 168px;
+    }
+
+    .card h2 {
+        font-size: medium;
+    }
+
+    .card span {
+        font-size: medium;
+    }
+
+    /* home page desing ends */
+    /* login page desing start  */
+
+    .login_container {
+        width: 100%;
+        padding: 10px;
+
+    }
+
+    .login_container form {
+        width: 83%;
+
+
+    }
+
+    .login_container .login_welcom {
+        width: 100%;
+        text-align: center;
+    }
+
+    .login_card {
+        width: 120%;
+    }
+
+    /* login page desing start  */
+    /* user dashboard start */
+    .user_profiles {
+        width: 95%;
+    }
+
+    .following_follow_posts {
+        width: 95%;
+    }
+
+    .following_follow_posts div {
+        width: 85%;
+        margin: 10px auto;
+    }
+
+    .users_all_posts,
+    h2,
+    p {
+        width: 95% !important;
+    }
+
+    .post-saved_post {
+        width: 95%;
+    }
+
+    .UserAllPostList,
+    .dashborard-line {
+        width: 100% !important;
+    }
+
+    .user_profiles .user_profile {
+        width: 95%;
+    }
+
+    #followers-list {
+
+        position: fixed;
+        background-color: #222121e1;
+        width: 95%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 500px;
+        border-radius: 8px;
+    }
+
+    .followers-lists {
+        overflow-y: auto;
+        height: 400px;
+    }
+
+    #followers-list li {
+
+        align-items: center;
+        justify-content: space-between;
+        width: 80%;
+        background-color: #343434;
+        padding: 10px;
+        margin: 10px auto;
+        border-radius: 8px;
+
+    }
+
+
+    #followers-list .followersImg {
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        border-radius: 50%;
+
+
+    }
+
+    #followers-list .followersImg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+
+
+    }
+
+    /* .postingPageMiddle{
+        width: 95%;
+    } */
+    .postingPage {
+        margin: 0px;
+    }
+
+    .usersAllPosts {
+        width: 95%;
+    }
+
+    .PostComments-All,
+    .PostComments-forPosts {
+        width: 100%;
+        
+    }
+    .ListComments-All .Comments_contents {
+        width: 234px !important;
+    }
+    .ListsComments-All {
+        width: 100%;
+        margin: auto;
+    }
+
+    .userPostContent,
+    .post_content {
+        width: 100px;
+        height: 100px;
+    }
+
+    .user_profile .user_profile_image {
+        width: 110px;
+        height: 110px;
+    }
+
+    .userProfileSettings {
+        width: 95%;
+    }
+
+    .userProfileSettings-image {
+        width: 102px;
+        height: 102px;
+    }
+
+    /* user dashboard end */
+    /* user registration page  */
+    .registration_form_cover_photo {
+        width: 100%;
+    }
+
+    .registrationFormWords {
+        width: 100%;
+    }
+
+    .registrationFormWords h2 {
+        font-size: 16px;
+    }
+
+    .registrationFormWords p {
+        font-size: 14px;
+        color: #c2c0c2;
+    }
+
+    .registration_form div {
+        width: 100%;
+        flex-direction: column;
+        margin: 0%;
+
+    }
+
+    .registration_form {
+        width: 25%;
+        margin: 5px 0px;
+
+    }
+
+    .collage_name {
+        width: 405px !important;
+
+    }
+
+    .collage_name select {
+        width: 50%;
+
+    }
+
+    .agree_to_terms label {
+        width: 236px !important;
+    }
+
+    .main_container_width_phone {
+        width: 95% !important;
+    }
+
+    .message_user_card {
+        width: 95% !important;
+    }
+
+    .message_ChatContainer {
+        width: 100%;
+    }
+
+    /* post details starts  */
+    .PostDetails-Allcomments {
+        border-radius: 8px;
+        position: absolute;
+        z-index: 2;
+        background-color: #222222f6;
+        width: 90%;
+        height: 509px;
+        padding: 5px;
+        overflow: hidden;
+    }
+
+    .PostDetailsAll-comments .phone_comment {
+        word-wrap: break-word;
+        display: inline-block;
+        width: 271px !important;
+
+    }
+
+    .PostDetailsContents {
+        height: 540px;
+    }
+
+    .PostDetailsAll-comment-details {
+        width: 271px;
+    }
+
+    .PostDetails-comments-add_btn textarea {
+        width: 100%;
+    }
+
+    /* post details ends  */
+    /* all events starts here  */
+    .eventListingContainerDetails {
+        flex-wrap: wrap;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .upcommingEventCard {
+        width: 100%;
+    }
+
+    .upcomingEventSliderDetails {
+        bottom: -7px;
+        width: 226px;
+        text-align: center;
+    }
+
+    .upcomingEventSlider {
+
+        width: 100%px;
+        overflow: hidden;
+        margin-left: -100px;
+
+    }
+
+    .upcomingEventSlider swiper-slide {
+        width: 200px !important;
+        margin: 5px !important;
+        overflow: hidden;
+        height: 180px;
+    }
+
+    .upcomingEventSliderDetails h5 {
+        font-size: small;
+    }
+
+    .upcommingEventCard h2 {
+        font-size: 19px !important;
+
+        font-weight: 400 !important;
+
+    }
+
+    .recentEventContainer {
+        width: 100%;
+        overflow: hidden;
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+
+    .recentEventTitle h2 {
+        font-size: 22px !important;
+        font-weight: 400 !important;
+    }
+
+    .eventCaedImg {
+        width: 274px;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .allEventsLists {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .allEventsListsLeft {
+        padding: 10px;
+    }
+
+    .allEventsListsLeft h1 {
+        font-size: 22px !important;
+    }
+
+    .allEventsListsCard {
+        width: 175px;
+        height: 179px;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    #upcomingEventSliderDetails {
+        width: 176px !important;
+    }
+
+    .eventPoster {
+        height: 285px !important;
+    }
+
+    .eventPosterContentDetails {
+        width: 100%;
+    }
+
+    .eventFullDetails {
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+    }
+
+    .eventFullDetailsContect {
+        word-wrap: break-word !important;
+        width: 54%;
+        overflow: hidden;
+    }
+
+    .eventFullDetailsContect h2 {
+        width: 45%;
+    }
+
+    .eventFullDetailsOtherEvents {
+        width: 100% !important;
+    }
+
+    .eventFullDetailsOtherEvents .upcomingEventSliderDetails {
+        width: 162px !important;
+    }
+
+    .eventFullDetailsOtherEvents .allEventsListsCard {
+        width: 160px !important;
+    }
+
+    .eventFullDetailsLocation {
+        width: 100%;
+    }
+
+    /* all events ends here  */
+
+    /* notification styles starts here  */
+    .postingPageLast {
+        display: none;
+    }
+
+    .postingPageLast .sticky {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 1;
+        transform: translate(-50%, -50%);
+    }
+
+    .allnotificatons_scrol {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    #notification-close{
+        display:block;
+    }
+    /* notification styles ends here  */
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+    /* Styles for smartphones in landscape orientation */
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    
+    .postingPageLast {
+        display: none;
+    }
+    /* Styles for tablets in portrait orientation */
+    .postingPageLinks_phone-block {
+        display: block;
+    }
+
+    .phone_post_details_comment_close {
+        display: none;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .nav {
+        width: 100%;
+    }
+
+    /* Styles for smartphones in portrait orientation */
+    footer {
+        /* display: none; */
+        width: 80%;
+    }
+
+    /* list style page starts */
+
+    .loggedInUserProfile {
+        display: none;
+    }
+
+    .postingPageLinks_phone,
+    .postingPageLeft {
+        display: none;
+    }
+
+    .postingPageLinks_phone-block {
+        position: fixed;
+        display: block;
+        bottom: -22px;
+        width: 100%;
+        padding: 0px;
+        /* transform: translate(-16%, 22%); */
+        z-index: 1;
+        margin: auto;
+    }
+
+    .postingPageLinks ul {
+        padding: 0px;
+        display: flex;
+    }
+
+    .postingPageLinks ul li {
+        width: 40px;
+    }
+
+    .postingPageLinks ul li a span {
+        display: none;
+    }
+
+    .postingPage {
+        width: 100%;
+    }
+
+    .postContainer-card {
+        width: 333px;
+    }
+
+    .allPostLists {
+        padding: 7px;
+        width: 100%;
+    }
+
+    #searchUsers {
+        width: 95% !important;
+    }
+
+    .searchUserDetails {
+        width: 50% !important;
+    }
+
     .saySomething {
         display: none;
     }
@@ -394,16 +1010,19 @@
     .main_container_width_phone {
         width: 95% !important;
     }
-    .message_user_card{
+
+    .message_user_card {
         width: 95% !important;
     }
+
     .message_ChatContainer {
         width: 100%;
     }
+
     /* post details starts  */
-    .PostDetails-Allcomments{
+    .PostDetails-Allcomments {
         border-radius: 8px;
-        position:absolute;
+        position: absolute;
         z-index: 2;
         background-color: #222222f6;
         width: 90%;
@@ -411,46 +1030,168 @@
         padding: 5px;
         overflow: hidden;
     }
-    .PostDetailsAll-comments .phone_comment{
-        word-wrap:break-word;
+
+    .PostDetailsAll-comments .phone_comment {
+        word-wrap: break-word;
         display: inline-block;
         width: 271px !important;
-   
+
     }
-    .PostDetailsContents{
+
+    .PostDetailsContents {
         height: 540px;
     }
+
     .PostDetailsAll-comment-details {
         width: 271px;
     }
-    .PostDetails-comments-add_btn textarea {
-        width: 341px;
-    }
+
+
+
     /* post details ends  */
-
-}
-
-@media (min-width: 481px) and (max-width: 767px) {
-    /* Styles for smartphones in landscape orientation */
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-
-    /* Styles for tablets in portrait orientation */
-    .postingPageLinks_phone-block {
-        display: block;
+    /* all events starts here  */
+    .eventListingContainerDetails {
+        flex-wrap: wrap;
+        width: 100%;
+        padding: 10px;
     }
-    .phone_post_details_comment_close{
-        display:none;
+
+    .upcommingEventCard {
+        width: 100%;
     }
+
+    .upcomingEventSliderDetails {
+        bottom: -7px;
+        width: 226px;
+        text-align: center;
+    }
+
+    .upcomingEventSlider {
+
+        width: 100%px;
+        overflow: hidden;
+        margin-left: -100px;
+
+    }
+
+    .upcomingEventSlider swiper-slide {
+        width: 200px !important;
+        margin: 5px !important;
+        overflow: hidden;
+        height: 180px;
+    }
+
+    .upcomingEventSliderDetails h5 {
+        font-size: small;
+    }
+
+    .upcommingEventCard h2 {
+        font-size: 19px !important;
+
+        font-weight: 400 !important;
+
+    }
+
+    .recentEventContainer {
+        width: 100%;
+        overflow: hidden;
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+
+    .recentEventTitle h2 {
+        font-size: 22px !important;
+        font-weight: 400 !important;
+    }
+
+    .eventCaedImg {
+        width: 274px;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .allEventsLists {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .allEventsListsLeft {
+        padding: 10px;
+    }
+
+    .allEventsListsLeft h1 {
+        font-size: 22px !important;
+    }
+
+    .allEventsListsCard {
+        width: 175px;
+        height: 179px;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    #upcomingEventSliderDetails {
+        width: 176px !important;
+    }
+
+    .eventPoster {
+        height: 285px !important;
+    }
+
+    .eventPosterContentDetails {
+        width: 100%;
+    }
+
+    .eventFullDetails {
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+    }
+
+    .eventFullDetailsContect {
+        word-wrap: break-word !important;
+        width: 54%;
+        overflow: hidden;
+    }
+
+    .eventFullDetailsContect h2 {
+        width: 45%;
+    }
+
+    .eventFullDetailsOtherEvents {
+        width: 100% !important;
+    }
+
+    .eventFullDetailsOtherEvents .upcomingEventSliderDetails {
+        width: 162px !important;
+    }
+
+    .eventFullDetailsOtherEvents .allEventsListsCard {
+        width: 160px !important;
+    }
+
+    .eventFullDetailsLocation {
+        width: 100%;
+    }
+
+    /* all events ends here  */
+
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
     .postingPageLinks_phone-block {
         display: none;
     }
-    .phone_post_details_comment_close{
-        display:none;
+
+    .phone_post_details_comment_close {
+        display: none;
+    }
+    .notificationBell{
+        display: none;
+    }
+    .phone_post_details_comment_close,#notification-close {
+        display: none;
     }
     /* Styles for tablets in landscape orientation */
 }
@@ -459,8 +1200,11 @@
     .postingPageLinks_phone-block {
         display: none;
     }
-    .phone_post_details_comment_close{
-        display:none;
+    .notificationBell{
+        display: none;
+    }
+    .phone_post_details_comment_close,#notification-close {
+        display: none;
     }
 
     /* Styles for large desktops */

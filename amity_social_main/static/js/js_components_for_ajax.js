@@ -74,3 +74,28 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+
+// Notification showing for the phone 
+// search box showing 
+document.addEventListener("DOMContentLoaded", function() {
+    // Show the div with class searchUserHtml when clicking on elements with classes searchUsersByUID and searchUsersByPhoneUID
+    const searchUserBtns = document.querySelectorAll(".notificationBell"); // Select both elements
+    const closeBtn = document.getElementById("notification-close");
+
+    // Loop through the selected elements and add event listeners to each
+    searchUserBtns.forEach(function(button) {
+        button.addEventListener("click", function() {
+            console.log('working');
+            document.querySelector(".postingPageLast").style.display = "block";
+        });
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", function() {
+            document.querySelector(".postingPageLast").style.display = "none";
+        });
+    }
+});
+
+// Notification showing for the phone 

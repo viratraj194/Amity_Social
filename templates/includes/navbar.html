@@ -33,7 +33,7 @@
         </div>
         {% endif %}
         {% if user.is_authenticated %}
-        <div style="margin: 10px;">
+        <div class = "flex" style="margin: 10px; align-items: center;">
             {% if user_profile.profile_picture %}
             <div class="nav_profile_image"
                 style="width: 50px;height: 50px;overflow: hidden; border-radius: 50%; cursor: pointer;">
@@ -49,6 +49,14 @@
                 </a>
             </div>
             
+            {%endif%}
+            {%if notifications or follow_requests%}
+            <div class="notificationBell">
+                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#e83a30"
+                    style="width:30px;height:30px">
+                </lord-icon>
+            </div>
             {%endif%}
         </div>
         {% else %}

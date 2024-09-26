@@ -1,19 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-
+{% load static %}
 <body>
     <div class="user_profiles ">
         <div class="user_profile">
             <div class="user_profile_image">
+                {% if is_following %}
                 {% if profile.userprofile.profile_picture %}
                 <img src="{{profile.userprofile.profile_picture.url}}" alt="">
                 {% else %}
-                <img src="https://cdn.usegalileo.ai/stability/5a1d521b-203e-464a-af54-9c7e80ef5f24.png" alt="">
+                <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
                 {% endif %}
+                {% else %}
+                <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                {% endif %}
+                
             </div>
+            {% if is_following %}
             <div class="user_profile_names">
                 <h1><strong>{{profile.first_name}} {{profile.last_name}}</strong> </h1>
                 <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
+                    <span>ID:{{user.users_id}}</span>
                     <span>{{profile.username}}</span>
                     {% comment %} <a href="{% url 'userProfileSettings'%}" style="color: #86829a;">
                         <i class="bi bi-gear"></i>
@@ -21,13 +28,26 @@
 
                 </div>
             </div>
+            {% else %}
+            <div class="user_profile_names">
+                <h1><strong>{{user.users_id}}</strong> </h1>
+                <div class="flex" style="justify-content: space-evenly; width: 200px; margin: auto;">
+                    <span>ID:{{user.users_id}}</span>
+                    {% comment %} <a href="{% url 'userProfileSettings'%}" style="color: #86829a;">
+                        <i class="bi bi-gear"></i>
+                    </a> {% endcomment %}
+
+                </div>
+            </div>
+            {% endif %}
             <div class="user_profile_follow_msg_btn">
                 {% if is_following %}
                 <button type="submit" style="background-color: #86829a;outline: none;border: none;"><a href="{%url 'unFollow' profile.id%}">Unfollow</a></button>
+                <a href="{%url 'message_user' profile.id%}"><button>Message</button></a>
                 {% else %}
                 <button type="submit" style="background-color: #86829a;outline: none;border: none;"><a href="{%url 'send_follow_request' profile.id %}">Follow</a></button>
+                <a ><button style="cursor: not-allowed;">Message</button></a>
                 {% endif %}
-                <a href="{%url 'message_user' profile.id%}"><button>Message</button></a>
             </div>
         </div>
     </div>
@@ -56,7 +76,11 @@
     </div>
     <div class="users_all_posts">
         <h2>Bio</h2>
+        {% if profile.userprofile.userBio %}
         <p style="font-size:15px;color:#747475; margin: 10px;width: 700px; padding: 10px">{{profile.userprofile.userBio}}</p>
+        {% else %}
+        <p style="font-size:15px;color:#747475; margin: 10px;width: 700px; padding: 10px">Thank You for visiting my profile.🙏🏻🙏🏻😊😊</p>
+        {% endif %}
     </div>
     <div style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
 
