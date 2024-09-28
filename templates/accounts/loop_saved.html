@@ -1,0 +1,8 @@
+{% for save in saved_posts %}
+{% include "accounts/saved.html" %}
+{% endfor %}
+<div hx-get="{% url 'SavedPosts' %}?page={{ page|add:1 }}"
+hx-trigger="revealed"
+hx-target="this"
+hx-swap="outerHTML">
+</div>

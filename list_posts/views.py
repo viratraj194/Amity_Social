@@ -94,7 +94,7 @@ def add_posts(request):
             return redirect('list_posts')
         else:
             
-            messages.error(request,'POST Image is not valid image or its corrupted image')
+            messages.error(request,'Post caption is to big or corrupted image')
             return redirect('list_posts')
             
     else:

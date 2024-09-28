@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import*
 from . forms import addEventsForm
 import datetime
@@ -7,7 +7,7 @@ from accounts.models import*
 from list_posts.models import*
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from django.core.paginator import Paginator
 
 def get_current_week():
     today = timezone.now()
@@ -40,11 +40,20 @@ def allEvents(request):
         start_datetime__lte=end_of_month
     )
     allEvents = Event.objects.all()
+    paginator = Paginator(allEvents,6)
+    page = int(request.GET.get('page',1))
+    try:
+        allEvents = paginator.page(page)
+    except:
+        return HttpResponse('')
     context = {
         'allEvents':allEvents,
         'events_this_week': events_this_week,
         'events_this_month': events_this_month,
+        'page':page,
     }
+    if request.headers.get('HX-Request') == 'true':
+        return render(request,'events\loop_events.html',context)
     return render(request,'events/allEvents.html',context)
 @login_required(login_url='login')
 def addEvents(request):

@@ -1782,6 +1782,8 @@ h4 {
     z-index: 1000;
     background-color: #060606d9;
     border-radius: 15px;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+
 }
 
 .PostComments-forPostsTitle {
@@ -1904,6 +1906,7 @@ h4 {
 .indetails {
     max-height: 600px;
     overflow: hidden;
+    align-items: center;
 }
 
 .PostDetailsContents {

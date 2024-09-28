@@ -133,7 +133,7 @@
                         <div id="comments-container-{{ post.id }}"
                             class="ListComments-All comments-container flex">
                             <div class="ListComments-UserProfile">
-                                <img src="" alt="">
+                                
                             </div>
                             <div class="Comments_contents">
                                 <div>
@@ -142,8 +142,8 @@
                                 </div>
 
                                 <div class="Comment_details-time flex">
-                                    <span style="margin: 0px 10px;">36/25/</span>
-                                    <span style="margin: 0px 10px;">Replay</span>
+                                    <span style="margin: 0px 10px;"></span>
+                                    <span style="margin: 0px 10px;"></span>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +203,7 @@
                 {% if post.is_following %}
                 <h4><strong style="font-size: smaller;font-weight: 100;">@{{post.user.username}}</strong>
                 {% else %}
-                <h4><strong style="font-size: smaller;font-weight: 100;">@{{post.user.users_id}}</strong>
+                <h4><strong style="font-size: smaller;font-weight: 100;color: #afabab;">@{{post.user.users_id}}</strong>
                 {% endif %}
                     <span style="font-size: small;color: #bdb6b6;">{{post.caption}}</span></h4>
             </div>

@@ -1,0 +1,12 @@
+<!-- listing post one by one here starts  -->
+{% for event in allEvents%}
+{% include "events/events.html" %}
+{% endfor %}
+<div hx-get="{% url 'allEvents' %}?page={{ page|add:1 }}"
+hx-trigger="revealed"
+hx-target="this"
+hx-swap="outerHTML">
+</div>
+
+<!-- listing post one by one here ends  -->
+

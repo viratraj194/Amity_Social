@@ -13,6 +13,7 @@ from list_posts . forms import addCommentForm
 from django.http import JsonResponse
 from django.db.models import Q
 from events.models import Event
+from django.core.paginator import Paginator
 
 
 
@@ -215,6 +216,15 @@ def UserDashboard(request):
     total_posts =  user_posts.count()
     user_saves = UserSavedPosts.objects.filter(user=request.user)
     total_saved = user_saves.count()
+
+
+    # infinite scrolling 
+    paginator = Paginator(user_posts,8)
+    page = int(request.GET.get('page', 1))
+    try:
+        user_posts = paginator.page(page)
+    except:
+        return HttpResponse('')
  
     context = {
         'profile':profile,
@@ -224,8 +234,11 @@ def UserDashboard(request):
         'total_following':total_following,
         'total_followers':total_followers,
         'totalEvent':totalEvent,
+        'page':page,
 
     }
+    if request.headers.get('HX-Request') == 'true':
+        return render(request,'accounts\loop_users_posts.html',context)
     return render(request,'accounts/UserDashboard.html',context)
 @login_required(login_url='login')
 def SavedPosts(request):
@@ -244,7 +257,14 @@ def SavedPosts(request):
     totalEvent = list_events.count()
     total_following = following.count()
     total_followers = followers.count()
-    
+
+    # infinite scrolling 
+    paginator = Paginator(saved_posts,8)
+    page = int(request.GET.get('page', 1))
+    try:
+        saved_posts = paginator.page(page)
+    except:
+        return HttpResponse('')
 
     context = {
         'profile':profile,
@@ -254,7 +274,10 @@ def SavedPosts(request):
         'total_following':total_following,
         'total_followers':total_followers,
         'totalEvent':totalEvent,
+        'page':page,
     }
+    if request.headers.get('HX-Request') == 'true':
+        return render(request,'accounts\loop_saved.html',context)
     return render(request,'accounts/SavedPosts.html',context)
 
 @login_required(login_url='login')

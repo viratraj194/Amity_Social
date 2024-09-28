@@ -118,18 +118,13 @@
     </div>
     <div class="allEventsListsRights flex">
         {% for event in allEvents%}
-        <a href="{% url 'eventDetails' event.id %}">
-            <div class="allEventsListsRight">
-                <div class="allEventsListsCard">
-                    <img src="{{event.image.url}}" alt="">
-                </div>
-                <div class="upcomingEventSliderDetails" id="upcomingEventSliderDetails" style="bottom: 0px;">
-                    <span>{{event.start_datetime}}</span>
-                    <h5>{{event.title}}</h5>
-                </div>
-            </div>
-        </a>
+        {% include "events/events.html" %}
         {% endfor %}
+        <div hx-get="{% url 'allEvents' %}?page={{ page|add:1 }}"
+        hx-trigger="revealed"
+        hx-target="this"
+        hx-swap="outerHTML">
+        </div>
 
     </div>
 </section>

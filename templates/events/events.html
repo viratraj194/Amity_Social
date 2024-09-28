@@ -1,0 +1,11 @@
+<a href="{% url 'eventDetails' event.id %}">
+    <div class="allEventsListsRight">
+        <div class="allEventsListsCard">
+            <img src="{{event.image.url}}" alt="">
+        </div>
+        <div class="upcomingEventSliderDetails" id="upcomingEventSliderDetails" style="bottom: 0px;">
+            <span>{{event.start_datetime}}</span>
+            <h5>{{event.title}}</h5>
+        </div>
+    </div>
+</a>

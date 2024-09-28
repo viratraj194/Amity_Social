@@ -83,8 +83,22 @@
         {% endif %}
     </div>
     <div style="width: 800px; margin: auto; border-bottom: 1px solid  rgb(93, 97, 126);"></div>
-
-   
+    {% if is_following %}
+    <div style="margin:auto; width:400px;">
+        <h2  style="margin:50px; color:gray; ">
+            You can't see Friends Posts for the privacy of The User. 
+            Thank For the profile visit.🙏🏻
+        </h2>
+        
+    </div>
+    {% else %}
+    <div style="margin:auto; width:400px;">
+        <h2  style="margin:50px; color:gray; ">
+            Thank For the profile visit.🙏🏻
+        </h2>
+        
+    </div>
+    {% endif %}
     
 </body>
 {% include "includes/alerts.html" %}
