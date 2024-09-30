@@ -48,9 +48,16 @@
                 {% for item in rooms_with_photos %}
                 <li class="message_user_card">
                     <a href="{% url 'room_chat' item.rom.slug %}" class="messageUserCard flex">
+                        {% if item.profile_photo %}
+
                         <div class="userImg">
                             <img src="{{ item.profile_photo }}" alt="">
                         </div>
+                        {% else %}
+                        <div class="userImg">
+                            <img src="{% static "img/images.jpg" %}" alt="">
+                        </div>
+                        {% endif %}
                         <div class="messageUsersDetails column">
                             <div class="flex">
                                 <span
@@ -94,6 +101,7 @@
     </div>
     <div style="border-right: 1px solid rgb(62, 61, 61);"></div>
     <div class="message_ChatContainer">
+        {% if receiver.id%}
         <a href="{% url 'profile_details' receiver.id%}">
             <div class="messageSelectedUser flex">
                 <div class="messageSelectedUserImg">
@@ -108,6 +116,22 @@
                 </div>
             </div>
         </a>
+        {% else %}
+        <a href="">
+            <div class="messageSelectedUser flex">
+                <div class="messageSelectedUserImg">
+                    <img src="{{ receiver.userprofile.profile_picture.url}}" alt="">
+                </div>
+                <div class="messageSelectedUserDetails  colum">
+                    <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
+                    <span style="margin: 0px 10px; color: gray;">last seen {{room.get_last_message.created_at}}</span>
+                </div>
+                <div id="receiver-{{ receiver.id }}">
+                    <div id="receiverStatus" class="userStatus">Offline</div>
+                </div>
+            </div>
+        </a>
+        {% endif %}
         <div class="allTheMessages">
             <div id="chatContainer" class="allTheMessage">
                 {% for message in messages %}

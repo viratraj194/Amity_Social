@@ -426,10 +426,15 @@ def room_chat(request,slug):
         other_user = other_participants.first()
         last_message = rom.get_last_message()
         unread_msg = rom.has_unread_messages(sender)
+         # Check if the other user has a UserProfile and use a default photo if not
+        if hasattr(other_user, 'userprofile') and other_user.userprofile:
+            profile_photo_url = other_user.userprofile.profile_picture.url
+        else:
+            profile_photo_url = 'static\img\images.jpeg'  # Replace with your default image path
         rooms_with_photos.append({
             'rom': rom,
             'other_user': other_user,
-            'profile_photo': other_user.userprofile.profile_picture.url,
+            'profile_photo':profile_photo_url,
             'last_message':last_message,
             'unread_msg':unread_msg,
             'room_id':room.id
@@ -479,10 +484,18 @@ def friend_messages(request):
         other_user = other_participants.first()
         last_message = room.get_last_message()
         unread_msg = room.has_unread_messages(user)
+         # Check if the other user has a UserProfile and use a default photo if not
+        if hasattr(other_user, 'userprofile') and other_user.userprofile:
+            profile_photo_url = other_user.userprofile.profile_picture.url
+        else:
+            profile_photo_url = 'static\img\images.jpeg'  # Replace with your default image path
+
+         # Debugging output
+        
         rooms_with_photos.append({
             'room': room,
             'other_user': other_user,
-            'profile_photo': other_user.userprofile.profile_picture.url,
+            'profile_photo':profile_photo_url,
             'last_message':last_message,
             'unread_msg':unread_msg,
         })
