@@ -12,10 +12,12 @@
     <link rel="stylesheet" href="{% static 'css/amity_design.css'%}">
     <link rel="stylesheet" href="{% static 'css/amity_design_phone.css'%}">
     {% endcompress %}
-
+    {% if '/list-posts/' == request.path  %}
     {% compress js %}
-    <script src="{% static 'js/js_components.js'%}"></script>
+    <script src="{% static 'js/js_for_list_post_page.js' %}"></script>
     {% endcompress %}
+
+    {% endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"

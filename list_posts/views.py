@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
-from accounts.models import UserProfile,User,FollowRequest,Follower
+from accounts.models import *
 from .forms import addPostsForm
 from .models import UserPosts,Like,Notification,Comment,UserSavedPosts
 from django.contrib import messages
@@ -45,7 +45,8 @@ def list_posts(request):
 
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
     # implement pagination
-
+    # if messages 
+    user_messages = Message.objects.filter(receiver=request.user,read = False)
     paginator = Paginator(posts,15)
     page = int(request.GET.get('page', 1))
     try:
@@ -61,6 +62,7 @@ def list_posts(request):
         'follow_requests': follow_requests,
         'total_following': total_following,
         'total_followers': total_followers,
+        'user_messages':user_messages,
         'page':page,
     }
     if request.headers.get('HX-Request') == 'true':

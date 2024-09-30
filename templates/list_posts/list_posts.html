@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+{% comment %} js starts here  {% endcomment %}
+
 <style>
     @media only screen and (max-width: 768px) {
         footer{
@@ -172,6 +174,13 @@
                                     colors="primary:#ffffff" style="width:20px;height:20px">
                                 </lord-icon>
                                 <span>Messages</span>
+                                {% if user_messages %}
+                                <small>
+                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                    <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:20px;height:20px">
+                                    </lord-icon>
+                                </small>
+                                {% endif %}
                             </a>
                         </li>
                         <li class="border-animation">
@@ -263,6 +272,31 @@
                         </div>
                     </div>
                 </div>
+                <script>
+
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const modal = document.getElementById("deactivateModal");
+                        const cancelBtn = document.querySelector(".cancel-btn");
+                    
+                        // Check if modal and cancelBtn exist before attaching event listeners
+                        if (modal && cancelBtn) {
+                            function closeModal() {
+                                modal.style.display = "none";
+                            }
+                    
+                            cancelBtn.addEventListener("click", closeModal);
+                    
+                            window.addEventListener("click", function (event) {
+                                if (event.target === modal) {
+                                    closeModal();
+                                }
+                            });
+                        } else {
+                            console.error("Modal or Cancel button not found in the DOM.");
+                        }
+                    });
+                     
+                </script>
                 {% endif %}
                 <div class="saySomething-input  flex">
                     <div class="saySomething-icon1">
@@ -462,6 +496,13 @@
                             colors="primary:#ffffff" style="width:20px;height:20px">
                         </lord-icon>
                         <span>Messages</span>
+                        {% if user_messages %}
+                        <small>
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:10px;height:10px">
+                            </lord-icon>
+                        </small>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="border-animation">
@@ -512,6 +553,11 @@
         </div>
     </div>
 </div>
+
+
+
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
