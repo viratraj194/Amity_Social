@@ -147,6 +147,7 @@
     window.onload = function () {
         scrollToBottom();
     };
+
     // Retrieve room slug and sender ID from the template context
     document.addEventListener('DOMContentLoaded', () => {
         const roomSlug = '{{ room.slug }}';
@@ -249,6 +250,9 @@
                 } else {
                     console.log(`Receiver ${receiverId} is online, no notification.`);
                     hideUnreadMessageIndicator(roomSlug); // Ensure notification is hidden if online
+
+                    // Mark message as read if receiver is online
+                    markMessagesAsRead();
                 }
             } else {
                 // If the message is from the current user (sender), just append it, no notification
@@ -343,7 +347,6 @@
                 }
             });
         }
-
 
         function markMessagesAsRead() {
             socket.send(JSON.stringify({

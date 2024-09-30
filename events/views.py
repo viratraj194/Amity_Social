@@ -94,7 +94,13 @@ def userEvents(request):
 
     total_following = following.count()
     total_followers = followers.count()
-    
+
+    paginator = Paginator(events,4)
+    page = int(request.GET.get('page',1))
+    try:
+        events = paginator.page(page)
+    except:
+        return HttpResponse('')
     context = {
         'events':events,
         'profile':profile,
@@ -103,8 +109,11 @@ def userEvents(request):
         'total_events':total_events,
         'total_following':total_following,
         'total_followers':total_followers,
+        'page':page,
 
     }
+    if request.headers.get('HX-Request') == 'true':
+        return render(request,'events\loopUserEvents.html',context)
     return render(request,'events/userEvents.html',context)
 @login_required(login_url='login')
 def eventDetails(request,event_id):

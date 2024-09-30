@@ -6,7 +6,6 @@ from channels.db import database_sync_to_async
 from .models import Message, Room, User
 
 logger = logging.getLogger(__name__)
-
 class ChatConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,6 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.set_user_status(self.scope["user"].id, 'online')
 
+        # Notify group about user status change
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -35,6 +35,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        # Notify current user about the online status of other users
         online_users = await self.get_online_users()
         for user_id in online_users:
             if user_id != self.scope["user"].id:
@@ -43,14 +44,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'status': 'online'
                 }))
 
-        logger.info(f"WebSocket connected: {self.room_group_name}")
-
+        # Send rooms with profile photos
         rooms_with_photos = await self.get_rooms_with_photos(self.scope["user"].id)
         await self.send(text_data=json.dumps({
             'rooms_with_photos': rooms_with_photos
         }))
 
     async def disconnect(self, close_code):
+        # Notify the group about user's disconnection
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -60,16 +61,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        # Set user status as offline in Redis
         await self.set_user_status(self.scope["user"].id, 'offline')
 
+        # Remove user from room group
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
-        logger.info(f"WebSocket disconnected: {self.room_group_name}")
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        command = text_data_json.get('command', None)
+
+        # Handle 'mark_as_read' command to mark messages as read
+        if command == 'mark_as_read':
+            await self.mark_messages_as_read(self.scope["user"].id)
+            return
+
+        # Handle sending a message
         message = text_data_json.get('message', '')
         sender_id = self.scope["user"].id
         receiver_id = text_data_json.get('receiver_id')
@@ -78,10 +88,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if message:
             await self.save_message(sender_id, receiver_id, message)
 
+            # If both users are online, mark messages as read
             room_users = await self.get_online_users()
             if sender_id in room_users and receiver_id in room_users:
                 await self.mark_messages_as_read(receiver_id)
 
+            # Send message to room group
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -93,6 +105,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     async def chat_message(self, event):
+        # Handle the message event to send to WebSocket
         message = event['message']
         sender_id = event['sender_id']
         sender_profile_pic = event['sender_profile_pic']
@@ -104,6 +117,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     async def user_status(self, event):
+        # Handle user status change
         user_id = event['user_id']
         status = event['status']
 
@@ -124,7 +138,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             if not self.redis_conn:
                 self.redis_conn = redis.Redis()
-                
+
             if status == 'online':
                 self.redis_conn.sadd(f'room_{self.room_slug}_online', user_id)
             else:

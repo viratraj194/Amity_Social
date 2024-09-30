@@ -1,0 +1,33 @@
+<a href="{% url "eventDetails" event.id %}">
+    <div class="post_content ">
+        <div class="userPostContent" style="margin: 0px;">
+            {% if event.image %}
+            <img src="{{event.image.url}}" alt="" style="object-fit: cover;">
+            {% else %}
+            {% comment %} <p style="text-align: center; font-size:small;">{{post.content}}</p> {% endcomment %}
+            {% endif %}
+            <div class="upcomingEventSliderDetails" style="width: 88%;">
+                <span>{{event.start_datetime}}</span>
+                <h5>{{event.title}}</h5>
+            </div>
+        </div>
+        
+        <div class="post_content-likes-comment flex">
+            
+            {% comment %} <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
+                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:white"
+                    style="width:30px;height:30px;font-weight: bold;">
+                </lord-icon>
+                <h4><strong>{{save.post.total_likes}}</strong></h4>
+            </div>
+            <div class="post_content-likes-commentIcons flex" style="align-items: center; text-align: center;">
+                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:white"
+                    style="width:30px;height:30px;font-weight: bold;">
+                </lord-icon>
+                <h4><strong>{{save.post.total_comments}}</strong></h4>
+            </div> {% endcomment %}
+        </div>
+    </div>
+</a>
