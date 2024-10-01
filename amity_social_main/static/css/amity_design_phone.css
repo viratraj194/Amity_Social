@@ -34,9 +34,11 @@
         z-index: 1;
         margin: auto;
     }
-    .postContainer-Post_Big-image{
-        height:410px !important;
+
+    .postContainer-Post_Big-image {
+        height: 410px !important;
     }
+
     .postingPageLinks ul {
         padding: 0px;
         display: flex;
@@ -318,15 +320,30 @@
     .usersAllPosts {
         width: 95%;
     }
+    .userAllSavePosts {
+        width: 115px;
+    }
+    .dashborard_event{
+        margin-left: 0px !important;
+    }
+    .post-saved_post {
+        width: 95%;
+    }
+
+    .post-saved_post .userAllPosts {
+        width: 110px !important;
+    }
 
     .PostComments-All,
     .PostComments-forPosts {
         width: 100%;
-        
+
     }
+
     .ListComments-All .Comments_contents {
         width: 234px !important;
     }
+
     .ListsComments-All {
         width: 100%;
         margin: auto;
@@ -346,7 +363,9 @@
     .userProfileSettings {
         width: 95%;
     }
-
+    .profile_details_bottom_line{
+        width: 100% !important;
+    }
     .userProfileSettings-image {
         width: 102px;
         height: 102px;
@@ -588,9 +607,10 @@
         overflow-y: auto;
     }
 
-    #notification-close{
-        display:block;
+    #notification-close {
+        display: block;
     }
+
     /* notification styles ends here  */
 }
 
@@ -599,10 +619,11 @@
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
-    
+
     .postingPageLast {
         display: none;
     }
+
     /* Styles for tablets in portrait orientation */
     .postingPageLinks_phone-block {
         display: block;
@@ -862,6 +883,10 @@
         width: 95%;
     }
 
+    .post-saved_post .userAllPosts {
+        width: 110px !important;
+    }
+
     .UserAllPostList,
     .dashborard-line {
         width: 100% !important;
@@ -929,11 +954,13 @@
     .usersAllPosts {
         width: 95%;
     }
-
+    #PostComments-forPosts{
+        margin-left: 17px !important;
+    }
     .PostComments-All,
     .PostComments-forPosts {
         width: 100%;
-        margin-left: 18px;
+        /* margin-left: 18px; */
     }
 
     .ListsComments-All {
@@ -1187,12 +1214,16 @@
     .phone_post_details_comment_close {
         display: none;
     }
-    .notificationBell{
+
+    .notificationBell {
         display: none;
     }
-    .phone_post_details_comment_close,#notification-close {
+
+    .phone_post_details_comment_close,
+    #notification-close {
         display: none;
     }
+
     /* Styles for tablets in landscape orientation */
 }
 
@@ -1200,10 +1231,13 @@
     .postingPageLinks_phone-block {
         display: none;
     }
-    .notificationBell{
+
+    .notificationBell {
         display: none;
     }
-    .phone_post_details_comment_close,#notification-close {
+
+    .phone_post_details_comment_close,
+    #notification-close {
         display: none;
     }
 
