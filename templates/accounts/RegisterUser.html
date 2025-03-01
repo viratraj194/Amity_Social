@@ -7,7 +7,7 @@ background-repeat: no-repeat;
 background-attachment: fixed; 
 position: relative;">
 <div class="registrationFormWords">
-    <h2>Anonymity lets your true colors shine.Speak your mind without a name tag.</h2>
+    <h2>Vircle lets your true colors shine.Speak your mind without a name tag.</h2>
     <p>In our college social media platform, anonymity empowers students to express themselves freely. Share your
         thoughts, experiences, and opinions without fear of judgment. Connect authentically and engage in genuine
         interactions. Here, your voice matters, fostering a supportive and dynamic community where true
@@ -84,7 +84,9 @@ position: relative;">
 
         <div class="agree_to_terms flex">
 
-            <label>Agree to terms and conditons</label>
+            <label>
+                <a href="{%url 'terms'%}" style="color:blue;">Agree to terms and conditons</a>
+            </label>
             <input type="checkbox" name="agree_to_terms" >
         </div>
         <div class="errors_handle" style="width: 1010px;">
@@ -153,4 +155,5 @@ position: relative;">
 
     </script>
 </div>
+{% include "includes/alerts.html" %}
 {% endblock %}

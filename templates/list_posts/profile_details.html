@@ -41,7 +41,7 @@
             </div>
             {% endif %}
             <div class="user_profile_follow_msg_btn">
-                {% if is_following %}
+                {% if is_following  %}
                 <button type="submit" style="background-color: #86829a;outline: none;border: none;"><a href="{%url 'unFollow' profile.id%}">Unfollow</a></button>
                 <a href="{%url 'message_user' profile.id%}"><button>Message</button></a>
                 {% else %}

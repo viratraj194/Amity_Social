@@ -8,3 +8,5 @@ def home(request):
         return redirect('list_posts')
 
     return render(request,'home.html')
+
+

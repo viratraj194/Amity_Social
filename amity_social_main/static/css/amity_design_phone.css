@@ -337,6 +337,7 @@
     .PostComments-All,
     .PostComments-forPosts {
         width: 100%;
+        margin-left:17px ;
 
     }
 
@@ -585,6 +586,9 @@
 
     .eventFullDetailsLocation {
         width: 100%;
+    }
+    .addEventsFromBG{
+        background-size: cover !important;
     }
 
     /* all events ends here  */
@@ -954,13 +958,13 @@
     .usersAllPosts {
         width: 95%;
     }
-    #PostComments-forPosts{
+    .PostComments-forPosts{
         margin-left: 17px !important;
     }
     .PostComments-All,
     .PostComments-forPosts {
         width: 100%;
-        /* margin-left: 18px; */
+        margin-left: 40px !important;
     }
 
     .ListsComments-All {

@@ -180,7 +180,17 @@ a {
 .border-animation:hover span::after {
     transition-delay: 0.75s;
 }
-
+.terms_title_card{
+    font-size: large;
+    font-weight: bold;
+    color: #555555;
+}
+.terms_subtitle{
+    color: #636264;
+}
+.terms_title span{
+    color: #7a797a;
+}
 
 /* UTILITY */
 
@@ -1620,10 +1630,7 @@ h4 {
 /* floating post starts */
 
 .PostContainers {
-
-
-
-    background-color: rgb(35, 35, 35);
+    background-color: rgba(33, 33, 33, 0.778);
     width: 650px;
     display: none;
     transform: translate(65%, 10%);
@@ -1632,7 +1639,8 @@ h4 {
     top: 25px;
     max-height: 600px;
     overflow: hidden;
-
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     z-index: 1000;
     border-radius: 15px;
 
@@ -1936,7 +1944,7 @@ h4 {
 
 /* post details starts  */
 .indetails {
-    max-height: 600px;
+    max-height: 640px;
     overflow: hidden;
     align-items: center;
 }
@@ -1951,12 +1959,12 @@ h4 {
 }
 
 .PostDetails-Allcomments {
-    height: 600px;
+    height: 640px;
     margin: 20px auto;
 }
 
 .PostDetailsAll-comment {
-    height: 382px;
+    height: 445px;
     padding: 10px;
     overflow-y: auto;
 }

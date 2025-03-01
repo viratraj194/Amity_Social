@@ -161,3 +161,7 @@ def deleteEvent(request,event_id):
     event.delete()
     messages.success(request,'Event is deleted successfully')
     return redirect('account')
+
+
+def terms(request):
+    return render(request, 'events/terms.html')

@@ -54,13 +54,13 @@
                     {{user_info_form.phone_number}}
                 </div>
                 <h6>Enter you phone number.</h6>
-                <div class="flex space_between ">
+                {% comment %} <div class="flex space_between ">
                     <label >Privet Profile</label>
                     {{user_profile_form.is_privet}}
                     
                 </div>
                 
-                <h6>Make your profile Privet.</h6>
+                <h6>Make your profile Privet.</h6> {% endcomment %}
             </div>
             <div class="M-10_0">
                 <div class="flex space_between">
@@ -129,6 +129,10 @@
     <div class="userProfile-logout">
         <h3>LOG OUT your account</h3>
         <a href="{% url 'logout'%}" style="margin: 0px;"><button>LOG OUT</button></a>
+    </div>
+    <div class="userProfile-logout">
+        <h3>Deactivate  your Account</h3>
+        <a href="{% url 'deactivate_account'%}" style="margin: 0px;"><button>DEACTIVATE</button></a>
     </div>
 </div>
 <script>

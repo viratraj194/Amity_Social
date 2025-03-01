@@ -116,6 +116,14 @@ def mark_notification_as_read(request, notification_id):
     return JsonResponse({'status': 'success'})
 
 
+@login_required(login_url='login')
+def mark_all_as_read(request):
+    if request.method == "POST":
+        Notification.objects.filter(user=request.user, read=False).update(read=True)
+        return JsonResponse({"success": True, "message": "All notifications marked as read."})
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+
 
 
 

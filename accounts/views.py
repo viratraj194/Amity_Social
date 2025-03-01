@@ -70,6 +70,16 @@ def activate(request,uidb64,token):
         return redirect('account')
     pass
 
+@login_required(login_url='login')
+def deactivate_account(request):
+    user = request.user
+    user.is_online = False
+    user.is_active = False
+    user.save()
+    print(user,'is deactivated')
+    auth.logout(request)
+    messages.success(request, 'you have logged out successfully'.title())
+    return redirect('login')
 
 def login(request):
     if request.user.is_authenticated:
@@ -79,14 +89,16 @@ def login(request):
         email = request.POST['email']
         password = request.POST['password']
         user = auth.authenticate(email=email,password=password)
-        if user is not None:
+        if user is not None :
             auth.login(request,user)
             user.is_online = True
             user.save()
 
             messages.success(request,'You are now logged in.')
             return redirect('list_posts')
+        
         else:
+            # print(user.is_active)
             messages.error(request,'Invalid credentials!')
             return redirect('list_posts')
     return render(request,'accounts/login.html')

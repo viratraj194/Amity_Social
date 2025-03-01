@@ -202,14 +202,14 @@
                                     colors="primary:#ffffff"
                                     style="width:20px;height:20px">
                                 </lord-icon>
-                                <span>Search</span>
+                                <span style="cursor: pointer;">Search</span>
                             </a>
                         </li>
                         
 
                         
-                        <li class="border-animation">
-                            <a href="{% url "allEvents" %}">
+                        <!-- <li class="border-animation">
+                            <a href="{% url 'allEvents' %}">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                 <lord-icon
                                     src="https://cdn.lordicon.com/abfverha.json"
@@ -219,7 +219,7 @@
                                 </lord-icon>
                                 <span>Events</span>
                             </a>
-                        </li>
+                        </li> -->
                         <li class="border-animation">
                             <a href="{% url 'account'%}">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -382,8 +382,10 @@
                         style="width:20px;height:20px"></lord-icon>
                     </lord-icon>
                 </span>
+                
                 <div class="flex">
                     <h4>Notifications</h4>
+                    
                     {%if notifications or follow_requests%}
                     <script src="https://cdn.lordicon.com/lordicon.js"></script>
                     <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#e83a30"
@@ -438,8 +440,16 @@
                 {% endfor %}
                 <div class="allnotificatons_scrol" style="max-height: 400px; overflow-y: auto;">
                     {%if notifications %}
+                    <div class="mark_all_as_read">
+                        <span style="font-size: small;
+                        font-weight: 400;
+                        color: #a4a1a1;
+                        cursor: pointer;
+                        border-bottom: 1px solid #a4a1a1;
+                        ">Mark all as read</span>
+                    </div>
                     {% for notification in notifications %}
-                    <div class="postActivity notification flex"
+                    <div class="postActivity notification  flex"
                         data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
                         {%if notification.actor.userprofile.profile_picture %}
                         <div class="postActivity-userProfile-image">
@@ -531,7 +541,7 @@
                         <span>Search</span>
                     </a>
                 </li>
-                <li class="border-animation">
+                <!-- <li class="border-animation">
                     <a href="{% url "allEvents" %}">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon
@@ -542,7 +552,7 @@
                         </lord-icon>
                         <span>Events</span>
                     </a>
-                </li>
+                </li> -->
                 <li class="border-animation">
                     <a href="{% url 'account'%}">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -593,8 +603,14 @@
                     // Toggle icon based on liked status
                     if (response.liked) {
                         iconDiv.removeClass('postUnliked_icon').addClass('postLiked_icon');
-                        iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
-                        colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>`);
+                        iconDiv.html(`<lord-icon
+                                        src="https://cdn.lordicon.com/aydxrkfl.json"
+                                        trigger="in"
+                                        stroke="regular"
+                                        state="morph-slider"
+                                        colors="primary:#e83a30,secondary:#b4b4b4"
+                                        style="width:30px;height:30px">
+                                    </lord-icon>`);
                     } else {
                         iconDiv.removeClass('postLiked_icon').addClass('postUnliked_icon');
                         iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
@@ -701,6 +717,38 @@
             });
         });
     });
+    $(document).ready(function () {
+        $('.mark_all_as_read').on('click',function(){
+            $.ajax({
+            url: "/mark_all_as_read/",  // Update with your actual endpoint
+            type: "POST",
+            headers: { "X-CSRFToken": getCSRFToken() }, // CSRF token for security
+            success: function(response) {
+                console.log(response.message);
+                
+                // Hide all notifications on success
+                $('.notification').fadeOut('slow', function () {
+                    $(this).remove();  // Removes from DOM after fade out
+                });
+            },
+            error: function(xhr, status, error) {
+                console.log("Error:", error);
+            }
+        });
+        })
+
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            let csrfToken = null;
+            document.cookie.split(";").forEach(function(cookie) {
+                let parts = cookie.split("=");
+                if (parts[0].trim() === "csrftoken") {
+                    csrfToken = parts[1];
+                }
+            });
+            return csrfToken;
+        }
+    })
 
     // Adding the comment using event delegation
     $(document).ready(function () {
