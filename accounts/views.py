@@ -580,3 +580,25 @@ def following(request):
 
     # Get all users the logged-in user is following
     # following = Follower.objects.filter(follower=user).select_related('following')
+
+
+import requests
+from django.http import JsonResponse
+
+def get_colleges(request):
+    # New API endpoint (raw JSON file on GitHub)
+    api_url = "https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json"
+
+    try:
+        response = requests.get(api_url, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            # Filter only Indian colleges
+            indian_colleges = [college for college in data if college.get("country", "").lower() == "india"]
+            return JsonResponse(indian_colleges, safe=False)
+
+        return JsonResponse({"error": "Failed to fetch data", "status": response.status_code}, status=500)
+
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": str(e)}, status=500)

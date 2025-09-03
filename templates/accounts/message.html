@@ -47,7 +47,7 @@
             <ul class="message_user_cards">
                 {% for item in rooms_with_photos %}
                 <li class="message_user_card">
-                    <a href="{% url 'room_chat' item.rom.slug %}" class="messageUserCard flex">
+                    <a href="{% url 'room_chat' item.rom.slug %}" class="messageUserCard flex" onclick="enterRoom()">
                         {% if item.profile_photo %}
 
                         <div class="userImg">
@@ -189,7 +189,7 @@
             console.log("WebSocket connection opened");
             console.log("Current User ID:", senderId);
         };
-
+        const currentRoomSlug = document.getElementById("chat-room")?.dataset.roomSlug; // Get current room slug from data attribute
         socket.onmessage = function (event) {
             try {
                 const data = JSON.parse(event.data);
@@ -199,6 +199,12 @@
                     handleUserStatus(data);
                 } else if (data.hasOwnProperty('message')) {
                     handleMessage(data);
+                } else if (data.type === "new_notification") {
+                    // Only show a notification if the message is for a different room
+                    if (data.room_slug !== roomSlug) {
+                        console.log("New notification received for room:", data.room_slug);
+                        updateUnreadMessageIndicator(data.room_slug);
+                    }
                 }
             } catch (error) {
                 console.error("Error processing WebSocket message:", error);
@@ -222,7 +228,8 @@
                     'message': message,
                     'sender_id': senderId,
                     'receiver_id': receiverId,
-                    'sender_profile_pic': '{{ user.userprofile.profile_picture.url }}'
+                    'sender_profile_pic': '{{ user.userprofile.profile_picture.url }}',
+                    'room_slug': roomSlug
                 }));
                 messageInput.value = '';
             } else {
@@ -261,29 +268,30 @@
             const message = data.message;
             const messageSenderId = data.sender_id;
             const senderProfilePic = data.sender_profile_pic;
+            const messageRoomSlug = data.room_slug;
             const isSender = messageSenderId == senderId;
 
-            if (!isSender) {
-                // If the message is from the other user, append it and update the unread message indicator
+
+             if (messageRoomSlug === roomSlug) {
+                // Message belongs to current open chat
                 appendMessage(message, senderProfilePic, isSender);
 
-                // Show unread message notification only if receiver is offline
-                if (receiverOnlineStatus === 'Offline') {
-                    console.log(`Receiver ${receiverId} is offline, showing notification.`);
-                    updateUnreadMessageIndicator(roomSlug);
-                } else {
-                    console.log(`Receiver ${receiverId} is online, no notification.`);
-                    hideUnreadMessageIndicator(roomSlug); // Ensure notification is hidden if online
-
-                    // Mark message as read if receiver is online
-                    markMessagesAsRead();
+                if (!isSender) {
+                    if (receiverOnlineStatus === 'Offline') {
+                        updateUnreadMessageIndicator(roomSlug);
+                    } else {
+                        hideUnreadMessageIndicator(roomSlug);
+                        markMessagesAsRead();
+                    }
                 }
-            } else {
-                // If the message is from the current user (sender), just append it, no notification
-                appendMessage(message, senderProfilePic, isSender);
-            }
 
-            scrollToBottom();
+                scrollToBottom();
+
+            } else {
+                // Message belongs to another room
+                console.log("New message in another room:", messageRoomSlug);
+                updateUnreadMessageIndicator(messageRoomSlug);
+            }
         }
 
         function appendMessage(message, senderProfilePic, isSender) {

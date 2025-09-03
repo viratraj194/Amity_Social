@@ -23,6 +23,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+        # Join personal group for notifications
+        await self.channel_layer.group_add(
+            f"user_{self.scope['user'].id}",
+            self.channel_name
+        )
+
         await self.set_user_status(self.scope["user"].id, 'online')
 
         # Notify group about user status change
@@ -36,6 +42,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         # Notify current user about the online status of other users
+        
         online_users = await self.get_online_users()
         for user_id in online_users:
             if user_id != self.scope["user"].id:
@@ -100,20 +107,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'message': message,
                     'sender_id': sender_id,
-                    'sender_profile_pic': sender_profile_pic
+                    'sender_profile_pic': sender_profile_pic,
+                    'room_slug': self.room_slug
                 }
             )
-
+            # 🔔 Send notification to receiver (NEW)
+            await self.channel_layer.group_send(
+                f"user_{receiver_id}",   # personal group for receiver
+                {
+                    "type": "new_notification",
+                    "room_slug": self.room_slug, # room slug 
+                    "unread": True
+                }
+            )
     async def chat_message(self, event):
         # Handle the message event to send to WebSocket
         message = event['message']
         sender_id = event['sender_id']
         sender_profile_pic = event['sender_profile_pic']
+        room_slug = event['room_slug']
 
         await self.send(text_data=json.dumps({
-            'message': message,
-            'sender_id': sender_id,
-            'sender_profile_pic': sender_profile_pic
+            "type": "chat_message",   # <-- ADD THIS
+            "message": message,
+            "sender_id": sender_id,
+            "sender_profile_pic": sender_profile_pic,
+            "room_slug": room_slug
         }))
 
     async def user_status(self, event):
@@ -125,6 +144,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'user_id': user_id,
             'status': status
         }))
+
+    async def new_notification(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "new_notification",
+            "room_slug": event["room_slug"],
+            "unread": event["unread"]
+        }))
+
+
 
     @database_sync_to_async
     def save_message(self, sender_id, receiver_id, content):

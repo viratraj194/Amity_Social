@@ -14,6 +14,9 @@ urlpatterns = [
     path('account/',views.account,name='account'),
     path('activate/<uidb64>/<token>/',views.activate,name='activate'),
     path('deactivate_account/',views.deactivate_account,name='deactivate_account'),
+    # calling api 
+    path("api/get_colleges/", views.get_colleges, name="get_colleges"), 
+
     path('forgot_password/',views.forgot_password,name='forgot_password'),
     path('reset_password_validator/<uidb64>/<token>/',views.reset_password_validator,name='reset_password_validator'),
     path('reset_password/',views.reset_password,name='reset_password'),
