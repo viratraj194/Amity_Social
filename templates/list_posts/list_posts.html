@@ -174,15 +174,18 @@
                                     colors="primary:#ffffff" style="width:20px;height:20px">
                                 </lord-icon>
                                 <span>Messages</span>
-                                {% if user_messages %}
-                                <small>
+                                
+                                <small id="notification-badge" style="display: none;">
                                     <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                     <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:20px;height:20px">
                                     </lord-icon>
                                 </small>
-                                {% endif %}
+                                
                             </a>
                         </li>
+
+
+                        
                         <li class="border-animation">
                             <a class="open" style="cursor: pointer;">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -883,7 +886,26 @@
     });
 </script>
 
+// unread message notification badge
+<script>
+    function checkNotifications() {
+        fetch("{% url 'unread_message_count' %}")
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById("notification-badge");
+                if (data.unread_count > 0) {
+                    badge.style.display = "inline-block";
+                } else {
+                    badge.style.display = "none";
+                }
+            })
+            .catch(err => console.error("Failed to fetch notifications:", err));
+    }
 
+    // Run once and then every 10s
+    checkNotifications();
+    setInterval(checkNotifications, 10000);
+</script>
 {% include "includes/alerts.html" %}
 
 {% endblock %}

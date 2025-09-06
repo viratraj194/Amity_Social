@@ -19,7 +19,7 @@ urlpatterns = [
     # profile details
     path('profile_details/<int:user_id>/',views.profile_details,name='profile_details'),
     # path('message/<int:user_id>/', views.message_user, name='message_user'),
-    
+    path("api/unread-messages/", views.unread_message_count, name="unread_message_count"),
     # search users 
     path('search-user/', views.search_user, name='search_user'), 
     

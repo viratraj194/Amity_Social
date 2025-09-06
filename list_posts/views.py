@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import addCommentForm
 from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator
+from accounts.models import Message
 
 
 
@@ -301,3 +302,13 @@ def search_user(request):
 
 
 
+
+
+
+#unread_message_count
+
+def unread_message_count(request):
+    if request.user.is_authenticated:
+        unread_count = Message.objects.filter(receiver=request.user, read=False).count()
+        return JsonResponse({"unread_count": unread_count})
+    return JsonResponse({"unread_count": 0})
