@@ -54,3 +54,6 @@ While the frontend is anonymous, the database is highly organized. **PostgreSQL*
    ```bash
    git clone [https://github.com/viratraj194/Amity_Social.git](https://github.com/viratraj194/Amity_Social.git)
    cd Amity_Social
+
+
+<div align="center"> <p>Developed with ❤️ by <a href="https://www.google.com/search?q=https://github.com/viratraj194">Virat Raj</a></p> </div>
