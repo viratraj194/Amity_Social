@@ -1,48 +1,52 @@
 <div align="center">
+  <h1>🤝 Amity Social</h1>
+  <p><strong>A Privacy-First Anonymous Social Networking Platform</strong></p>
 
-  <img src="https://img.shields.io/github/stars/viratraj194/Amity_Social?style=for-the-badge&color=gold" alt="stars"/>
-  <img src="https://img.shields.io/github/forks/viratraj194/Amity_Social?style=for-the-badge&color=blue" alt="forks"/>
-  <img src="https://img.shields.io/github/license/viratraj194/Amity_Social?style=for-the-badge&color=green" alt="license"/>
-  <img src="https://img.shields.io/github/issues/viratraj194/Amity_Social?style=for-the-badge&color=red" alt="issues"/>
-
-  <br />
-  
-  <h1> 🤝 Amity Social </h1>
-  
-  <p><b>A modern, feature-rich social networking platform designed for seamless community connection.</b></p>
-
-  <a href="https://github.com/viratraj194/Amity_Social"><strong>Explore the Docs »</strong></a>
-  <br />
-  <br />
-  <a href="https://github.com/viratraj194/Amity_Social/issues">Report Bug</a>
-  ·
-  <a href="https://github.com/viratraj194/Amity_Social/issues">Request Feature</a>
-</div>
-
-<hr />
-
-## 📖 About the Project
-**Amity Social** is a social media application built to bridge the gap between users, allowing them to share updates, connect with friends, and engage in real-time interactions. Whether it's for a specific organization or a general audience, it provides a clean UI and robust backend performance.
-
-### ✨ Key Features
-- 👤 **User Profiles:** Customizable profiles with avatars and bios.
-- 📝 **Post Creation:** Share text, images, or updates with your network.
-- 💬 **Interactive Feed:** Like, comment, and engage with posts in real-time.
-- 🤝 **Friend/Follow System:** Build your network and stay updated.
-- 🔔 **Notifications:** Get instant updates on social interactions.
-- 🛡️ **Secure Authentication:** Robust login and signup systems.
-
----
-
-## 🛠 Tech Stack
-<div align="left">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
-  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
-  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
 </div>
 
 ---
 
-<div align="center"> <p>Developed with ❤️ by <a href="https://www.google.com/search?q=https://github.com/viratraj194">Virat Raj</a></p> </div>
+## 📖 Project Overview
+**Amity Social** is a social platform built to allow users to interact, share, and communicate without the pressure of traditional social media identities. The core of the project is its **Anonymous Messaging System**, which allows users to express their thoughts and connect with others while maintaining total privacy.
+
+## 🚀 Key Functionalities
+- 🕵️ **Total Anonymity:** Built-in systems to ensure messaging and interactions can remain anonymous.
+- 💬 **Private Messaging:** A robust peer-to-peer messaging system for direct connections.
+- 📑 **Social Feed:** Share updates and view community posts in a clean, Django-rendered interface.
+- 🗄️ **Relational Architecture:** Powered by **PostgreSQL** for high-performance data handling and secure user management.
+- 🔐 **Secure Auth:** Custom user authentication logic handled through Django’s secure framework.
+
+---
+
+## 🛠 Tech Stack & Architecture
+
+### Backend & Logic
+- **Python/Django:** Handles the Model-Template-View (MTV) architecture.
+- **Django ORM:** Manages complex relationships between users, posts, and anonymous threads.
+
+### Database
+- **PostgreSQL:** Used for its reliability and advanced querying capabilities, ensuring that message data is stored and retrieved efficiently.
+
+### Frontend
+- **HTML5 & CSS3:** Clean, custom-styled templates providing a distraction-free user experience.
+
+---
+
+## ⚙️ How It Works (The Core Logic)
+1. **The Anonymous Layer:** When a user sends a message, the system can detach the User ID from the display name, using a unique session-based or token-based identifier to mask the sender's true identity from the recipient.
+2. **Database Integrity:** PostgreSQL handles the `Foreign Key` relationships between the `Messages` and `Threads` tables, ensuring that even if a user is anonymous, the data remains consistent and threaded correctly.
+3. **Template Rendering:** Django’s templating engine dynamically renders anonymous vs. public content based on user-defined privacy settings.
+
+---
+
+## 🚀 Installation & Setup
+
+### 1. Clone the Project
+```bash
+git clone [https://github.com/viratraj194/Amity_Social.git](https://github.com/viratraj194/Amity_Social.git)
+cd Amity_Social
