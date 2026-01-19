@@ -45,9 +45,4 @@
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-* npm
-  ```sh
-  npm install npm@latest -g
+<div align="center"> <p>Developed with ❤️ by <a href="https://www.google.com/search?q=https://github.com/viratraj194">Virat Raj</a></p> </div>
