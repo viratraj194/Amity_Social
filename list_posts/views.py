@@ -47,7 +47,7 @@ def list_posts(request):
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
     # implement pagination
     # if messages 
-    user_messages = Message.objects.filter(receiver=request.user,read = False)
+    user_messages = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ)
     paginator = Paginator(posts,15)
     page = int(request.GET.get('page', 1))
     try:
