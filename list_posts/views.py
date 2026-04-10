@@ -136,19 +136,37 @@ def add_comment(request, post_id):
         data = json.loads(request.body)
         comment_text = data.get('comment', 'No comment provided')
         post_id = data.get('post_id', 'None')
+        parent_id = data.get('parent_id', None)  # Optional parent_id for replies
         user = request.user
 
         if comment_text:
             post = UserPosts.objects.get(id=post_id)
-            comment = Comment.objects.create(post=post, user=user, comment=comment_text)
+
+            # If parent_id provided, verify it exists and belongs to same post
+            parent = None
+            if parent_id:
+                try:
+                    parent = Comment.objects.get(id=parent_id, post=post)
+                except Comment.DoesNotExist:
+                    parent = None
+
+            comment = Comment.objects.create(
+                post=post,
+                user=user,
+                comment=comment_text,
+                parent=parent
+            )
 
             response_data = {
                 'success': True,
                 'comment': {
+                    'id': comment.id,
                     'text': comment.comment,
                     'user': comment.user.username,
-                    'profile_picture': comment.user.userprofile.profile_picture.url,
-                    'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                    'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
+                    'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    'parent_id': comment.parent.id if comment.parent else None,
+                    'is_reply': comment.is_reply
                 }
             }
             return JsonResponse(response_data)
@@ -167,7 +185,8 @@ from .models import UserPosts, Comment
 @login_required(login_url='login')
 def get_comments(request, post_id):
     post = get_object_or_404(UserPosts, id=post_id)
-    comments = Comment.objects.filter(post=post).select_related('user__userprofile')
+    # Get top-level comments (no parent) with their replies
+    comments = Comment.objects.filter(post=post, parent__isnull=True).select_related('user__userprofile')
     user = request.user
     # Create a notification for the post's author
     if post.user != user:
@@ -178,17 +197,35 @@ def get_comments(request, post_id):
                     actor=user,
                     read=False
             )
-        
 
-    comments_data = [
-        {
+    def serialize_comment(comment):
+        """Serialize a comment and its replies recursively"""
+        comment_data = {
+            'id': comment.id,
             'user': comment.user.username,
-            'profile_picture': comment.user.userprofile.profile_picture.url,
+            'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
             'comment': comment.comment,
-            'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'parent_id': comment.parent.id if comment.parent else None,
+            'is_reply': comment.is_reply,
+            'reply_count': comment.replies.count(),
+            'replies': []
         }
-        for comment in comments
-    ]  
+        # Get replies for this comment
+        replies = comment.replies.select_related('user__userprofile').order_by('created_at')
+        for reply in replies:
+            comment_data['replies'].append({
+                'id': reply.id,
+                'user': reply.user.username,
+                'profile_picture': reply.user.userprofile.profile_picture.url if hasattr(reply.user, 'userprofile') and reply.user.userprofile.profile_picture else '/static/img/images.jpeg',
+                'comment': reply.comment,
+                'created_at': reply.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'parent_id': reply.parent.id,
+                'is_reply': True
+            })
+        return comment_data
+
+    comments_data = [serialize_comment(comment) for comment in comments]
     return JsonResponse({'comments': comments_data})
 
 @login_required(login_url='login')
@@ -309,6 +346,6 @@ def search_user(request):
 
 def unread_message_count(request):
     if request.user.is_authenticated:
-        unread_count = Message.objects.filter(receiver=request.user, read=False).count()
+        unread_count = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ).count()
         return JsonResponse({"unread_count": unread_count})
     return JsonResponse({"unread_count": 0})

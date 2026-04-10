@@ -197,15 +197,62 @@ class Room(models.Model):
 
 
 class Message(models.Model):
+    # Message status choices
+    STATUS_SENT = 1
+    STATUS_DELIVERED = 2
+    STATUS_READ = 3
+
+    STATUS_CHOICES = (
+        (STATUS_SENT, 'Sent'),
+        (STATUS_DELIVERED, 'Delivered'),
+        (STATUS_READ, 'Read'),
+    )
+
     room = models.ForeignKey(Room, related_name='messages', on_delete=models.CASCADE)
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
     content = models.TextField()
-    read = models.BooleanField(default=False)
+    status = models.IntegerField(default=STATUS_SENT, db_index=True)
+    delivered_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    read_at = models.DateTimeField(null=True, blank=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at =models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['receiver', 'status']),
+            models.Index(fields=['room', '-created_at']),
+        ]
 
     def __str__(self):
-        return f'{self.sender} to {self.receiver}: {self.content}'
+        status_label = dict(self.STATUS_CHOICES).get(self.status, 'Unknown')
+        return f'{self.sender} to {self.receiver}: {self.content} [{status_label}]'
+
+    @property
+    def is_delivered(self):
+        return self.status >= self.STATUS_DELIVERED
+
+    @property
+    def is_read(self):
+        return self.status >= self.STATUS_READ
+
+
+class MessageNotification(models.Model):
+    """Persistent notification for unread messages - created when receiver is offline"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='message_notifications', db_index=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_message_notifications', db_index=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='message_notifications', db_index=True)
+    message = models.OneToOneField(Message, on_delete=models.CASCADE, related_name='notification', db_index=True)
+    is_read = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'is_read']),
+            models.Index(fields=['user', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f'{self.sender} → {self.user} (room: {self.room.slug})'
 

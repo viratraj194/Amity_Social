@@ -32,6 +32,43 @@
             width: 100% !important;
         }
     }
+
+    /* Message Status Indicators */
+    .senderMessageFooter {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+        margin-top: 4px;
+    }
+
+    .messageStatusIndicator {
+        font-size: 12px;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .sent-tick {
+        color: #8e8e8e;
+        font-weight: bold;
+    }
+
+    .delivered-tick {
+        color: #8e8e8e;
+        font-weight: bold;
+    }
+
+    .read-tick {
+        color: #3498db;
+        font-weight: bold;
+    }
+
+    .senderMessage {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-bottom: 8px;
+    }
 </style>
 
 <div class="messageContainer flex main_container_width main_container_width_phone"
@@ -138,8 +175,19 @@
                 {% if message.sender == user %}
                 <div class="senderMessage">
                     <p>{{ message.content }}</p>
-                    <div class="receiverMessageImg">
-                        <img src="{{ user.userprofile.profile_picture.url }}" alt="">
+                    <div class="senderMessageFooter flex">
+                        <div class="receiverMessageImg">
+                            <img src="{{ user.userprofile.profile_picture.url }}" alt="">
+                        </div>
+                        <div class="messageStatusIndicator">
+                            {% if message.status == 3 %}
+                                <span class="read-tick" title="Read">✓✓</span>
+                            {% elif message.status == 2 %}
+                                <span class="delivered-tick" title="Delivered">✓✓</span>
+                            {% else %}
+                                <span class="sent-tick" title="Sent">✓</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 {% else %}
@@ -195,10 +243,16 @@
                 const data = JSON.parse(event.data);
                 console.log("WebSocket message received:", data);
 
-                if (data.hasOwnProperty('status')) {
+                if (data.hasOwnProperty('user_status')) {
                     handleUserStatus(data);
                 } else if (data.hasOwnProperty('message')) {
                     handleMessage(data);
+                } else if (data.type === "message_status_update") {
+                    // Handle message status update (delivered/read)
+                    handleStatusUpdate(data);
+                } else if (data.type === "room_list_update") {
+                    // Handle room list ordering update
+                    handleRoomListUpdate(data);
                 } else if (data.type === "new_notification") {
                     // Only show a notification if the message is for a different room
                     if (data.room_slug !== roomSlug) {
@@ -264,17 +318,24 @@
             }
         }
 
+        function handleStatusUpdate(data) {
+            const messageId = data.message_id;
+            const status = data.status;
+            updateMessageStatus(messageId, status);
+        }
+
         function handleMessage(data) {
             const message = data.message;
             const messageSenderId = data.sender_id;
             const senderProfilePic = data.sender_profile_pic;
             const messageRoomSlug = data.room_slug;
+            const messageId = data.message_id;
+            const status = data.status;
             const isSender = messageSenderId == senderId;
-
 
              if (messageRoomSlug === roomSlug) {
                 // Message belongs to current open chat
-                appendMessage(message, senderProfilePic, isSender);
+                appendMessage(message, senderProfilePic, isSender, messageId, status);
 
                 if (!isSender) {
                     if (receiverOnlineStatus === 'Offline') {
@@ -294,29 +355,58 @@
             }
         }
 
-        function appendMessage(message, senderProfilePic, isSender) {
+        function appendMessage(message, senderProfilePic, isSender, messageId, initialStatus = 1) {
             const messageElement = document.createElement('div');
 
             if (isSender) {
                 messageElement.className = 'senderMessage';
+                let statusHtml = '';
+                if (initialStatus === 3) {
+                    statusHtml = '<span class="read-tick" title="Read">✓✓</span>';
+                } else if (initialStatus === 2) {
+                    statusHtml = '<span class="delivered-tick" title="Delivered">✓✓</span>';
+                } else {
+                    statusHtml = '<span class="sent-tick" title="Sent">✓</span>';
+                }
                 messageElement.innerHTML = `
-                <p>${message}</p>
-                <div class="receiverMessageImg">
-                    <img src="${senderProfilePic}" alt="Profile Picture">
-                </div>
-            `;
+                    <p>${message}</p>
+                    <div class="senderMessageFooter flex">
+                        <div class="receiverMessageImg">
+                            <img src="${senderProfilePic}" alt="Profile Picture">
+                        </div>
+                        <div class="messageStatusIndicator" id="msg-status-${messageId}">
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+                messageElement.dataset.messageId = messageId;
             } else {
                 messageElement.className = 'receiverMessage';
                 messageElement.innerHTML = `
-                <div class="receiverMessageImg">
-                    <img src="${senderProfilePic}" alt="Profile Picture">
-                </div>
-                <p>${message}</p>
-            `;
+                    <div class="receiverMessageImg">
+                        <img src="${senderProfilePic}" alt="Profile Picture">
+                    </div>
+                    <p>${message}</p>
+                `;
             }
 
             const chatContainer = document.getElementById('chatContainer');
             chatContainer.appendChild(messageElement);
+        }
+
+        function updateMessageStatus(messageId, status) {
+            const statusElement = document.getElementById(`msg-status-${messageId}`);
+            if (statusElement) {
+                let statusHtml = '';
+                if (status === 3) {
+                    statusHtml = '<span class="read-tick" title="Read">✓✓</span>';
+                } else if (status === 2) {
+                    statusHtml = '<span class="delivered-tick" title="Delivered">✓✓</span>';
+                } else {
+                    statusHtml = '<span class="sent-tick" title="Sent">✓</span>';
+                }
+                statusElement.innerHTML = statusHtml;
+            }
         }
 
         function scrollToBottom() {
@@ -396,6 +486,25 @@
             }));
 
             hideUnreadMessageIndicator(roomSlug);
+            // Trigger badge refresh
+            checkNotifications();
+        }
+
+        // Notification badge refresh function
+        function checkNotifications() {
+            fetch("{% url 'unread_message_count' %}")
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById("notification-badge");
+                    if (badge) {
+                        if (data.unread_count > 0) {
+                            badge.style.display = "inline-block";
+                        } else {
+                            badge.style.display = "none";
+                        }
+                    }
+                })
+                .catch(err => console.error("Failed to fetch notifications:", err));
         }
     });
 

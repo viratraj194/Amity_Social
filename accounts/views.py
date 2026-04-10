@@ -14,6 +14,14 @@ from django.http import JsonResponse
 from django.db.models import Q
 from events.models import Event
 from django.core.paginator import Paginator
+from django.db.models import Max, F
+from django.db.models.functions import Coalesce
+from datetime import datetime, timezone
+
+
+
+
+
 
 
 
@@ -252,6 +260,8 @@ def UserDashboard(request):
     if request.headers.get('HX-Request') == 'true':
         return render(request,'accounts\loop_users_posts.html',context)
     return render(request,'accounts/UserDashboard.html',context)
+
+
 @login_required(login_url='login')
 def SavedPosts(request):
     profile = UserProfile.objects.get(user=request.user)
@@ -419,44 +429,61 @@ def deny_follow_request(request,request_id):
 
 
 @login_required(login_url='login')
-def room_chat(request,slug):
-    
-     # Fetch the room based on the slug
-    room = get_object_or_404(Room, slug=slug)
-    
-    # Fetch all messages related to this room, ordered by timestamp
-    messages = room.messages.order_by('updated_at')
-    messages.update(read = True)
+def room_chat(request, slug):
     sender = request.user
-    receiver = room.participants.exclude(id=sender.id).first() # For private chats
-    # listing all the room user is connected with 
-    rooms = Room.objects.filter(participants=sender)
+    # Fetch the room based on the slug
+    room = get_object_or_404(Room.objects.prefetch_related('participants__userprofile'), slug=slug)
+
+    # Fetch all messages related to this room, ordered by timestamp - optimized with select_related
+    messages = room.messages.select_related('sender__userprofile', 'receiver__userprofile').order_by('created_at')
+    # Mark messages as read
+    now = datetime.now(timezone.utc)
+    room.messages.filter(receiver=sender, status__lt=Message.STATUS_READ).update(status=Message.STATUS_READ, read_at=now)
+    # Also mark message notifications as read
+    MessageNotification.objects.filter(user=sender, room=room, is_read=False).update(is_read=True)
+
+    receiver = room.participants.exclude(id=sender.id).first()  # For private chats
+
+    # listing all the room user is connected with - optimized query with ordering by last message
+    rooms = Room.objects.filter(
+        participants=sender
+    ).annotate(
+        last_message_time=Coalesce(Max('messages__created_at'), F('created_at'))
+    ).order_by('-last_message_time').prefetch_related('participants__userprofile')
+
     rooms_with_photos = []
     for rom in rooms:
-        
-        other_participants = rom.participants.exclude(id = sender.id)
-        other_user = other_participants.first()
-        last_message = rom.get_last_message()
-        unread_msg = rom.has_unread_messages(sender)
-         # Check if the other user has a UserProfile and use a default photo if not
-        if hasattr(other_user, 'userprofile') and other_user.userprofile:
-            profile_photo_url = other_user.userprofile.profile_picture.url
+        other_participants = [p for p in rom.participants.all() if p.id != sender.id]
+        other_user = other_participants[0] if other_participants else None
+        if not other_user:
+            continue
+
+        last_message = rom.messages.order_by('-created_at').first()
+        # Check for unread messages using status field
+        unread_msg = rom.messages.filter(receiver=sender, status__lt=Message.STATUS_READ).exists()
+
+        # Check if the other user has a UserProfile and use a default photo if not
+        profile_photo_url = getattr(other_user, 'userprofile', None)
+        if profile_photo_url and hasattr(profile_photo_url, 'profile_picture') and profile_photo_url.profile_picture:
+            profile_photo_url = profile_photo_url.profile_picture.url
         else:
-            profile_photo_url = 'static\img\images.jpeg'  # Replace with your default image path
+            profile_photo_url = 'static/img/images.jpeg'
+
         rooms_with_photos.append({
             'rom': rom,
             'other_user': other_user,
-            'profile_photo':profile_photo_url,
-            'last_message':last_message,
-            'unread_msg':unread_msg,
-            'room_id':room.id
+            'profile_photo': profile_photo_url,
+            'last_message': last_message,
+            'unread_msg': unread_msg,
+            'room_id': rom.id
         })
+
     context = {
         'room': room,
         'messages': messages,
         'sender': sender,
-        'receiver': receiver,  
-        'rooms_with_photos':rooms_with_photos,
+        'receiver': receiver,
+        'rooms_with_photos': rooms_with_photos,
     }
     return render(request, 'accounts/message.html', context)
 
@@ -488,42 +515,49 @@ def message_user(request, user_id):
 @login_required(login_url='login')
 def friend_messages(request):
     user = request.user
-    rooms = Room.objects.filter(participants=user)
+    # Optimize: prefetch participants with profiles and order by last message time
+    rooms = Room.objects.filter(
+        participants=user
+    ).annotate(
+        last_message_time=Coalesce(Max('messages__created_at'), F('created_at'))
+    ).order_by('-last_message_time').prefetch_related('participants__userprofile')
+
     rooms_with_photos = []
     for room in rooms:
-        
-        other_participants = room.participants.exclude(id = user.id)
-        other_user = other_participants.first()
-        last_message = room.get_last_message()
-        unread_msg = room.has_unread_messages(user)
-         # Check if the other user has a UserProfile and use a default photo if not
-        if hasattr(other_user, 'userprofile') and other_user.userprofile:
-            profile_photo_url = other_user.userprofile.profile_picture.url
-        else:
-            profile_photo_url = 'static\img\images.jpeg'  # Replace with your default image path
+        other_participants = [p for p in room.participants.all() if p.id != user.id]
+        other_user = other_participants[0] if other_participants else None
+        if not other_user:
+            continue
 
-         # Debugging output
-        
+        # Get last message efficiently
+        last_message = room.messages.order_by('-created_at').first()
+        # Check for unread messages using status field
+        unread_msg = room.messages.filter(receiver=user, status__lt=Message.STATUS_READ).exists()
+
+        # Check if the other user has a UserProfile and use a default photo if not
+        profile_photo_url = getattr(other_user, 'userprofile', None)
+        if profile_photo_url and hasattr(profile_photo_url, 'profile_picture') and profile_photo_url.profile_picture:
+            profile_photo_url = profile_photo_url.profile_picture.url
+        else:
+            profile_photo_url = 'static/img/images.jpeg'
+
         rooms_with_photos.append({
             'room': room,
             'other_user': other_user,
-            'profile_photo':profile_photo_url,
-            'last_message':last_message,
-            'unread_msg':unread_msg,
+            'profile_photo': profile_photo_url,
+            'last_message': last_message,
+            'unread_msg': unread_msg,
         })
-        # print(room.message.receiver.username)
 
     context = {
-
-        'rooms_with_photos':rooms_with_photos,
+        'rooms_with_photos': rooms_with_photos,
     }
-    return render(request,'accounts/friend_messages.html',context)
+    return render(request, 'accounts/friend_messages.html', context)
 
 
 # Create a Redis instance
 
-# In your Django views.py
-# In your Django views.py
+
 from django.http import JsonResponse
 import redis
 redis_instance = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)

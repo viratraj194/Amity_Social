@@ -11,6 +11,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = ()
 admin.site.register(Room)
 admin.site.register(Message)
+admin.site.register(MessageNotification)
 admin.site.register(Follower)
 admin.site.register(FollowRequest)
 admin.site.register(User, CustomUserAdmin)

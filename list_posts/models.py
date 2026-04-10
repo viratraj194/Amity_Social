@@ -54,12 +54,29 @@ class Like(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(UserPosts, related_name='comments', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies', db_index=True)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['post', '-created_at']),
+            models.Index(fields=['parent']),
+        ]
+
     def __str__(self):
+        if self.parent:
+            return f'Reply by {self.user.username} on {self.post.id}'
         return f'Comment by {self.user.username} on {self.post.id}'
+
+    @property
+    def is_reply(self):
+        return self.parent is not None
+
+    def reply_count(self):
+        return self.replies.count()
     
 
 
