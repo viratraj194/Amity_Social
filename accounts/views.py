@@ -52,9 +52,8 @@ def RegisterUser(request):
             return redirect('RegisterUser')
         else:
             print(form.errors)
-            form.errors
     else:
-        form = UserForm()    
+        form = UserForm()
     context = {
         'form':form,
     }
@@ -470,12 +469,15 @@ def room_chat(request, slug):
             profile_photo_url = 'static/img/images.jpeg'
 
         rooms_with_photos.append({
-            'rom': rom,
-            'other_user': other_user,
-            'profile_photo': profile_photo_url,
-            'last_message': last_message,
+            'room_id': rom.id,
+            'room_name': rom.name,
+            'room_slug': rom.slug,
+            'other_user_id': other_user.id,
+            'other_user_name': other_user.username,
+            'profile_photo_url': profile_photo_url,
+            'last_message_content': last_message.content if last_message else '',
+            'last_message_time': last_message.created_at if last_message else None,
             'unread_msg': unread_msg,
-            'room_id': rom.id
         })
 
     context = {

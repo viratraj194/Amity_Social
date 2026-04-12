@@ -161,7 +161,7 @@ def add_comment(request, post_id):
                 'success': True,
                 'comment': {
                     'id': comment.id,
-                    'text': comment.comment,
+                    'comment': comment.comment,
                     'user': comment.user.username,
                     'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
                     'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),

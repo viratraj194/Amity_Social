@@ -131,16 +131,17 @@ position: relative;">
         
 
     </script>
-    <!-- <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             const apiEndpoint = window.location.origin + "/api/get_colleges/";
             const collegeSelect = document.getElementById("collage_names");
-        
+            const savedCollege = "{{ form.collage_name.value|escapejs }}";
+
             if (!collegeSelect) {
                 console.error("The select element with ID 'collage_names' was not found.");
                 return;
             }
-        
+
             fetch(apiEndpoint)
                 .then((response) => response.json())
                 .then((data) => {
@@ -152,10 +153,14 @@ position: relative;">
                             collegeSelect.appendChild(option);
                         }
                     });
+                    // Restore saved college selection after populating options
+                    if (savedCollege) {
+                        collegeSelect.value = savedCollege;
+                    }
                 })
                 .catch((error) => console.error("Error fetching college data:", error));
         });
-        </script> -->
+        </script>
 </div>
 {% include "includes/alerts.html" %}
 {% endblock %}

@@ -1708,6 +1708,23 @@ h4 {
     color: #989595;
 }
 
+/* Reply comment styling */
+.ListComments-All.reply-comment {
+    background-color: #1f1f1f;
+    border-radius: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.ListComments-All[data-comment-id] {
+    transition: background-color 0.2s ease;
+}
+
+.reply-btn:hover {
+    color: #fff !important;
+    text-decoration: underline;
+}
+
 .comment-posting-user {
     width: 40px;
     height: 40px;

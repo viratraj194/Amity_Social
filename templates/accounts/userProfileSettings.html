@@ -94,10 +94,7 @@
                                 {% if saved_collage == "Amity University Greater Noida" %}selected{% endif %}>
                             Amity University Greater Noida
                         </option>
-                        <!-- Option to show the saved college -->
-                        <option value="{{ saved_collage }}" {% if saved_collage %}selected{% endif %}>
-                            {{ saved_collage }}
-                        </option>
+                        <!-- Additional colleges will be loaded via API -->
                     </select>
 
 
@@ -139,25 +136,30 @@
     document.addEventListener("DOMContentLoaded", function () {
         const apiEndpoint = window.location.origin + "/api/get_colleges/";
         const collegeSelect = document.getElementById("id_collage_name");
-    
+        const savedCollege = "{{ user.collage_name|escapejs }}";
+
         if (!collegeSelect) {
             console.error("The select element with ID 'id_collage_name' was not found.");
             return;
         }
-    
-        console.log("Fetching from:", apiEndpoint);
+
         fetch(apiEndpoint)
-            .then(response => response.text())  // ✅ Read response as text first
-            .then(text => {
-                console.log("Raw API Response:", text);  // ✅ Log raw response
-                try {
-                    const data = JSON.parse(text);
-                    console.log("Parsed API Data:", data);
-                } catch (error) {
-                    console.error("Invalid JSON received:", text);
+            .then((response) => response.json())
+            .then((data) => {
+                data.forEach((college) => {
+                    if (college.name && college.name !== "Amity University Greater Noida") {
+                        const option = document.createElement("option");
+                        option.value = college.name;
+                        option.textContent = college.name;
+                        collegeSelect.appendChild(option);
+                    }
+                });
+                // Restore saved college selection after populating options
+                if (savedCollege) {
+                    collegeSelect.value = savedCollege;
                 }
             })
-            .catch(error => console.error("Error fetching college data:", error));
+            .catch((error) => console.error("Error fetching college data:", error));
     });
     </script>
     

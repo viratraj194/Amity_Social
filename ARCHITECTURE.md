@@ -184,26 +184,138 @@ Sender                    WebSocket                    Receiver
 
 ---
 
+## Real-Time Chat Fixes Applied (2026-04-11)
+
+### Issues Fixed
+
+**1. Redis Connection Initialization**
+- Moved `self.redis_conn = redis.Redis()` to `connect()` method
+- Ensures Redis is available before `set_user_status()` is called
+
+**2. User.is_online Database Sync**
+- `set_user_status()` now updates both Redis AND `User.is_online` field
+- Fixes offline detection for `MessageNotification` creation
+
+**3. Message Status Broadcast**
+- Replaced sync `send_status_update()` with async `broadcast_status_updates()`
+- Properly broadcasts status changes after `mark_messages_as_read()`
+- Uses `asyncio.gather()` for parallel execution (prevents race conditions)
+
+**4. Frontend Event Type Matching**
+- Added `type: 'user_status'` to backend response
+- Frontend now correctly identifies `user_status` events
+- Added `handleRoomListUpdate()` function
+
+**5. Multi-Room Presence Tracking (2026-04-11)**
+- Users can now be connected to multiple rooms simultaneously
+- Class-level `_active_connections` tracks user -> rooms mapping
+- User only marked offline when ALL room connections are closed
+- Room-specific presence sets: `room_{slug}_online`
+- Global presence set: `global_online_users`
+
+**6. Redis Cleanup Mechanism (2026-04-11)**
+- Periodic cleanup runs every 5 minutes on first connection
+- Removes stale presence sets for deleted rooms
+- Management command: `python manage.py cleanup_redis_presence`
+- Can be scheduled via cron for regular cleanup
+
+**7. Missing Import Fixed**
+- Added `datetime` to imports (was only used inline)
+- Added `asyncio` for parallel status updates
+
+### Files Modified
+- `accounts/consumers.py` - Full rewrite of presence system
+- `templates/accounts/message.html` - Event type check, room list handler
+- `accounts/management/commands/cleanup_redis_presence.py` - New cleanup command
+
+---
+
+## Presence System Architecture
+
+### Data Flow
+
+```
+User connects to Room A:
+1. Add to global_online_users (Redis SET)
+2. Add to room_A_online (Redis SET)
+3. Update User.is_online = True (Database)
+4. Track in ChatConsumer._active_connections[user_id] = {room_A}
+
+User connects to Room B (while still in Room A):
+1. Add to room_B_online (Redis SET)
+2. Track in ChatConsumer._active_connections[user_id] = {room_A, room_B}
+3. User.is_online stays True (already online)
+
+User disconnects from Room A:
+1. Remove from room_A_online
+2. Remove from tracking: {room_B}
+3. User still online (has Room B connection)
+4. Notify Room A users: user offline
+
+User disconnects from Room B (last connection):
+1. Remove from room_B_online
+2. Remove from global_online_users
+3. Update User.is_online = False
+4. Notify Room B users: user offline
+```
+
+### Redis Keys
+
+| Key | Type | Purpose |
+|-----|------|---------|
+| `global_online_users` | SET | All currently online user IDs |
+| `room_{slug}_online` | SET | User IDs online in specific room |
+
+### Cleanup Strategy
+
+1. **On-connect cleanup**: First connection after 5 min triggers cleanup
+2. **Management command**: `python manage.py cleanup_redis_presence`
+3. **Cron recommendation**: Run every 15 minutes for production
+
+---
+
 ## Next Agent Instructions
 
 ### Backend Agent
-1. Verify message status transitions are atomic
-2. Add database migration for any new fields
-3. Ensure `MessageNotification` cleanup on read
-4. Test concurrent message delivery edge cases
+1. **Verify Presence System**: Test that `User.is_online` toggles correctly on WebSocket connect/disconnect
+2. **Test Message Status Flow**: Ensure messages transition SENT → DELIVERED → READ correctly
+3. **Check Race Conditions**: Verify concurrent messages don't cause duplicate status updates (now batched with asyncio.gather)
+4. **Redis Cleanup**: Consider scheduling the management command via cron
+5. **Edge Case**: Multi-room presence now handled - test user in 2+ rooms simultaneously
 
 ### Frontend Agent
-1. Verify status tick colors match design
-2. Test room list reordering on message send/receive
-3. Ensure nested comments render with proper indentation
-4. Add loading states for comment replies
+1. **Status Indicator Colors**: Verify tick colors (gray for sent/delivered, blue for read)
+2. **Room List Updates**: Test that room list reorders when new message arrives
+3. **Receiver Status**: Ensure "Online"/"Offline" text updates in real-time
+4. **Error Handling**: Add reconnection logic for WebSocket drops
+5. **Mobile Testing**: Verify status indicators visible on small screens
 
 ### QA Agent
-1. Test message flow: sender offline → receiver online
-2. Verify nested comments display correctly on mobile
-3. Test chat ordering with 10+ rooms
-4. Verify status ticks update in real-time
-5. Test comment reply depth (ensure no circular references)
+1. **Presence Test Matrix**:
+   - User A opens chat → User B sees "Online" immediately
+   - User A closes chat → User B sees "Offline" within 2 seconds
+   - Both users in same room → messages auto-mark as READ
+
+2. **Message Status Test Matrix**:
+   | Scenario | Expected Status |
+   |----------|-----------------|
+   | Receiver offline | SENT (single tick) |
+   | Receiver online, different room | DELIVERED (double gray) |
+   | Receiver in same room | READ (double blue) |
+   | Receiver opens chat | READ (double blue) |
+
+3. **Notification Test**: Verify `MessageNotification` created only when receiver offline
+4. **Room Ordering**: Verify rooms sort by latest message time
+5. **Comment Replies**: Test nested comments render correctly on mobile
+
+---
+
+## Security Considerations
+
+- CSRF protection on comment/like endpoints
+- User authentication required for all actions
+- Room access validation in WebSocket `connect()`
+- SQL injection prevention via Django ORM
 
 ---
 

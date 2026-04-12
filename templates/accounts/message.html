@@ -84,11 +84,11 @@
             <ul class="message_user_cards">
                 {% for item in rooms_with_photos %}
                 <li class="message_user_card">
-                    <a href="{% url 'room_chat' item.rom.slug %}" class="messageUserCard flex" onclick="enterRoom()">
-                        {% if item.profile_photo %}
+                    <a href="{% url 'room_chat' item.room_slug %}" class="messageUserCard flex" onclick="enterRoom()">
+                        {% if item.profile_photo_url %}
 
                         <div class="userImg">
-                            <img src="{{ item.profile_photo }}" alt="">
+                            <img src="{{ item.profile_photo_url }}" alt="">
                         </div>
                         {% else %}
                         <div class="userImg">
@@ -100,15 +100,11 @@
                                 <span
                                     style="margin: 2px 0px; display: flex; justify-content: space-between; width: 174px; font-size: 15px;">
                                     <strong style="color: rgb(210, 208, 208);">
-                                        {% for participant in item.rom.participants.all %}
-                                        {% if participant != user %}
-                                        {{ participant.username }}
-                                        {% endif %}
-                                        {% endfor %}
+                                        {{ item.other_user_name }}
                                     </strong>
                                 </span>
-                                <small style="color: gray;">{{ item.last_message.created_at|date:"H:i" }}</small>
-                                <div id="room-{{ item.rom.slug }}" class="room-container">
+                                <small style="color: gray;">{{ item.last_message_time|date:"H:i" }}</small>
+                                <div id="room-{{ item.room_slug }}" class="room-container">
                                     {% if item.unread_msg %}
                                     <small class="notification-icon" style="display: block;">
                                         <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover"
@@ -126,7 +122,7 @@
                             </div>
                             <span
                                 style=" display: block; font-size: small; color: rgb(134, 135, 135); margin: 2px 0px; width: 200px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                                {{ item.last_message.content }}
+                                {{ item.last_message_content }}
                             </span>
                         </div>
                     </a>
@@ -243,15 +239,15 @@
                 const data = JSON.parse(event.data);
                 console.log("WebSocket message received:", data);
 
-                if (data.hasOwnProperty('user_status')) {
+                if (data.type === "user_status") {
                     handleUserStatus(data);
-                } else if (data.hasOwnProperty('message')) {
+                } else if (data.type === "chat_message" || data.hasOwnProperty('message')) {
                     handleMessage(data);
                 } else if (data.type === "message_status_update") {
                     // Handle message status update (delivered/read)
                     handleStatusUpdate(data);
                 } else if (data.type === "room_list_update") {
-                    // Handle room list ordering update
+                    // Handle room list ordering update - only update the specific room item
                     handleRoomListUpdate(data);
                 } else if (data.type === "new_notification") {
                     // Only show a notification if the message is for a different room
@@ -259,6 +255,9 @@
                         console.log("New notification received for room:", data.room_slug);
                         updateUnreadMessageIndicator(data.room_slug);
                     }
+                } else if (data.rooms_with_photos) {
+                    // Handle initial room list load - update each room item without full re-render
+                    handleInitialRoomList(data.rooms_with_photos);
                 }
             } catch (error) {
                 console.error("Error processing WebSocket message:", error);
@@ -465,6 +464,55 @@
                                 existingIndicator.remove();
                             }
                         }
+                    }
+                }
+            });
+        }
+
+        function handleRoomListUpdate(data) {
+            // Handle room list reordering when new message arrives
+            const roomSlug = data.room_slug;
+            const lastMessage = data.last_message;
+            const lastMessageTime = data.last_message_time;
+
+            // Find the room element and update its last message
+            const roomElement = document.querySelector(`#room-${roomSlug}`);
+            if (roomElement) {
+                // Update the message preview
+                const messageSpan = roomElement.parentElement.querySelector('span[style*="font-size: small"]');
+                if (messageSpan) {
+                    messageSpan.textContent = lastMessage;
+                }
+                // Update the timestamp
+                const timeSmall = roomElement.parentElement.querySelector('small[style*="color: gray"]');
+                if (timeSmall) {
+                    const date = new Date(lastMessageTime);
+                    timeSmall.textContent = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                }
+            }
+        }
+
+        function handleInitialRoomList(rooms) {
+            // Update room list items incrementally without full re-render
+            rooms.forEach(function(room) {
+                const roomSlug = room.room_slug;
+                const roomElement = document.querySelector(`#room-${roomSlug}`);
+                if (roomElement) {
+                    // Update unread indicator
+                    const notificationIcon = roomElement.querySelector('.notification-icon');
+                    if (notificationIcon) {
+                        notificationIcon.style.display = room.unread_msg ? 'block' : 'none';
+                    }
+                    // Update last message preview
+                    const messageSpan = roomElement.parentElement.querySelector('span[style*="font-size: small"]');
+                    if (messageSpan && room.last_message_content) {
+                        messageSpan.textContent = room.last_message_content;
+                    }
+                    // Update timestamp
+                    const timeSmall = roomElement.parentElement.querySelector('small[style*="color: gray"]');
+                    if (timeSmall && room.last_message_time) {
+                        const date = new Date(room.last_message_time);
+                        timeSmall.textContent = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                     }
                 }
             });

@@ -609,33 +609,56 @@
                     console.log(response);
 
                     if (response.success) {
-                        // Clear the textarea
-                        $('.textareamain').val('');
+                        // Clear the textarea and reset reply mode
+                        const $textarea = $(this).closest('.PostComments-Input').find('.textareamain');
+                        $textarea.val('');
+                        // Remove parent-id attribute to reset reply mode
+                        $(this).removeData('parent-id');
+                        $(this).attr('data-parent-id', '');
 
-                        // Create the new comment HTML
-                        const newCommentHtml = `
-                        <div class="ListComments-All flex">
-                            <div class="ListComments-UserProfile">
-                                <img src="${response.comment.profile_picture}" alt="${response.comment.user}">
-                            </div>
-                            <div class="Comments_contents">
-                                <div>
-                                    <small><strong>${response.comment.user}</strong> <span>${response.comment.text}</span></small>
+                        // Determine if this is a reply or a new comment
+                        if (response.comment.parent_id) {
+                            // It's a reply - append to the parent's reply container
+                            const replyHtml = `
+                                <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="${response.comment.profile_picture}" alt="${response.comment.user}">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>${response.comment.user}</strong> <span>${response.comment.comment}</span></small>
+                                        </div>
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">${response.comment.created_at}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="Comment_details-time flex">
-                                    <span style="margin: 0px 10px;">${response.comment.created_at}</span>
-                                    <span style="margin: 0px 10px;">Reply</span>
+                            `;
+                            $(`#replies-container-${response.comment.parent_id}`).append(replyHtml);
+                        } else {
+                            // It's a new top-level comment
+                            const newCommentHtml = `
+                                <div class="ListComments-All flex">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="${response.comment.profile_picture}" alt="${response.comment.user}">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>${response.comment.user}</strong> <span>${response.comment.comment}</span></small>
+                                        </div>
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">${response.comment.created_at}</span>
+                                            <span style="margin: 0px 10px; cursor: pointer;" class="reply-link" data-comment-id="${response.comment.id}" data-post-id="${postId}">Reply</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    `;
-
-                        // Append the new comment to the comments container
-                        $(`#comments-container-${postId}`).append(newCommentHtml);
+                            `;
+                            $(`#comments-container-${postId}`).append(newCommentHtml);
+                        }
                     } else {
                         console.error('Failed to post comment:', response.message);
                     }
-                },
+                }.bind(this),
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
                 }
@@ -668,8 +691,8 @@
         $('.show-comments-btn').on('click', function (e) {
             e.preventDefault();
 
-            var postId = $(this).data('post-id');  // Get post ID from data attribute
-            var url = $(this).data('url');         // Get URL from data attribute
+            var postId = $(this).data('post-id');
+            var url = $(this).data('url');
 
             $.ajax({
                 url: url,
@@ -679,22 +702,56 @@
                     var commentsHtml = '';
 
                     comments.forEach(function (comment) {
+                        // Build replies HTML (hidden by default)
+                        var repliesHtml = '';
+                        if (comment.replies && comment.replies.length > 0) {
+                            comment.replies.forEach(function (reply) {
+                                repliesHtml += `
+                                    <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
+                                        <div class="ListComments-UserProfile">
+                                            <img src="${reply.profile_picture}" alt="${reply.user}">
+                                        </div>
+                                        <div class="Comments_contents">
+                                            <div>
+                                                <small><strong>${reply.user}</strong> <span>${reply.comment}</span></small>
+                                            </div>
+                                            <div class="Comment_details-time flex">
+                                                <span style="margin: 0px 10px;">${reply.created_at}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        // View replies button (only if there are replies)
+                        var viewRepliesBtn = '';
+                        if (comment.replies && comment.replies.length > 0) {
+                            viewRepliesBtn = `<span style="margin: 0px 10px; cursor: pointer; color: #555;" class="view-replies-btn" data-comment-id="${comment.id}">View replies (${comment.replies.length})</span>`;
+                        }
+
                         commentsHtml += `
-<div class="ListComments-All flex">
-    <div class="ListComments-UserProfile">
-        <img src="${comment.profile_picture}" alt="${comment.user}">
-    </div>
-    <div class="Comments_contents">
-        <div>
-            <small><strong>${comment.user}</strong> <span>${comment.comment}</span></small>
-        </div>
-        <div class="Comment_details-time flex">
-            <span style="margin: 0px 10px;">${comment.created_at}</span>
-            <span style="margin: 0px 10px;">Reply</span>
-        </div>
-    </div>
-</div>
-`;
+                            <div class="comment-wrapper" data-comment-id="${comment.id}">
+                                <div class="ListComments-All flex">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="${comment.profile_picture}" alt="${comment.user}">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>${comment.user}</strong> <span>${comment.comment}</span></small>
+                                        </div>
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">${comment.created_at}</span>
+                                            <span style="margin: 0px 10px; cursor: pointer;" class="reply-link" data-comment-id="${comment.id}" data-post-id="${postId}">Reply</span>
+                                            ${viewRepliesBtn}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="replies-container-${comment.id}" class="replies-container" style="display: none;">
+                                    ${repliesHtml}
+                                </div>
+                            </div>
+                        `;
                     });
 
                     // Update the specific comments container for the current post
@@ -704,6 +761,49 @@
                     console.error('Error fetching comments:', error);
                 }
             });
+        });
+
+        // Toggle replies visibility
+        $(document).on('click', '.view-replies-btn', function (e) {
+            e.stopPropagation();
+            var commentId = $(this).data('comment-id');
+            var $repliesContainer = $('#replies-container-' + commentId);
+            var $btn = $(this);
+
+            if ($repliesContainer.is(':visible')) {
+                $repliesContainer.hide();
+                $btn.text($btn.text().replace('Hide', 'View'));
+            } else {
+                $repliesContainer.show();
+                $btn.text($btn.text().replace('View', 'Hide'));
+            }
+        });
+
+        // Handle reply link click - set up reply mode
+        $(document).on('click', '.reply-link', function (e) {
+            e.stopPropagation();
+            var commentId = $(this).data('comment-id');
+            var postId = $(this).data('post-id');
+
+            // Find the comment wrapper and scroll to it
+            var $commentWrapper = $(this).closest('.comment-wrapper');
+            var $inputSection = $commentWrapper.find('.PostComments-Input');
+
+            // If no input section found in comment wrapper, find the main input
+            if ($inputSection.length === 0) {
+                $inputSection = $('.PostComments-Input').first();
+            }
+
+            // Set the parent-id on the button
+            var $commentButton = $inputSection.find('.add_comments');
+            $commentButton.attr('data-parent-id', commentId);
+
+            // Focus the textarea
+            var $textarea = $inputSection.find('.textareamain');
+            $textarea.val('@' + $(this).prevAll('small').first().find('strong').text() + ' ').focus();
+
+            // Change button text to indicate reply mode
+            $commentButton.text('Reply');
         });
     });
 </script>
