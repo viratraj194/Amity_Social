@@ -10,6 +10,35 @@
         }
     }
 
+    .caption-text {
+        color: #bdb6b6;
+        font-size: small;
+    }
+
+    .caption-text-truncated {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .caption-text-expanded {
+        display: inline;
+    }
+
+    .view-more-btn {
+        background: none;
+        border: none;
+        color: #777b7b;
+        font-size: small;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 4px;
+    }
+
+    .view-more-btn:hover {
+        color: #fff;
+    }
 </style>
 
 {% comment %} hidden search  {% endcomment %}

@@ -133,7 +133,7 @@
                         <div id="comments-container-{{ post.id }}"
                             class="ListComments-All comments-container flex">
                             <div class="ListComments-UserProfile">
-                                
+
                             </div>
                             <div class="Comments_contents">
                                 <div>
@@ -205,12 +205,29 @@
                 {% else %}
                 <h4><strong style="font-size: smaller;font-weight: 100;color: #afabab;">@{{post.user.users_id}}</strong>
                 {% endif %}
-                    <span style="font-size: small;color: #bdb6b6;">{{post.caption}}</span></h4>
+                    <span class="caption-text caption-text-truncated" id="caption-{{post.id}}">{{post.caption}}</span>
+                    {% if post.caption|length > 80 %}
+                    <button class="view-more-btn" onclick="toggleCaption({{post.id}})">View more</button>
+                    {% endif %}
+                </h4>
             </div>
-            <!-- <div class="postAll-comments">
-                <a href="#allcoments" style="color: #777b7b;">View all 156 comments</a>
-            </div> -->
         </div>
+
+        <script>
+            function toggleCaption(id) {
+                var caption = document.getElementById('caption-' + id);
+                var btn = caption.nextElementSibling;
+                if (caption.classList.contains('caption-text-truncated')) {
+                    caption.classList.remove('caption-text-truncated');
+                    caption.classList.add('caption-text-expanded');
+                    btn.textContent = 'View less';
+                } else {
+                    caption.classList.remove('caption-text-expanded');
+                    caption.classList.add('caption-text-truncated');
+                    btn.textContent = 'View more';
+                }
+            }
+        </script>
 
     </div>
 </div>
