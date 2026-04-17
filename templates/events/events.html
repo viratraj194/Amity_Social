@@ -1,10 +1,14 @@
 <a href="{% url 'eventDetails' event.id %}">
     <div class="allEventsListsRight">
         <div class="allEventsListsCard">
+            {% if event.image %}
             <img src="{{event.image.url}}" alt="">
+            {% else %}
+            <img src="/static/img/add_img.jpeg" alt="">
+            {% endif %}
         </div>
         <div class="upcomingEventSliderDetails" id="upcomingEventSliderDetails" style="bottom: 0px;">
-            <span>{{event.start_datetime}}</span>
+            <span>{{event.start_datetime|date:"M d, Y"}}</span>
             <h5>{{event.title}}</h5>
         </div>
     </div>

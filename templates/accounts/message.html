@@ -69,6 +69,141 @@
         align-items: flex-end;
         margin-bottom: 8px;
     }
+
+    /* Message bubble - safe structure */
+    .message-bubble {
+        position: relative;
+        max-width: 300px;
+        margin: 10px;
+        padding: 10px 14px;
+        border-radius: 16px;
+        color: rgb(75, 75, 75);
+        border: 1px solid white;
+        box-shadow: -3px 3px 7px 1px rgb(255 255 255 / 30%);
+    }
+
+    .senderMessage .message-bubble {
+        border-radius: 16px 16px 0px 16px;
+    }
+
+    .receiverMessage .message-bubble {
+        border-radius: 16px 16px 16px 0px;
+    }
+
+    .message-text {
+        display: block;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    /* Chat list item fixed height - prevents layout shift */
+    .message_user_card {
+        height: 75px !important;
+        max-height: 75px !important;
+        overflow: hidden;
+    }
+
+    /* Chat list meta - time + notification (absolute for list items) */
+    .messageUserCard .chat-meta {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .chat-time {
+        font-size: 11px;
+        color: #8e8e8e;
+    }
+
+    /* Message meta - time + tick inside bubble (safe flex positioning) */
+    .senderMessage .chat-meta,
+    .receiverMessage .chat-meta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        font-size: 11px;
+        position: static;
+    }
+
+    .messageStatusIndicator {
+        font-size: 11px;
+        line-height: 1;
+    }
+
+
+    .messageUserCard {
+        align-items: center;
+        height: 100%;
+        max-height: 75px;
+        overflow: hidden;
+    }
+
+    .messageUserCard .userImg {
+        flex-shrink: 0;
+        width: 45px;
+        height: 45px;
+    }
+
+    .messageUserCard .messageUsersDetails {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        max-height: 50px;
+    }
+
+    .messageUserCard .messageUsersDetails > div.flex {
+        flex-shrink: 0;
+    }
+
+    .messageUserCard .messageUsersDetails span[style*="font-size: small"] {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        max-width: 200px;
+        line-height: 1.2;
+    }
+
+    /* Chat item meta - time + notification ALWAYS top-right */
+    .messageUserCard {
+        position: relative;
+    }
+
+    .room-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .room-container small:first-child {
+        font-size: 11px;
+        color: #8e8e8e;
+        white-space: nowrap;
+    }
+
+    .room-container .notification-icon {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* Ensure name span doesn't overlap with meta */
+    .messageUsersDetails > div.flex {
+        padding-right: 70px;
+    }
+
+    .messageUsersDetails .user-name {
+        margin: 2px 0;
+        font-size: 15px;
+        display: block;
+    }
 </style>
 
 <div class="messageContainer flex main_container_width main_container_width_phone"
@@ -97,14 +232,13 @@
                         {% endif %}
                         <div class="messageUsersDetails column">
                             <div class="flex">
-                                <span
-                                    style="margin: 2px 0px; display: flex; justify-content: space-between; width: 174px; font-size: 15px;">
+                                <span class="user-name">
                                     <strong style="color: rgb(210, 208, 208);">
                                         {{ item.other_user_name }}
                                     </strong>
                                 </span>
-                                <small style="color: gray;">{{ item.last_message_time|date:"H:i" }}</small>
-                                <div id="room-{{ item.room_slug }}" class="room-container">
+                                <div id="room-{{ item.room_slug }}" class="room-container" style="display: flex;">
+                                    <small>{{ item.last_message_time|date:"H:i" }}</small>
                                     {% if item.unread_msg %}
                                     <small class="notification-icon" style="display: block;">
                                         <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover"
@@ -165,24 +299,24 @@
             </div>
         </a>
         {% endif %}
-        <div class="allTheMessages">
-            <div id="chatContainer" class="allTheMessage">
+        <div class="allTheMessages" style="flex: 1; overflow: hidden; display: flex; height: 477px !important; flex-direction: column;">
+            <div id="chatContainer" class="allTheMessage" style="flex: 1; overflow-y: auto; height: 477px !important; min-height: 0;">
                 {% for message in messages %}
                 {% if message.sender == user %}
                 <div class="senderMessage">
-                    <p>{{ message.content }}</p>
-                    <div class="senderMessageFooter flex">
-                        <div class="receiverMessageImg">
-                            <img src="{{ user.userprofile.profile_picture.url }}" alt="">
-                        </div>
-                        <div class="messageStatusIndicator">
-                            {% if message.status == 3 %}
-                                <span class="read-tick" title="Read">✓✓</span>
-                            {% elif message.status == 2 %}
-                                <span class="delivered-tick" title="Delivered">✓✓</span>
-                            {% else %}
-                                <span class="sent-tick" title="Sent">✓</span>
-                            {% endif %}
+                    <div class="message-bubble">
+                        <span class="message-text">{{ message.content }}</span>
+                        <div class="chat-meta">
+                            <span class="chat-time">{{ message.created_at|date:"H:i" }}</span>
+                            <div class="messageStatusIndicator" id="msg-status-{{ message.id }}">
+                                {% if message.status == 3 %}
+                                    <span class="read-tick" title="Read">✓✓</span>
+                                {% elif message.status == 2 %}
+                                    <span class="delivered-tick" title="Delivered">✓✓</span>
+                                {% else %}
+                                    <span class="sent-tick" title="Sent">✓</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -191,7 +325,12 @@
                     <div class="receiverMessageImg">
                         <img src="{{ message.sender.userprofile.profile_picture.url }}" alt="">
                     </div>
-                    <p>{{ message.content }}</p>
+                    <div class="message-bubble">
+                        <span class="message-text">{{ message.content }}</span>
+                        <div class="chat-meta">
+                            <span class="chat-time">{{ message.created_at|date:"H:i" }}</span>
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
                 {% endfor %}
@@ -246,6 +385,9 @@
                 } else if (data.type === "message_status_update") {
                     // Handle message status update (delivered/read)
                     handleStatusUpdate(data);
+                } else if (data.type === "messages_read") {
+                    // Handle bulk messages read when user enters room
+                    handleMessagesRead(data);
                 } else if (data.type === "room_list_update") {
                     // Handle room list ordering update - only update the specific room item
                     handleRoomListUpdate(data);
@@ -323,6 +465,13 @@
             updateMessageStatus(messageId, status);
         }
 
+        function handleMessagesRead(data) {
+            const messageIds = data.message_ids;
+            messageIds.forEach(function(messageId) {
+                updateMessageStatus(messageId, 3); // STATUS_READ
+            });
+        }
+
         function handleMessage(data) {
             const message = data.message;
             const messageSenderId = data.sender_id;
@@ -367,14 +516,15 @@
                 } else {
                     statusHtml = '<span class="sent-tick" title="Sent">✓</span>';
                 }
+                const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                 messageElement.innerHTML = `
-                    <p>${message}</p>
-                    <div class="senderMessageFooter flex">
-                        <div class="receiverMessageImg">
-                            <img src="${senderProfilePic}" alt="Profile Picture">
-                        </div>
-                        <div class="messageStatusIndicator" id="msg-status-${messageId}">
-                            ${statusHtml}
+                    <div class="message-bubble">
+                        <span class="message-text">${message}</span>
+                        <div class="chat-meta">
+                            <span class="chat-time">${time}</span>
+                            <div class="messageStatusIndicator" id="msg-status-${messageId}">
+                                ${statusHtml}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -385,7 +535,12 @@
                     <div class="receiverMessageImg">
                         <img src="${senderProfilePic}" alt="Profile Picture">
                     </div>
-                    <p>${message}</p>
+                    <div class="message-bubble">
+                        <span class="message-text">${message}</span>
+                        <div class="chat-meta">
+                            <span class="chat-time">${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                    </div>
                 `;
             }
 
@@ -395,6 +550,7 @@
 
         function updateMessageStatus(messageId, status) {
             const statusElement = document.getElementById(`msg-status-${messageId}`);
+            console.log(`updateMessageStatus: msg-${messageId}, status=${status}, element found: ${!!statusElement}`);
             if (statusElement) {
                 let statusHtml = '';
                 if (status === 3) {
@@ -405,6 +561,9 @@
                     statusHtml = '<span class="sent-tick" title="Sent">✓</span>';
                 }
                 statusElement.innerHTML = statusHtml;
+                console.log(`Updated msg-${messageId} to ${statusHtml}`);
+            } else {
+                console.warn(`Element msg-status-${messageId} not found!`);
             }
         }
 

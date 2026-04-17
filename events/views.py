@@ -1,4 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
+from django.core.cache import cache
+from django.core.cache.utils import make_template_fragment_key
 from .models import*
 from . forms import addEventsForm
 import datetime
@@ -8,6 +10,7 @@ from list_posts.models import*
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from functools import wraps
 
 def get_current_week():
     today = timezone.now()
@@ -24,46 +27,66 @@ def get_current_month():
 
 @login_required(login_url='login')
 def allEvents(request):
-     # Get the date ranges
+    # Get the date ranges
     start_of_week, end_of_week = get_current_week()
     start_of_month, end_of_month = get_current_month()
 
-    # Filter events for the current week
-    events_this_week = Event.objects.filter(
-        start_datetime__gte=start_of_week,
-        start_datetime__lte=end_of_week
-    )
+    page = int(request.GET.get('page', 1))
+    cache_key = f'events_list_page_{page}'
 
-    # Filter events for the current month
-    events_this_month = Event.objects.filter(
-        start_datetime__gte=start_of_month,
-        start_datetime__lte=end_of_month
-    )
-    allEvents = Event.objects.all()
-    paginator = Paginator(allEvents,6)
-    page = int(request.GET.get('page',1))
+    # Try to get from cache first
+    cached_data = cache.get(cache_key)
+    if cached_data and request.headers.get('HX-Request') != 'true':
+        return render(request, 'events/allEvents.html', cached_data)
+
+    # Optimized queries with select_related for FK
+    all_events = Event.objects.select_related('eventCreator').order_by('-created_at')
+
+    paginator = Paginator(all_events, 12)
     try:
-        allEvents = paginator.page(page)
+        events_page = paginator.page(page)
     except:
         return HttpResponse('')
+
+    # Only fetch week/month events on first page (for hero section)
+    events_this_week = []
+    events_this_month = []
+    if page == 1:
+        events_this_week = Event.objects.select_related('eventCreator').filter(
+            start_datetime__gte=start_of_week,
+            start_datetime__lte=end_of_week
+        )[:5]
+
+        events_this_month = Event.objects.select_related('eventCreator').filter(
+            start_datetime__gte=start_of_month,
+            start_datetime__lte=end_of_month
+        )[:10]
+
     context = {
-        'allEvents':allEvents,
+        'allEvents': events_page,
         'events_this_week': events_this_week,
         'events_this_month': events_this_month,
-        'page':page,
+        'page': page,
     }
+
+    # Cache for 60 seconds (only for non-HTMX requests)
+    if request.headers.get('HX-Request') != 'true':
+        cache.set(cache_key, context, 60)
+
     if request.headers.get('HX-Request') == 'true':
-        return render(request,'events\loop_events.html',context)
-    return render(request,'events/allEvents.html',context)
+        return render(request, 'events/loop_events.html', context)
+    return render(request, 'events/allEvents.html', context)
 @login_required(login_url='login')
 def addEvents(request):
     if request.method == 'POST':
         form = addEventsForm(request.POST,request.FILES)
         if form.is_valid():
-            event = form.save(commit=False)  # Create an Event instance but don't save yet
-            event.eventCreator = request.user  # Assign the current logged-in user as the eventCreator
-            event.save()  # Save the Event instance
-            return redirect('allEvents')  # Replace 'event_list' with the URL name you want to redirect to after form submission
+            event = form.save(commit=False)
+            event.eventCreator = request.user
+            event.save()
+            # Invalidate cache for event list
+            cache.delete('events_list_page_1')
+            return redirect('allEvents')
         else:
             print(form.errors)
     else:
@@ -136,12 +159,20 @@ def eventDetails(request,event_id):
 @login_required(login_url='login')
 def editEvent(request,event_id=None):
     event = get_object_or_404(Event,id=event_id)
+
+    # SECURITY: Verify user owns the event
+    if event.eventCreator != request.user:
+        messages.error(request, 'You do not have permission to edit this event.')
+        return redirect('allEvents')
+
     if request.method == 'POST':
         form = addEventsForm(request.POST,request.FILES,instance=event)
         if form.is_valid():
             event = form.save(commit=False)
             event.eventCreator = request.user
             event.save()
+            # Invalidate cache for event list
+            cache.delete('events_list_page_1')
             messages.success(request,'Event is updated successfully')
             return redirect('account')
         else:
@@ -158,7 +189,15 @@ def editEvent(request,event_id=None):
 @login_required(login_url='login')
 def deleteEvent(request,event_id):
     event = get_object_or_404(Event,id=event_id)
+
+    # SECURITY: Verify user owns the event
+    if event.eventCreator != request.user:
+        messages.error(request, 'You do not have permission to delete this event.')
+        return redirect('allEvents')
+
     event.delete()
+    # Invalidate cache for event list
+    cache.delete('events_list_page_1')
     messages.success(request,'Event is deleted successfully')
     return redirect('account')
 

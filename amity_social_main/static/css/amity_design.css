@@ -2070,11 +2070,14 @@ h4 {
 
 .message_user_card {
     width: 285px;
+    height: 55px;
+    max-height: 75px;
     background-color: #1a1a1a;
     padding: 10px;
     border-radius: 10px;
     margin: 15px auto;
-    box-shadow: -2px 2px 10px 0px rgba(98, 96, 96, 0.3)
+    box-shadow: -2px 2px 10px 0px rgba(98, 96, 96, 0.3);
+    overflow: hidden;
 }
 
 .message_user_card:hover {
@@ -2094,15 +2097,9 @@ h4 {
 }
 
 .userImg {
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-    border-radius: 50%;
-}
-
-.userImg {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
     overflow: hidden;
     border-radius: 50%;
 }
@@ -2114,12 +2111,31 @@ h4 {
 }
 
 .messageUserCard {
+    display: flex;
     align-items: center;
+    height: 100%;
+    max-height: 55px;
+    overflow: hidden;
 }
 
 .messageUserCard .messageUsersDetails {
     margin-left: 15px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
 
+.messageUserCard .messageUsersDetails > div.flex {
+    flex-shrink: 0;
+}
+
+.messageUserCard .messageUsersDetails span[style*="font-size: small"] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 200px;
+    line-height: 1.2;
 }
 
 .message_ChatContainer {
@@ -2187,19 +2203,7 @@ h4 {
 .receiverMessage {
     display: flex;
     align-items: end;
-}
-
-.receiverMessage p {
-    width: 300px;
-    text-wrap: wrap;
-    overflow: hidden;
-    word-wrap: break-word;
-    margin-left: 10px;
-    background-color: rgb(209, 208, 208);
-    color: rgb(75, 75, 75);
-    padding: 10px;
-    border-radius: 16px 16px 16px 0px;
-    box-shadow: -3px 3px 7px 1px rgb(255 255 255 / 30%);
+    gap: 10px;
 }
 
 .receiverMessageImg {
@@ -2207,6 +2211,7 @@ h4 {
     height: 40px;
     overflow: hidden;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
 .receiverMessageImg img {
@@ -2217,21 +2222,34 @@ h4 {
 
 .senderMessage {
     display: flex;
-    align-items: end;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 8px;
 }
 
-.senderMessage p {
-    width: 300px;
-    text-wrap: wrap;
-    word-wrap: break-word;
-    overflow: hidden;
-    margin-right: 10px;
+/* Message bubble styles - used by both sender and receiver */
+.message-bubble {
+    max-width: 300px;
+    padding: 10px 14px;
     border: 1px solid white;
     color: rgb(75, 75, 75);
-    padding: 10px;
-    border-radius: 16px 16px 0px 16px;
     box-shadow: -3px 3px 7px 1px rgb(255 255 255 / 30%);
+}
+
+.senderMessage .message-bubble {
+    background-color: rgb(209, 208, 208);
+    border-radius: 16px 16px 0px 16px;
+}
+
+.receiverMessage .message-bubble {
+    background-color: rgb(209, 208, 208);
+    border-radius: 16px 16px 16px 0px;
+}
+
+.message-text {
+    display: block;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 /* message ends */

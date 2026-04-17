@@ -11,23 +11,36 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .forms import addCommentForm
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from accounts.models import Message
+from django_ratelimit.decorators import ratelimit
+from django_ratelimit.exceptions import Ratelimited
+from django.template.response import TemplateResponse
 
 
 
 
 @login_required(login_url='login')
 def list_posts(request):
-    user_profile = UserProfile.objects.get(user=request.user)
+    user_profile = get_object_or_404(UserProfile, user=request.user)
     user = request.user
     collage = user.collage_name
-    posts = UserPosts.objects.filter(user__collage_name=collage).order_by('-created_at')
+
+    page = int(request.GET.get('page', 1))
+    cache_key = f'posts_list_{request.user.id}_{collage}_page_{page}'
+
+    # Try cache first (non-HTMX requests only)
+    cached_data = cache.get(cache_key)
+    if cached_data and request.headers.get('HX-Request') != 'true':
+        return render(request, 'list_posts/list_posts.html', cached_data)
+
+    posts = UserPosts.objects.filter(user__collage_name=collage).select_related('user__userprofile').order_by('-created_at')
     total_posts = UserPosts.objects.filter(user=user)
-    
+
     # Sending the follow request
     follow_requests = FollowRequest.objects.filter(to_user=user, is_accepted=False)
-    
+
     # Get all users who are following the logged-in user
     followers = Follower.objects.filter(following=user).select_related('follower')
 
@@ -36,20 +49,24 @@ def list_posts(request):
 
     total_following = following.count()
     total_followers = followers.count()
-    
+
+    # Prefetch following list for efficient lookup
+    following_users = set(Follower.objects.filter(follower=user).values_list('following_id', flat=True))
+
+    # Prefetch saved posts and likes for the user
+    saved_posts = set(UserSavedPosts.objects.filter(user=request.user).values_list('post_id', flat=True))
+    liked_posts = set(Like.objects.filter(user=user).values_list('post_id', flat=True))
+
     # Add attributes to posts: is_saved, is_portrait, is_liked, is_following
     for post in posts:
-        post.saved_by_user = UserSavedPosts.objects.filter(user=request.user, post=post).exists()
+        post.saved_by_user = post.id in saved_posts
         post.is_portrait = post.image_height > post.image_width if post.image_height and post.image_width else False
-        post.liked_by_user = post.likes.filter(user=user).exists() if user else False
-        post.is_following = Follower.objects.filter(follower=user, following=post.user).exists()  # Add is_following attribute to each post
+        post.liked_by_user = post.id in liked_posts
+        post.is_following = post.user.id in following_users
 
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
-    # implement pagination
-    # if messages 
     user_messages = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ)
     paginator = Paginator(posts,15)
-    page = int(request.GET.get('page', 1))
     try:
         posts = paginator.page(page)
     except:
@@ -57,7 +74,7 @@ def list_posts(request):
     context = {
         'user_profile': user_profile,
         'user': user,
-        'posts': posts,  # Pass the modified posts list
+        'posts': posts,
         'notifications': notifications,
         'total_posts': total_posts.count(),
         'follow_requests': follow_requests,
@@ -66,6 +83,11 @@ def list_posts(request):
         'user_messages':user_messages,
         'page':page,
     }
+
+    # Cache for 30 seconds (non-HTMX only)
+    if request.headers.get('HX-Request') != 'true':
+        cache.set(cache_key, context, 30)
+
     if request.headers.get('HX-Request') == 'true':
         return render(request,'list_posts\loop_posts.html',context)
     return render(request, 'list_posts/list_posts.html', context)
@@ -79,30 +101,32 @@ def add_posts(request):
     if request.method == 'POST':
         post_form = addPostsForm(request.POST, request.FILES)
         if post_form.is_valid():
-            post = post_form.save(commit=False)  # Don't save to the database yet
-            post.user = request.user  # Set the user to the current logged-in user
+            post = post_form.save(commit=False)
+            post.user = request.user
 
             if not post.content and not post.caption and not post.post_image:
                 messages.error(request, "You cannot post an empty post. Please provide content, caption, or an image.")
                 return redirect('list_posts')
-            post.save()  # Save the post now
+            post.save()
 
             # Set post_slug based on user's name and post id
             user = request.user
             user_name = f'{user.first_name}{user.last_name}'
             post.post_slug = slugify(user_name) + '_' + str(post.id)
-            post.save()  # Save the post again to update post_slug
+            post.save()
 
+            # Invalidate cache for the user's college feed
+            cache.delete(f'posts_list_{request.user.collage_name}_page_1')
             messages.success(request, 'New post is added.')
             return redirect('list_posts')
         else:
-            
+
             messages.error(request,'Post caption is to big or corrupted image')
             return redirect('list_posts')
-            
+
     else:
         post_form = addPostsForm()
-    
+
     context = {
         'post_form': post_form
     }
@@ -110,10 +134,8 @@ def add_posts(request):
 
 @login_required(login_url='login')
 def mark_notification_as_read(request, notification_id):
-    notification = Notification.objects.get(id=notification_id, user=request.user)
-    notification.read = True
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
     notification.delete()
-    notification.save()
     return JsonResponse({'status': 'success'})
 
 
@@ -130,7 +152,8 @@ def mark_all_as_read(request):
 
 
 
-@csrf_exempt
+@login_required(login_url='login')
+@ratelimit(key='user', rate='10/m', block=True, method=['POST'])
 def add_comment(request, post_id):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -140,14 +163,14 @@ def add_comment(request, post_id):
         user = request.user
 
         if comment_text:
-            post = UserPosts.objects.get(id=post_id)
+            post = get_object_or_404(UserPosts, id=post_id)
 
             # If parent_id provided, verify it exists and belongs to same post
             parent = None
             if parent_id:
                 try:
-                    parent = Comment.objects.get(id=parent_id, post=post)
-                except Comment.DoesNotExist:
+                    parent = get_object_or_404(Comment, id=parent_id, post=post)
+                except:
                     parent = None
 
             comment = Comment.objects.create(
@@ -198,13 +221,14 @@ def get_comments(request, post_id):
                     read=False
             )
 
+    import html
     def serialize_comment(comment):
         """Serialize a comment and its replies recursively"""
         comment_data = {
             'id': comment.id,
             'user': comment.user.username,
             'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
-            'comment': comment.comment,
+            'comment': html.escape(comment.comment),
             'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'parent_id': comment.parent.id if comment.parent else None,
             'is_reply': comment.is_reply,
@@ -218,7 +242,7 @@ def get_comments(request, post_id):
                 'id': reply.id,
                 'user': reply.user.username,
                 'profile_picture': reply.user.userprofile.profile_picture.url if hasattr(reply.user, 'userprofile') and reply.user.userprofile.profile_picture else '/static/img/images.jpeg',
-                'comment': reply.comment,
+                'comment': html.escape(reply.comment),
                 'created_at': reply.created_at.strftime('%Y-%m-%d %H:%M:%S'),
                 'parent_id': reply.parent.id,
                 'is_reply': True
@@ -228,7 +252,10 @@ def get_comments(request, post_id):
     comments_data = [serialize_comment(comment) for comment in comments]
     return JsonResponse({'comments': comments_data})
 
+from django.db import transaction
+
 @login_required(login_url='login')
+@ratelimit(key='user', rate='15/m', block=True, method=['POST'])
 def post_like(request, post_id):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -236,17 +263,16 @@ def post_like(request, post_id):
                 post = get_object_or_404(UserPosts, id=post_id)
                 user = request.user
 
-                if Like.objects.filter(user=user, post=post).exists():
-                    # If already liked, remove the like
-                    Like.objects.filter(user=user, post=post).delete()
-                    liked = False
-                else:
-                    # If not liked, create a new like
-                    Like.objects.create(user=user, post=post)
-                    liked = True
-                    if post.user != user:
-                        Notification.objects.create(user=post.user,post = post,actor=user, notification_msg='Liked your Post.')
-                        
+                with transaction.atomic():
+                    # Use get_or_create for atomic toggle operation
+                    like, created = Like.objects.get_or_create(user=user, post=post)
+                    if created:
+                        liked = True
+                        if post.user != user:
+                            Notification.objects.create(user=post.user, post=post, actor=user, notification_msg='Liked your Post.')
+                    else:
+                        like.delete()
+                        liked = False
 
                 return JsonResponse({'status': 'success', 'liked': liked})
 
@@ -265,14 +291,16 @@ def save_post(request, post_id):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         try:
             post = get_object_or_404(UserPosts, id=post_id)
-            
             user = request.user
-            if UserSavedPosts.objects.filter(user=user, post=post).exists():
-                UserSavedPosts.objects.filter(user=user, post=post).delete()
-                post_saved = False
-            else:
-                UserSavedPosts.objects.create(user=user, post=post)
-                post_saved = True
+
+            with transaction.atomic():
+                saved, created = UserSavedPosts.objects.get_or_create(user=user, post=post)
+                if created:
+                    post_saved = True
+                else:
+                    saved.delete()
+                    post_saved = False
+
             return JsonResponse({'status': 'success', 'post_saved': post_saved})
         except UserPosts.DoesNotExist:
             return JsonResponse({'status': 'failed', 'message': 'Post does not exist'})

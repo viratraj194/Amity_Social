@@ -17,6 +17,8 @@ from django.core.paginator import Paginator
 from django.db.models import Max, F
 from django.db.models.functions import Coalesce
 from datetime import datetime, timezone
+from django.db import transaction
+from django_ratelimit.decorators import ratelimit
 
 
 
@@ -88,6 +90,7 @@ def deactivate_account(request):
     messages.success(request, 'you have logged out successfully'.title())
     return redirect('login')
 
+@ratelimit(key='ip', rate='5/m', block=True, method=['POST'])
 def login(request):
     if request.user.is_authenticated:
         messages.warning(request,'you are already logged in.')
@@ -103,7 +106,7 @@ def login(request):
 
             messages.success(request,'You are now logged in.')
             return redirect('list_posts')
-        
+
         else:
             # print(user.is_active)
             messages.error(request,'Invalid credentials!')
@@ -127,6 +130,7 @@ def account(request):
     redirectUrl = detectUser(user)
     return redirect(redirectUrl)
 
+@ratelimit(key='ip', rate='3/h', block=True, method=['POST'])
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -163,10 +167,19 @@ def reset_password(request):
         conform_password = request.POST['conform_password']
         if password == conform_password:
             pk = request.session.get('uid')
-            user = User.objects.get(pk = pk)
+            if not pk:
+                messages.error(request, 'Invalid password reset session. Please request a new link.')
+                return redirect('forgot_password')
+            try:
+                user = User.objects.get(pk=pk)
+            except User.DoesNotExist:
+                messages.error(request, 'Invalid password reset link.')
+                return redirect('forgot_password')
             user.set_password(password)
             user.is_active = True
             user.save()
+            # Clear the session key after successful reset
+            del request.session['uid']
             messages.success(request,'You have updated your password successfully'.title())
             return redirect('login')
         else:
@@ -370,46 +383,59 @@ def post_details_like(request,post_id):
 
 def deletePost(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug = post_slug,user=request.user)
+    collage_name = post.user.collage_name
     post.delete()
+    # Invalidate cache for the college feed
+    from django.core.cache import cache
+    cache.delete(f'posts_list_{collage_name}_page_1')
     return redirect('UserDashboard')
 
 @login_required(login_url='login')
-# follow systems 
+# follow systems
 def send_follow_request(request,user_id):
     to_user = get_object_or_404(User,id=user_id)
     from_user = request.user
+
     if from_user == to_user:
         messages.error(request,'You can follow yourself!')
         return redirect('list_posts')
-    elif FollowRequest.objects.filter(from_user=from_user,to_user=to_user).exists():
-        messages.info(request,'Request is already sent!')
-        return redirect('profile_details',user_id=user_id)
-    else:
-        FollowRequest.objects.create(to_user=to_user,from_user=from_user)
-        messages.success(request,'Follow request sent.'.title())
-        return redirect('profile_details',user_id=user_id)
+
+    with transaction.atomic():
+        # Check if already following
+        if Follower.objects.filter(follower=from_user, following=to_user).exists():
+            messages.info(request,'You are already following this user.')
+            return redirect('profile_details',user_id=user_id)
+
+        # Check if request already exists (use get_or_create for atomicity)
+        request_obj, created = FollowRequest.objects.get_or_create(
+            from_user=from_user,
+            to_user=to_user,
+            defaults={'is_accepted': False}
+        )
+
+        if created:
+            messages.success(request,'Follow request sent.'.title())
+        else:
+            messages.info(request,'Request is already sent!')
 
     return redirect('profile_details',user_id=user_id)
 @login_required(login_url='login')
-# accepting the request 
+# accepting the request
 def accept_follow_request(request,request_id):
     follow_request = get_object_or_404(FollowRequest, id=request_id, to_user=request.user)
-    
-    if follow_request:
+
+    with transaction.atomic():
         # Check if the follower relationship already exists
         existing_follower = Follower.objects.filter(follower=follow_request.from_user, following=follow_request.to_user).exists()
-        
+
         if not existing_follower:
             # Create a new Follower instance if not already following
             Follower.objects.create(follower=follow_request.from_user, following=follow_request.to_user)
-            follow_request.is_accepted = True
-            follow_request.delete()
-            return JsonResponse({'status': 'accepted'})
-        else:
-            # If already following, just mark the follow request as accepted
-            follow_request.is_accepted = True
-            follow_request.delete()
-            return JsonResponse({'status': 'already_following'})
+
+        # Always delete the request
+        follow_request.delete()
+        return JsonResponse({'status': 'accepted' if not existing_follower else 'already_following'})
+
     return JsonResponse({'status': 'error'}, status=400)
 @login_required(login_url='login')
 def unFollow(request,user_id):
@@ -432,6 +458,11 @@ def room_chat(request, slug):
     sender = request.user
     # Fetch the room based on the slug
     room = get_object_or_404(Room.objects.prefetch_related('participants__userprofile'), slug=slug)
+
+    # SECURITY: Verify user is a participant in the room
+    if not room.participants.filter(id=sender.id).exists():
+        messages.error(request, 'You do not have access to this chat room.')
+        return redirect('friend_messages')
 
     # Fetch all messages related to this room, ordered by timestamp - optimized with select_related
     messages = room.messages.select_related('sender__userprofile', 'receiver__userprofile').order_by('created_at')
@@ -558,15 +589,24 @@ def friend_messages(request):
 
 
 # Create a Redis instance
-
-
 from django.http import JsonResponse
 import redis
-redis_instance = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+from decouple import config
+
+redis_instance = redis.StrictRedis(
+    host=config('REDIS_HOST', default='127.0.0.1'),
+    port=config('REDIS_PORT', default='6379', cast=int),
+    db=0,
+    password=config('REDIS_PASSWORD', default=None)
+)
 
 def get_user_status(request, user_id):
     try:
-        r = redis.Redis()
+        r = redis.Redis(
+            host=config('REDIS_HOST', default='127.0.0.1'),
+            port=config('REDIS_PORT', default='6379', cast=int),
+            password=config('REDIS_PASSWORD', default=None)
+        )
         status = r.get(f'user:{user_id}:status')
         if status:
             return JsonResponse({'status': status.decode('utf-8')})

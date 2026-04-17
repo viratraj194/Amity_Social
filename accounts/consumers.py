@@ -79,7 +79,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Mark existing unread messages as read when entering the room
         read_message_ids = await self.mark_messages_as_read(self.user_id)
         if read_message_ids:
-            await self.broadcast_status_updates(read_message_ids, Message.STATUS_READ)
+            # Broadcast to room group so sender sees double blue ticks
+            logger.info(f'Broadcasting messages_read for {len(read_message_ids)} messages in room {self.room_slug}')
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'messages_read',
+                    'message_ids': read_message_ids,
+                    'room_slug': self.room_slug
+                }
+            )
+        else:
+            logger.info(f'No unread messages to mark as read for user {self.user_id} in room {self.room_slug}')
 
         # Run periodic cleanup if needed
         await self.maybe_run_cleanup()
@@ -241,6 +252,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "new_notification",
             "room_slug": event["room_slug"],
             "unread": event["unread"]
+        }))
+
+    async def messages_read(self, event):
+        """Handle messages read event - broadcast when user enters room and marks messages as read"""
+        message_ids = event['message_ids']
+        room_slug = event.get('room_slug', self.room_slug)
+
+        await self.send(text_data=json.dumps({
+            "type": "messages_read",
+            "message_ids": message_ids,
+            "room_slug": room_slug
         }))
 
     async def message_status_update(self, event):

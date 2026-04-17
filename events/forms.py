@@ -1,9 +1,15 @@
 from django import forms
 from .models import *
+from amity_social_main.validators import validate_image_field
 
 
 class addEventsForm(forms.ModelForm):
-    
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            validate_image_field(image)
+        return image
+
     class Meta:
         model = Event
         fields = ['title','description','location','start_datetime','end_datetime','organizer','image','attendees']

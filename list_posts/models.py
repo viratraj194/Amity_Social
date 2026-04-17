@@ -40,12 +40,16 @@ class UserPosts(models.Model):
         
 
 class Like(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    post = models.ForeignKey(UserPosts,related_name='likes', on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE, db_index=True)
+    post = models.ForeignKey(UserPosts,related_name='likes', on_delete=models.CASCADE, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'post')
+        indexes = [
+            models.Index(fields=['user', 'post']),
+            models.Index(fields=['post']),
+        ]
 
     def __str__(self):
         return f'{self.user.username} likes {self.post.id}'
@@ -83,28 +87,35 @@ class Comment(models.Model):
 # test notification 
 class Notification(models.Model):
     # notification_title = models.CharField(blank=True,null=True,db_index=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', db_index=True)
+    post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications', db_index=True)
     notification_msg = models.CharField(blank=True,null=True)
-    actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actor')
-    timestamp = models.DateTimeField(default=timezone.now)
-    read = models.BooleanField(default=False)
+    actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actor', db_index=True)
+    timestamp = models.DateTimeField(default=timezone.now, db_index=True)
+    read = models.BooleanField(default=False, db_index=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'read']),
+            models.Index(fields=['user', '-timestamp']),
+        ]
 
     def __str__(self):
         return f"{self.actor} Notified {self.user}'s post"
 
 
 class UserSavedPosts(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    post = models.ForeignKey(UserPosts,on_delete=models.CASCADE,related_name='saved_posts')
+    user = models.ForeignKey(User,on_delete=models.CASCADE, db_index=True)
+    post = models.ForeignKey(UserPosts,on_delete=models.CASCADE,related_name='saved_posts', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         indexes = [
             models.Index(fields=['user']),
             models.Index(fields=['post']),
+            models.Index(fields=['user', 'post']),
         ]
+        unique_together = ('user', 'post')
         verbose_name = 'User Saved Post'
         verbose_name_plural = 'User Saved Posts'
 

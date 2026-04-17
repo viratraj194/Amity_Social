@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG',cast=bool)
+DEBUG = config('DEBUG', default='False', cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'list_posts',
     'events',
     'compressor',
-
+    'django_ratelimit',
 ]
 
 
@@ -56,7 +56,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [f"redis://:{config('REDIS_PASSWORD', default='')}@{config('REDIS_HOST', default='127.0.0.1')}:{config('REDIS_PORT', default='6379', cast=int)}/0"],
         },
     },
 }
@@ -80,6 +80,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'amity_social_main.urls'
@@ -192,20 +193,64 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'amity.loca.lt',
-    ' https://afraid-ads-swim.loca.lt'
-    
+    'afraid-ads-swim.loca.lt'
+
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
     'https://amity.loca.lt',
+    'https://afraid-ads-swim.loca.lt',
 ]
 
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default='True', cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default='True', cast=bool)
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
-# cachesing 
+# Content Security Policy (CSP)
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+CSP_IMG_SRC = ("'self'", 'data:', 'blob:')
+CSP_FONT_SRC = ("'self'", 'data:')
+CSP_CONNECT_SRC = ("'self'", 'wss:', 'ws:')
+CSP_OBJECT_SRC = ("'none'",)
+CSP_FRAME_ANCESTORS = ("'none'",)
+CSP_BASE_URI = ("'self'",)
+CSP_FORM_ACTION = ("'self'",)
+
+
+# caching
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': f"redis://:{config('REDIS_PASSWORD', default='')}@{config('REDIS_HOST', default='127.0.0.1')}:{config('REDIS_PORT', default='6379')}/1",
+        'TIMEOUT': 60,
+        'OPTIONS': {
+            'socket_connect_timeout': 5,
+        }
     }
 }
+
+# Fallback to locmem if redis not available (development)
+try:
+    import redis
+    redis_host = config('REDIS_HOST', default='127.0.0.1')
+    redis_port = config('REDIS_PORT', default='6379', cast=int)
+    redis_password = config('REDIS_PASSWORD', default=None)
+    r = redis.Redis(host=redis_host, port=redis_port, db=1, password=redis_password)
+    r.ping()
+except:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
