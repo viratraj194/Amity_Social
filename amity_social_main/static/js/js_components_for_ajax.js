@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Loop through the selected elements and add event listeners to each
     searchUserBtns.forEach(function(button) {
         button.addEventListener("click", function() {
-            console.log('working');
+            // console.log('working');
             document.querySelector(".searchUserHtml").style.display = "block";
         });
     });
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Loop through the selected elements and add event listeners to each
     searchUserBtns.forEach(function(button) {
         button.addEventListener("click", function() {
-            console.log('working');
+            // console.log('working');
             document.querySelector(".postingPageLast").style.display = "block";
         });
     });

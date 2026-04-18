@@ -369,14 +369,14 @@
         let receiverOnlineStatus = 'Offline'; // Track receiver's online status
 
         socket.onopen = function () {
-            console.log("WebSocket connection opened");
-            console.log("Current User ID:", senderId);
+            // console.log("WebSocket connection opened");
+            // console.log("Current User ID:", senderId);
         };
         const currentRoomSlug = document.getElementById("chat-room")?.dataset.roomSlug; // Get current room slug from data attribute
         socket.onmessage = function (event) {
             try {
                 const data = JSON.parse(event.data);
-                console.log("WebSocket message received:", data);
+                // console.log("WebSocket message received:", data);
 
                 if (data.type === "user_status") {
                     handleUserStatus(data);
@@ -394,7 +394,7 @@
                 } else if (data.type === "new_notification") {
                     // Only show a notification if the message is for a different room
                     if (data.room_slug !== roomSlug) {
-                        console.log("New notification received for room:", data.room_slug);
+                        // console.log("New notification received for room:", data.room_slug);
                         updateUnreadMessageIndicator(data.room_slug);
                     }
                 } else if (data.rooms_with_photos) {
@@ -411,7 +411,7 @@
         };
 
         socket.onclose = function () {
-            console.log("WebSocket connection closed!");
+            // console.log("WebSocket connection closed!");
         };
 
         function sendMessage() {
@@ -441,7 +441,7 @@
             const userId = data.user_id;
             const status = data.status;
 
-            console.log(`User ${userId} status: ${status}`); // Log user status
+            // console.log(`User ${userId} status: ${status}`); // Log user status
 
             if (userId == receiverId) {
                 const receiverStatusElement = document.getElementById('receiverStatus');
@@ -498,7 +498,7 @@
 
             } else {
                 // Message belongs to another room
-                console.log("New message in another room:", messageRoomSlug);
+                // console.log("New message in another room:", messageRoomSlug);
                 updateUnreadMessageIndicator(messageRoomSlug);
             }
         }
@@ -550,7 +550,7 @@
 
         function updateMessageStatus(messageId, status) {
             const statusElement = document.getElementById(`msg-status-${messageId}`);
-            console.log(`updateMessageStatus: msg-${messageId}, status=${status}, element found: ${!!statusElement}`);
+            // console.log(`updateMessageStatus: msg-${messageId}, status=${status}, element found: ${!!statusElement}`);
             if (statusElement) {
                 let statusHtml = '';
                 if (status === 3) {
@@ -561,9 +561,9 @@
                     statusHtml = '<span class="sent-tick" title="Sent">✓</span>';
                 }
                 statusElement.innerHTML = statusHtml;
-                console.log(`Updated msg-${messageId} to ${statusHtml}`);
+                // console.log(`Updated msg-${messageId} to ${statusHtml}`);
             } else {
-                console.warn(`Element msg-status-${messageId} not found!`);
+                // console.warn(`Element msg-status-${messageId} not found!`);
             }
         }
 
@@ -702,12 +702,22 @@
             fetch("{% url 'unread_message_count' %}")
                 .then(res => res.json())
                 .then(data => {
-                    const badge = document.getElementById("notification-badge");
-                    if (badge) {
+                    // Update desktop notification badge
+                    const desktopBadge = document.getElementById("notification-badge");
+                    if (desktopBadge) {
                         if (data.unread_count > 0) {
-                            badge.style.display = "inline-block";
+                            desktopBadge.style.display = "inline-block";
                         } else {
-                            badge.style.display = "none";
+                            desktopBadge.style.display = "none";
+                        }
+                    }
+                    // Update mobile notification badge
+                    const mobileBadge = document.getElementById("mobile-notification-badge");
+                    if (mobileBadge) {
+                        if (data.unread_count > 0) {
+                            mobileBadge.style.display = "inline-block";
+                        } else {
+                            mobileBadge.style.display = "none";
                         }
                     }
                 })

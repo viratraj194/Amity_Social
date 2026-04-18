@@ -517,7 +517,7 @@
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
 
                     // Select the icon div and like count span
                     const iconDiv = $(`.like_post[data-id="${postId}"] .post_icon`);
@@ -576,7 +576,7 @@
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
                 }
             });
         });
@@ -606,7 +606,7 @@
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
 
                     if (response.success) {
                         // Clear the textarea and reset reply mode

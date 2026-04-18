@@ -88,10 +88,10 @@
 
     .PostContainers {
         background-color: rgb(35, 35, 35);
-        width: 100%;
+        width: 95%;
         display: none;
         transform: translate(1%, 2%);
-        padding: 20px;
+        padding: 10px;
         position: fixed;
         top: 25px;
         max-height: 600px;

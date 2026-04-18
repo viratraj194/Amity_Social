@@ -194,7 +194,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'amity.loca.lt',
     'afraid-ads-swim.loca.lt',
-    'phi-forest-feel-attract.trycloudflare.com',
+    'harvey-rendered-toolkit-ali.trycloudflare.com',
 
 ]
 
@@ -202,7 +202,7 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://amity.loca.lt',
     'https://afraid-ads-swim.loca.lt',
-    'https://phi-forest-feel-attract.trycloudflare.com',
+    'https://harvey-rendered-toolkit-ali.trycloudflare.com',
 ]
 
 # Security settings

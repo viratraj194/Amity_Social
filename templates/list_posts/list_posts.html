@@ -542,13 +542,11 @@
                             colors="primary:#ffffff" style="width:20px;height:20px">
                         </lord-icon>
                         <span>Messages</span>
-                        {% if user_messages %}
-                        <small>
+                        <small id="mobile-notification-badge" style="display: none;">
                             <script src="https://cdn.lordicon.com/lordicon.js"></script>
                             <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:10px;height:10px">
                             </lord-icon>
                         </small>
-                        {% endif %}
                     </a>
                 </li>
                 <li class="border-animation">
@@ -627,8 +625,8 @@
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
-                    console.log(response);
-    
+                    // console.log(response);
+
                     // Select the icon div and like count span
                     const iconDiv = $(`.like_post[data-id="${postId}"] .post_icon`);
     
@@ -701,11 +699,11 @@
                             postIcon.attr('src', 'https://cdn.lordicon.com/prjooket.json');
                         }
                     } else {
-                        console.error('Failed to save post');
+                        // console.error('Failed to save post');
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                 }
             });
         });
@@ -744,7 +742,7 @@
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
                 }
             });
         });
@@ -756,15 +754,15 @@
             type: "POST",
             headers: { "X-CSRFToken": getCSRFToken() }, // CSRF token for security
             success: function(response) {
-                console.log(response.message);
-                
+                // console.log(response.message);
+
                 // Hide all notifications on success
                 $('.notification').fadeOut('slow', function () {
                     $(this).remove();  // Removes from DOM after fade out
                 });
             },
             error: function(xhr, status, error) {
-                console.log("Error:", error);
+                // console.log("Error:", error);
             }
         });
         })
@@ -794,7 +792,7 @@
             const csrfToken = getCookie('csrftoken');
 
             if (!commentText) {
-                console.log('Comment text is empty.');
+                // console.log('Comment text is empty.');
                 return;
             }
 
@@ -814,7 +812,7 @@
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
 
                     if (response.success) {
                         // Clear the textarea and reset reply mode
@@ -1023,11 +1021,23 @@
         fetch("{% url 'unread_message_count' %}")
             .then(res => res.json())
             .then(data => {
-                const badge = document.getElementById("notification-badge");
-                if (data.unread_count > 0) {
-                    badge.style.display = "inline-block";
-                } else {
-                    badge.style.display = "none";
+                // Update desktop notification badge
+                const desktopBadge = document.getElementById("notification-badge");
+                if (desktopBadge) {
+                    if (data.unread_count > 0) {
+                        desktopBadge.style.display = "inline-block";
+                    } else {
+                        desktopBadge.style.display = "none";
+                    }
+                }
+                // Update mobile notification badge
+                const mobileBadge = document.getElementById("mobile-notification-badge");
+                if (mobileBadge) {
+                    if (data.unread_count > 0) {
+                        mobileBadge.style.display = "inline-block";
+                    } else {
+                        mobileBadge.style.display = "none";
+                    }
                 }
             })
             .catch(err => console.error("Failed to fetch notifications:", err));
