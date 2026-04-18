@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
-from list_posts.models import UserPosts
+from list_posts.models import UserPosts,Notification
 from . forms import UserForm,userInfoForm,userProfileForm
 from .models import *
 from . utils import users_id_generator,send_email_verification,detectUser
@@ -49,7 +49,7 @@ def RegisterUser(request):
             mail_subject = 'please activate your account'
             mail_template = 'accounts/email/account_activate.html'
             send_email_verification(request,user,mail_subject,mail_template)
-            messages.success(request,'Your account is registered successfully wait for the approval.')
+            messages.success(request,'Your account is registered successfully. Check your email(or spam) and activate your account.')
 
             return redirect('RegisterUser')
         else:
@@ -397,7 +397,7 @@ def send_follow_request(request,user_id):
     from_user = request.user
 
     if from_user == to_user:
-        messages.error(request,'You can follow yourself!')
+        messages.error(request,'You cant follow yourself!')
         return redirect('list_posts')
 
     with transaction.atomic():
@@ -432,6 +432,11 @@ def accept_follow_request(request,request_id):
             # Create a new Follower instance if not already following
             Follower.objects.create(follower=follow_request.from_user, following=follow_request.to_user)
 
+            Notification.objects.create(
+            user=follow_request.from_user,   # 🔥 sender gets notification
+            actor=request.user,              # 🔥 who accepted
+            notification_msg=f"{request.user.username} accepted your follow request"
+        )
         # Always delete the request
         follow_request.delete()
         return JsonResponse({'status': 'accepted' if not existing_follower else 'already_following'})

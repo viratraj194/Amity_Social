@@ -88,7 +88,7 @@ class Comment(models.Model):
 class Notification(models.Model):
     # notification_title = models.CharField(blank=True,null=True,db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', db_index=True)
-    post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications', db_index=True)
+    post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='notifications', db_index=True,blank=True,null=True)
     notification_msg = models.CharField(blank=True,null=True)
     actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actor', db_index=True)
     timestamp = models.DateTimeField(default=timezone.now, db_index=True)

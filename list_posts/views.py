@@ -40,7 +40,7 @@ def list_posts(request):
 
     # Sending the follow request
     follow_requests = FollowRequest.objects.filter(to_user=user, is_accepted=False)
-
+    
     # Get all users who are following the logged-in user
     followers = Follower.objects.filter(following=user).select_related('follower')
 
@@ -63,6 +63,9 @@ def list_posts(request):
         post.is_portrait = post.image_height > post.image_width if post.image_height and post.image_width else False
         post.liked_by_user = post.id in liked_posts
         post.is_following = post.user.id in following_users
+        # Add show_user_info flag to comments based on following status
+        for comment in post.comments.all():
+            comment.show_user_info = comment.user.id in following_users
 
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
     user_messages = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ)
@@ -221,13 +224,17 @@ def get_comments(request, post_id):
                     read=False
             )
 
+    # Get following users set for comment visibility check
+    following_users = set(Follower.objects.filter(follower=user).values_list('following_id', flat=True))
+
     import html
     def serialize_comment(comment):
         """Serialize a comment and its replies recursively"""
+        show_user_info = comment.user.id in following_users
         comment_data = {
             'id': comment.id,
-            'user': comment.user.username,
-            'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
+            'user': comment.user.username if show_user_info else 'Private User',
+            'profile_picture': comment.user.userprofile.profile_picture.url if show_user_info and hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
             'comment': html.escape(comment.comment),
             'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'parent_id': comment.parent.id if comment.parent else None,
@@ -238,10 +245,11 @@ def get_comments(request, post_id):
         # Get replies for this comment
         replies = comment.replies.select_related('user__userprofile').order_by('created_at')
         for reply in replies:
+            reply_show_user_info = reply.user.id in following_users
             comment_data['replies'].append({
                 'id': reply.id,
-                'user': reply.user.username,
-                'profile_picture': reply.user.userprofile.profile_picture.url if hasattr(reply.user, 'userprofile') and reply.user.userprofile.profile_picture else '/static/img/images.jpeg',
+                'user': reply.user.username if reply_show_user_info else 'Private User',
+                'profile_picture': reply.user.userprofile.profile_picture.url if reply_show_user_info and hasattr(reply.user, 'userprofile') and reply.user.userprofile.profile_picture else '/static/img/images.jpeg',
                 'comment': html.escape(reply.comment),
                 'created_at': reply.created_at.strftime('%Y-%m-%d %H:%M:%S'),
                 'parent_id': reply.parent.id,

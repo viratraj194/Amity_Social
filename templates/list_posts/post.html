@@ -16,9 +16,15 @@
                 {%endif%}
                 {% else %}
                 {%if post.user.userprofile.profile_picture%}
+                {% if post.is_following %}
                 <div class="posting-user-Image">
                     <img style="object-fit: cover; filter: blur(4px);" src="{{post.user.userprofile.profile_picture.url}}" alt="">
                 </div>
+                {%else%}
+                <div class="posting-user-Image">
+                    <img src="{%static 'img/images.jpeg'%}" alt="">
+                </div>
+                {%endif%}
                 {%else%}
                 <div class="posting-user-Image">
                     <img src="{%static 'img/images.jpeg'%}" alt="">
