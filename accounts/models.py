@@ -1,6 +1,35 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils.text import slugify
 from .utils import send_notification_email
+
+
+class College(models.Model):
+    name = models.CharField(max_length=200, db_index=True)
+    normalized_name = models.CharField(max_length=200, unique=True, db_index=True)
+    slug = models.SlugField(max_length=200, unique=True, db_index=True)
+    aishe_code = models.CharField(
+        max_length=50, 
+        unique=True, 
+        null=True, 
+        blank=True,
+        help_text="Official Government AISHE Code"
+    )
+    city = models.CharField(max_length=100, blank=True, null=True, db_index=True)
+    state = models.CharField(max_length=100, blank=True, null=True, db_index=True)
+    is_verified = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 
@@ -42,10 +71,11 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=20,null=True,blank=True,db_index=True)
     username = models.CharField(max_length=50, unique=True,db_index=True)
-    # userSlug = models.SlugField(max_length=100,blank=True,unique=True)
     email = models.EmailField(max_length=100, unique=True,db_index=True)
     phone_number = models.CharField(max_length=12, blank=True,db_index=True)
-    collage_name = models.CharField(blank=True,null=True,db_index=True)
+    college = models.ForeignKey(College, on_delete=models.SET_NULL, null=True, blank=True, db_index=True, related_name='users')
+    state = models.CharField(max_length=100, blank=True, null=True, db_index=True, help_text='Indian State or Union Territory')
+    city = models.CharField(max_length=100, blank=True, null=True, db_index=True, help_text='City')
     users_id = models.CharField(max_length=20,unique=True,db_index=True)
     agree_to_terms = models.BooleanField(default=False,db_index=True)
     is_approved = models.BooleanField(default=False,db_index=True)

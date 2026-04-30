@@ -1,8 +1,8 @@
 from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
 from list_posts.models import UserPosts,Notification
-from . forms import UserForm,userInfoForm,userProfileForm
+from . forms import UserForm,userInfoForm,userProfileForm,INDIA_REGIONS
 from .models import *
-from . utils import users_id_generator,send_email_verification,detectUser
+from . utils import users_id_generator,send_email_verification,detectUser,get_or_create_college
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode
@@ -19,6 +19,7 @@ from django.db.models.functions import Coalesce
 from datetime import datetime, timezone
 from django.db import transaction
 from django_ratelimit.decorators import ratelimit
+from django.core.cache import cache
 
 
 
@@ -38,13 +39,50 @@ def RegisterUser(request):
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
-            user = form.save()
+
+            # Handle state and city from form
+            state = form.cleaned_data.get('state')
+            city = form.cleaned_data.get('city')
+            # Get college_name from visible input or hidden backup field
+            college_name = request.POST.get('college_name', '').strip() or request.POST.get('college_name_hidden', '').strip()
+
+            # DEBUG: Log what we received
+            print(f"DEBUG POST data: college_name='{college_name}', state='{state}', city='{city}'")
+            print(f"DEBUG raw POST: college_name={request.POST.get('college_name')}, college_name_hidden={request.POST.get('college_name_hidden')}")
+
+            if state:
+                user.state = state
+                request.session['user_state'] = state
+            if city:
+                user.city = city
+                request.session['user_city'] = city
+
+            # Handle college: get or create based on name, city, state
+            if college_name and state and city:
+                college = get_or_create_college(college_name, city=city, state=state)
+                if college:
+                    user.college = college
+                    print(f"REGISTRATION: college assigned - {college.name}")
+                else:
+                    print(f"REGISTRATION: college is None - name='{college_name}', state='{state}', city='{city}'")
+
+            # Generate users_id BEFORE saving (required field - cannot be empty)
+            # Use a temporary ID based on timestamp, will update after save
+            import datetime
+            temp_id = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
+            user.users_id = temp_id
+
+            # First save to get the actual user.id
+            user.save()
+
+            # Now update with proper users_id and user_slug
             user_f_name = form.cleaned_data['first_name']
             user_l_name = form.cleaned_data['last_name']
             user_name = f'{user_f_name}{user_l_name}'
-            user.user_slug = slugify(user_name)+'_'+str(user.id)
             user.users_id = users_id_generator(user.id)
-            form.save()
+            user.user_slug = slugify(user_name)+'_'+str(user.id)
+            user.save()
+
             # send verification
             mail_subject = 'please activate your account'
             mail_template = 'accounts/email/account_activate.html'
@@ -56,8 +94,10 @@ def RegisterUser(request):
             print(form.errors)
     else:
         form = UserForm()
+
     context = {
         'form':form,
+        'india_regions': INDIA_REGIONS,
     }
     return render(request,'accounts/RegisterUser.html',context)
 
@@ -191,33 +231,86 @@ def reset_password(request):
 
 @login_required(login_url='login')
 def userProfileSettings(request):
-    # Fetch the user profile
     user_profile = get_object_or_404(UserProfile, user=request.user)
     user = request.user
-    # userInfo = get_object_or_404(User,user=user)
-   
+
+    # Initialize variables for context (available for both GET and POST)
+    user_city = user.city or ''
+    user_state = user.state or ''
+    if user.college:
+        if not user_state:
+            user_state = user.college.state or ''
+        if not user_city:
+            user_city = user.college.city or ''
+
     if request.method == 'POST':
         user_profile_form = userProfileForm(request.POST, request.FILES, instance=user_profile)
         user_info_form = userInfoForm(request.POST, instance=request.user)
+
         if user_profile_form.is_valid() and user_info_form.is_valid():
-            # Print the cleaned data from the forms
-            # Uncomment the following lines to save the data to the database
+            # Save profile form first
             user_profile_form.save()
-            user_info_form.save()
+
+            # Store old college_id for cache invalidation
+            old_college_id = user.college.id if user.college else None
+
+            # Handle state and city from form
+            state = user_info_form.cleaned_data.get('state')
+            city = user_info_form.cleaned_data.get('city')
+            # Get college_name from visible input or hidden backup field
+            college_name = request.POST.get('college_name', '').strip() or request.POST.get('college_name_hidden', '').strip()
+
+            if state:
+                user.state = state
+            if city:
+                user.city = city
+
+            # Handle college: get or create based on name, city, state
+            new_college_id = None
+            if college_name and state and city:
+                college = get_or_create_college(college_name, city=city, state=state)
+                if college:
+                    user.college = college
+                    new_college_id = college.id
+                else:
+                    # Fallback: try to find college by exact name match
+                    college = College.objects.filter(name__iexact=college_name.strip()).first()
+                    if college:
+                        user.college = college
+                        new_college_id = college.id
+
+            # Save other user fields
+            user.first_name = user_info_form.cleaned_data['first_name']
+            user.last_name = user_info_form.cleaned_data['last_name']
+            user.username = user_info_form.cleaned_data['username']
+            user.phone_number = user_info_form.cleaned_data['phone_number']
+            user.save()
+
+            # Invalidate cache for old and new college feed
+            if old_college_id is not None:
+                cache.delete(f'posts_list_{request.user.id}_{old_college_id}_page_1')
+            if new_college_id is not None:
+                cache.delete(f'posts_list_{request.user.id}_{new_college_id}_page_1')
+
+            messages.success(request, 'Profile updated successfully.')
         else:
-            messages.error(request,'Form is invalid')
-            
+            messages.error(request, 'Form is invalid')
+            print("Profile form errors:", user_profile_form.errors)
+            print("User info form errors:", user_info_form.errors)
     else:
         user_profile_form = userProfileForm(instance=user_profile)
         user_info_form = userInfoForm(instance=request.user)
-     
+
     profile = UserProfile.objects.get(user=user)
-    
+
     context = {
         'user_profile_form': user_profile_form,
         'user_info_form': user_info_form,
-        'saved_collage':user.collage_name,
-        'profile':profile,
+        'profile': profile,
+        'india_regions': INDIA_REGIONS,
+        'user_city': user_city,
+        'user_state': user_state,
+        'user_college_name': user.college.name if user.college else '',
     }
 
     return render(request, 'accounts/userProfileSettings.html', context)
@@ -383,11 +476,11 @@ def post_details_like(request,post_id):
 
 def deletePost(request,post_slug):
     post = get_object_or_404(UserPosts,post_slug = post_slug,user=request.user)
-    collage_name = post.user.collage_name
+    college_id = post.user.college.id if post.user.college else None
     post.delete()
     # Invalidate cache for the college feed
     from django.core.cache import cache
-    cache.delete(f'posts_list_{collage_name}_page_1')
+    cache.delete(f'posts_list_{post.user.id}_{college_id}_page_1')
     return redirect('UserDashboard')
 
 @login_required(login_url='login')
@@ -422,7 +515,14 @@ def send_follow_request(request,user_id):
 @login_required(login_url='login')
 # accepting the request
 def accept_follow_request(request,request_id):
-    follow_request = get_object_or_404(FollowRequest, id=request_id, to_user=request.user)
+    # Handle missing request gracefully instead of 404
+    follow_request = FollowRequest.objects.filter(id=request_id, to_user=request.user).first()
+
+    if not follow_request:
+        return JsonResponse({'status': 'already_handled', 'message': 'Request not found or already processed'})
+
+    # Get to_user's college_id for cache invalidation before deleting
+    to_user_college_id = follow_request.to_user.college.id if follow_request.to_user.college else None
 
     with transaction.atomic():
         # Check if the follower relationship already exists
@@ -439,9 +539,12 @@ def accept_follow_request(request,request_id):
         )
         # Always delete the request
         follow_request.delete()
-        return JsonResponse({'status': 'accepted' if not existing_follower else 'already_following'})
 
-    return JsonResponse({'status': 'error'}, status=400)
+    # Invalidate cache for the to_user to remove stale follow request notification
+    if to_user_college_id:
+        cache.delete(f'posts_list_{follow_request.to_user.id}_{to_user_college_id}_page_1')
+
+    return JsonResponse({'status': 'accepted' if not existing_follower else 'already_following'})
 @login_required(login_url='login')
 def unFollow(request,user_id):
     profile = get_object_or_404(User,id=user_id)
@@ -450,12 +553,22 @@ def unFollow(request,user_id):
     return redirect('profile_details',user_id=user_id)
 
 def deny_follow_request(request,request_id):
-    
-    follow_request = get_object_or_404(FollowRequest, id=request_id, to_user=request.user)
-    if follow_request:
-        follow_request.delete()
-        return JsonResponse({'status': 'denied'})
-    return JsonResponse({'status': 'error'}, status=400)
+    # Handle missing request gracefully instead of 404
+    follow_request = FollowRequest.objects.filter(id=request_id, to_user=request.user).first()
+
+    if not follow_request:
+        return JsonResponse({'status': 'already_handled', 'message': 'Request not found or already processed'})
+
+    # Get to_user's college_id for cache invalidation before deleting
+    to_user_college_id = follow_request.to_user.college.id if follow_request.to_user.college else None
+
+    follow_request.delete()
+
+    # Invalidate cache for the to_user to remove stale follow request notification
+    if to_user_college_id:
+        cache.delete(f'posts_list_{follow_request.to_user.id}_{to_user_college_id}_page_1')
+
+    return JsonResponse({'status': 'denied'})
 
 
 @login_required(login_url='login')
@@ -663,23 +776,84 @@ def following(request):
     # following = Follower.objects.filter(follower=user).select_related('following')
 
 
-import requests
 from django.http import JsonResponse
 
 def get_colleges(request):
-    # New API endpoint (raw JSON file on GitHub)
-    api_url = "https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json"
+    """
+    Returns all colleges from the local College model with id and name.
+    Used for populating the datalist in registration forms.
+    """
+    colleges = list(College.objects.values('id', 'name').order_by('name'))
+    return JsonResponse(colleges, safe=False)
 
-    try:
-        response = requests.get(api_url, timeout=10)
 
-        if response.status_code == 200:
-            data = response.json()
-            # Filter only Indian colleges
-            indian_colleges = [college for college in data if college.get("country", "").lower() == "india"]
-            return JsonResponse(indian_colleges, safe=False)
+def get_cities(request):
+    """
+    Returns distinct cities filtered by state from College model.
+    Used for populating city dropdown after state selection.
+    """
+    state = request.GET.get('state', '').strip()
 
-        return JsonResponse({"error": "Failed to fetch data", "status": response.status_code}, status=500)
+    if not state:
+        return JsonResponse([], safe=False)
 
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({"error": str(e)}, status=500)
+    # Get distinct cities for the given state
+    cities = College.objects.filter(
+        state=state
+    ).values_list('city', flat=True).distinct().order_by('city')
+
+    # Filter out None/empty values and convert to list
+    cities_list = [city for city in cities if city]
+
+    return JsonResponse(cities_list, safe=False)
+
+def search_colleges(request):
+    """
+    Optimized college search API using database with caching.
+    NO LOGIN REQUIRED - accessible on registration page.
+
+    Filters by state and city before searching college name.
+
+    Performance optimizations:
+    - Short-circuit for empty/short queries
+    - Database index on name, state, city fields
+    - Query-level caching (5 minutes)
+    - LIMIT 10 to reduce payload
+    """
+    query = request.GET.get('q', '').strip()
+    state = request.GET.get('state', '').strip()
+    city = request.GET.get('city', '').strip()
+
+    # Short-circuit: require minimum 2 chars for search
+    if len(query) < 2:
+        return JsonResponse([], safe=False)
+
+    # Normalize query for case-insensitive search
+    query_lower = query.lower()
+
+    # Build cache key including state and city for proper invalidation
+    cache_key = f"college_search_{query_lower}_{state}_{city}"
+
+    # Try cache first (5 minute TTL)
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return JsonResponse(cached_result, safe=False)
+
+    # Build filter dynamically
+    filters = Q(name__icontains=query)
+
+    if state:
+        filters &= Q(state=state)
+    if city:
+        filters &= Q(city=city)
+
+    # Optimized DB query using indexed fields
+    colleges_qs = College.objects.filter(filters).values('name', 'city', 'state')[:10]
+
+    # Convert queryset to list
+    results = list(colleges_qs)
+
+    # Cache the results for 5 minutes
+    cache.set(cache_key, results, 300)
+
+    return JsonResponse(results, safe=False)

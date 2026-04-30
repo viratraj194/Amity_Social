@@ -25,17 +25,17 @@ from django.template.response import TemplateResponse
 def list_posts(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
     user = request.user
-    collage = user.collage_name
+    college_id = user.college.id if user.college else None
 
     page = int(request.GET.get('page', 1))
-    cache_key = f'posts_list_{request.user.id}_{collage}_page_{page}'
+    cache_key = f'posts_list_{request.user.id}_{college_id}_page_{page}'
 
     # Try cache first (non-HTMX requests only)
     cached_data = cache.get(cache_key)
     if cached_data and request.headers.get('HX-Request') != 'true':
         return render(request, 'list_posts/list_posts.html', cached_data)
 
-    posts = UserPosts.objects.filter(user__collage_name=collage).select_related('user__userprofile').order_by('-created_at')
+    posts = UserPosts.objects.filter(user__college_id=college_id).select_related('user__userprofile').order_by('-created_at')
     total_posts = UserPosts.objects.filter(user=user)
 
     # Sending the follow request
@@ -119,7 +119,8 @@ def add_posts(request):
             post.save()
 
             # Invalidate cache for the user's college feed
-            cache.delete(f'posts_list_{request.user.collage_name}_page_1')
+            college_id = request.user.college.id if request.user.college else None
+            cache.delete(f'posts_list_{request.user.id}_{college_id}_page_1')
             messages.success(request, 'New post is added.')
             return redirect('list_posts')
         else:
@@ -137,8 +138,19 @@ def add_posts(request):
 
 @login_required(login_url='login')
 def mark_notification_as_read(request, notification_id):
-    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    # Handle missing notification gracefully instead of 404
+    notification = Notification.objects.filter(id=notification_id, user=request.user).first()
+
+    if not notification:
+        return JsonResponse({'status': 'already_handled', 'message': 'Notification not found or already processed'})
+
     notification.delete()
+
+    # Invalidate cache for the user to remove stale notification
+    college_id = request.user.college.id if request.user.college else None
+    if college_id:
+        cache.delete(f'posts_list_{request.user.id}_{college_id}_page_1')
+
     return JsonResponse({'status': 'success'})
 
 

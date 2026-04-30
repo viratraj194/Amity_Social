@@ -5,6 +5,82 @@
     .M-10_0 input[type='checkbox'] {
         display: none;
     }
+    .state-select {
+        background: #636264;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        outline: none;
+        color: white;
+        cursor: pointer;
+        width: 215px;
+        height: 35px;
+    }
+    .state-select option {
+        background-color: #636264;
+        color: white;
+    }
+    .city-select {
+        background: #636264;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        outline: none;
+        color: white;
+        cursor: pointer;
+        width: 215px;
+        height: 35px;
+    }
+    .city-select option {
+        background-color: #636264;
+        color: white;
+    }
+    .city-select:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .college-input {
+        background: #636264;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        outline: none;
+        color: white;
+        cursor: pointer;
+        width: 215px;
+        height: 35px;
+    }
+    .college-input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .suggestions-list li {
+        padding: 10px;
+        cursor: pointer;
+        color: white;
+        list-style: none;
+    }
+    .suggestions-list li:hover {
+        background-color: #4a4a4c;
+    }
+    .bioOfprofile textarea {
+            background: #636264;
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            outline: none;
+
+
+    }
+    .userPncode input {
+        background: #636264;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        outline: none;
+        color: white;
+
+    }
 </style>
 <div class="userProfileSettings">
     <div class="userProfileSettings-title" style="margin: 20px 0px;">
@@ -86,33 +162,43 @@
             </div>
             <div class="M-10_0">
                 <div class="flex space_between">
-                    <label >Collage Name</label>
-                    <select id="id_collage_name" name="collage_name"
-                        style="outline: none; border: none; background-color: #636264; height: 35px; width: 215px; padding-left: 10px; color: white; border-radius: 8px;">
-                        <option value="">Select your college</option>
-                        <option value="Amity University Greater Noida"
-                                {% if saved_collage == "Amity University Greater Noida" %}selected{% endif %}>
-                            Amity University Greater Noida
-                        </option>
-                        <!-- Additional colleges will be loaded via API -->
+                    <label>State/Union Territory</label>
+                    <select name="state" id="id_state" class="state-select">
+                        <option value="" disabled selected>Select State / UT</option>
+                        {% for region in india_regions %}
+                        <option value="{{ region.0 }}" {% if region.0 == user_state %}selected{% endif %}>{{ region.1 }}</option>
+                        {% endfor %}
                     </select>
-
-
-
-
-                    {% comment %} {{user_profile_form.collage_name}} {% endcomment %}
                 </div>
-                <h6>Through your collage name you will have specialized post mainly from your collage </h6>
+                <h6>Select your State or Union Territory</h6>
             </div>
             <div class="M-10_0">
                 <div class="flex space_between">
+                    <label>City</label>
+                    <select name="city" id="id_city" class="city-select" disabled>
+                        <option value="" disabled selected>Select City</option>
+                    </select>
+                </div>
+                <h6>Select your City</h6>
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between">
+                    <label>College</label>
+                    <input type="text" id="id_college_name" class="college-input" placeholder="Start typing your college name" disabled style="background: #636264; border: none; border-radius: 8px; padding: 10px; outline: none; color: white; width: 215px;" value="{{ user_college_name }}">
+                    <ul id="college-suggestions" class="suggestions-list" style="display: none; position: absolute; background-color: #3a3a3c; border-radius: 8px; max-height: 200px; overflow-y: auto; width: 215px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"></ul>
+                </div>
+                <h6>Select your College</h6>
+                <input type="hidden" name="college_name" id="hidden_college_name" value="{{ user_college_name }}">
+            </div>
+            <div class="M-10_0">
+                <div class="flex space_between userPncode">
                     <label >Collage Pincode</label>
                     {{user_profile_form.collage_pin_code}}
                 </div>
                 <h6>Through your collage name you will have specialized post mainly from your collage Pin Code</h6>
             </div>
             <div class="M-10_0">
-                <div class="flex space_between">
+                <div class="flex space_between bioOfprofile">
                     <label>Bio</label>
                     {{user_profile_form.userBio}}
                 </div>
@@ -122,47 +208,204 @@
                 <button type="submit">Update</button>
             </div>
         </form>
-    </div>
-    <div class="userProfile-logout">
+         <div class="userProfile-logout">
         <h3>LOG OUT your account</h3>
         <a href="{% url 'logout'%}" style="margin: 0px;"><button>LOG OUT</button></a>
+        </div>
+        <div class="userProfile-logout">
+            <h3>Deactivate  your Account</h3>
+            <a href="{% url 'deactivate_account'%}" style="margin: 0px;"><button>DEACTIVATE</button></a>
+        </div>
     </div>
-    <div class="userProfile-logout">
-        <h3>Deactivate  your Account</h3>
-        <a href="{% url 'deactivate_account'%}" style="margin: 0px;"><button>DEACTIVATE</button></a>
-    </div>
+   
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const apiEndpoint = window.location.origin + "/api/get_colleges/";
-        const collegeSelect = document.getElementById("id_collage_name");
-        const savedCollege = "{{ user.collage_name|escapejs }}";
-
-        if (!collegeSelect) {
-            console.error("The select element with ID 'id_collage_name' was not found.");
-            return;
-        }
-
-        fetch(apiEndpoint)
-            .then((response) => response.json())
-            .then((data) => {
-                data.forEach((college) => {
-                    if (college.name && college.name !== "Amity University Greater Noida") {
-                        const option = document.createElement("option");
-                        option.value = college.name;
-                        option.textContent = college.name;
-                        collegeSelect.appendChild(option);
-                    }
-                });
-                // Restore saved college selection after populating options
-                if (savedCollege) {
-                    collegeSelect.value = savedCollege;
-                }
-            })
-            .catch((error) => console.error("Error fetching college data:", error));
-    });
-    </script>
     
 {% include "includes/alerts.html" %}
 <!-- login page design  ends here  -->
+
+<script>
+    // Cascading dropdown logic: State → City → College
+    document.addEventListener('DOMContentLoaded', function() {
+        const stateSelect = document.getElementById('id_state');
+        const citySelect = document.getElementById('id_city');
+        const collegeInput = document.getElementById('id_college_name');
+        const suggestionsList = document.getElementById('college-suggestions');
+        const hiddenCollegeName = document.getElementById('hidden_college_name');
+        const currentCity = '{{ user_city|escapejs }}';
+        const currentState = '{{ user_state|escapejs }}';
+        let debounceTimer = null;
+
+        // On state change: fetch cities
+        if (stateSelect) {
+            stateSelect.addEventListener('change', function() {
+                const state = this.value;
+
+                // Reset city and college
+                citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+                citySelect.disabled = true;
+                collegeInput.disabled = true;
+                collegeInput.value = '';
+                hiddenCollegeName.value = '';
+                suggestionsList.style.display = 'none';
+
+                if (state) {
+                    fetchCities(state, null);
+                }
+            });
+        }
+
+        function fetchCities(state, cityToSelect) {
+            fetch(`/api/get_cities/?state=${encodeURIComponent(state)}`)
+                .then(response => response.json())
+                .then(cities => {
+                    if (cities && cities.length > 0) {
+                        // Populate city dropdown FIRST
+                        cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city;
+                            option.textContent = city;
+                            citySelect.appendChild(option);
+                        });
+
+                        // Enable city dropdown
+                        citySelect.disabled = false;
+
+                        // THEN set the selected city AFTER populating
+                        if (cityToSelect) {
+                            citySelect.value = cityToSelect;
+                        }
+                    } else {
+                        // No cities found
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No cities available';
+                        citySelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching cities:', error);
+                });
+        }
+
+        // Load cities on page load if state is already selected (edit mode)
+        // Then set city AFTER cities are loaded
+        if (currentState && currentCity) {
+            fetchCities(currentState, currentCity);
+        } else if (currentState) {
+            fetchCities(currentState, null);
+        }
+
+        // On city change: enable college input
+        if (citySelect) {
+            citySelect.addEventListener('change', function() {
+                const city = this.value;
+                if (city) {
+                    collegeInput.disabled = false;
+                    // Only focus if user is actively changing, not on initial load
+                    if (!currentState || !currentCity) {
+                        collegeInput.focus();
+                    }
+                } else {
+                    collegeInput.disabled = true;
+                    collegeInput.value = '';
+                    hiddenCollegeName.value = '';
+                    suggestionsList.style.display = 'none';
+                }
+            });
+        }
+
+        // On college typing: fetch suggestions
+        if (collegeInput) {
+            collegeInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                const state = stateSelect.value;
+                const city = citySelect.value;
+
+                clearTimeout(debounceTimer);
+
+                if (query.length < 2) {
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                if (!state || !city) {
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetchCollegeSuggestions(query, state, city);
+                }, 300);
+            });
+
+            // Handle college selection from suggestions
+            collegeInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    suggestionsList.style.display = 'none';
+                }, 200);
+            });
+        }
+
+        function fetchCollegeSuggestions(query, state, city) {
+            fetch(`/api/search-colleges/?q=${encodeURIComponent(query)}&state=${encodeURIComponent(state)}&city=${encodeURIComponent(city)}`)
+                .then(response => response.json())
+                .then(colleges => {
+                    suggestionsList.innerHTML = '';
+
+                    if (colleges && colleges.length > 0) {
+                        colleges.forEach(college => {
+                            const li = document.createElement('li');
+                            li.textContent = college.name;
+                            li.addEventListener('click', function() {
+                                collegeInput.value = college.name;
+                                hiddenCollegeName.value = college.name;
+                                suggestionsList.style.display = 'none';
+                            });
+                            suggestionsList.appendChild(li);
+                        });
+                        suggestionsList.style.display = 'block';
+                    } else {
+                        suggestionsList.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching colleges:', error);
+                });
+        }
+
+        // Form validation
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const state = stateSelect.value;
+                const city = citySelect.value;
+                const college = collegeInput.value.trim();
+
+                if (!state) {
+                    e.preventDefault();
+                    alert('Please select your state/union territory.');
+                    stateSelect.focus();
+                    return false;
+                }
+
+                if (!city) {
+                    e.preventDefault();
+                    alert('Please select your city.');
+                    citySelect.focus();
+                    return false;
+                }
+
+                if (!college) {
+                    e.preventDefault();
+                    alert('Please enter your college name.');
+                    collegeInput.focus();
+                    return false;
+                }
+
+                // Set hidden field value
+                hiddenCollegeName.value = college;
+            });
+        }
+    });
+</script>
 {% endblock %}
