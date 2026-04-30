@@ -469,7 +469,8 @@ def post_details_like(request,post_id):
     else:
         Like.objects.create(user=user,post=post)
         liked = True
-        if post.user != user:
+        # Only create notification if one doesn't already exist
+        if post.user != user and not Notification.objects.filter(user=post.user, post=post, actor=user, notification_msg='Liked your Post.').exists():
             Notification.objects.create(user=post.user,post = post,actor=user, notification_msg='Liked your Post.')
 
     return redirect('post_details',post_slug=post.post_slug)

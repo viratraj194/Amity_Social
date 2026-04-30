@@ -8,7 +8,7 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=User)
 def post_save_create_profile_receiver(sender, instance, created, **kwargs):
-    
+
     if created:
         UserProfile.objects.create(user=instance)
 
@@ -16,7 +16,7 @@ def post_save_create_profile_receiver(sender, instance, created, **kwargs):
         try:
             profile = UserProfile.objects.get(user=instance)
             profile.save()
-        except:
+        except UserProfile.DoesNotExist:
             #create profile whose profile is not exists in database but has updated
             UserProfile.objects.create(user=instance)
 

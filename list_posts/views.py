@@ -234,6 +234,18 @@ def add_comment(request, post_id):
             parent=parent
         )
 
+        # Create notification for post author (if not self-comment)
+        if post.user != user:
+            # Only create notification if one doesn't already exist for this comment
+            if not Notification.objects.filter(user=post.user, post=post, actor=user, notification_msg='Commented on your post').exists():
+                Notification.objects.create(
+                    user=post.user,
+                    post=post,
+                    notification_msg='Commented on your post',
+                    actor=user,
+                    read=False
+                )
+
         response_data = {
             'success': True,
             'comment': {
@@ -272,15 +284,7 @@ def get_comments(request, post_id):
     # Get top-level comments (no parent) with their replies
     comments = Comment.objects.filter(post=post, parent__isnull=True).select_related('user__userprofile')
     user = request.user
-    # Create a notification for the post's author
-    if post.user != user:
-        Notification.objects.create(
-                    user=post.user,
-                    post=post,
-                    notification_msg="Commented on your post",
-                    actor=user,
-                    read=False
-            )
+    # Note: Notification is created in add_comment view when comment is actually posted, not here
 
     # Get following users set for comment visibility check
     following_users = set(Follower.objects.filter(follower=user).values_list('following_id', flat=True))
@@ -334,7 +338,8 @@ def post_like(request, post_id):
                     like, created = Like.objects.get_or_create(user=user, post=post)
                     if created:
                         liked = True
-                        if post.user != user:
+                        # Only create notification if one doesn't already exist for this like
+                        if post.user != user and not Notification.objects.filter(user=post.user, post=post, actor=user, notification_msg='Liked your Post.').exists():
                             Notification.objects.create(user=post.user, post=post, actor=user, notification_msg='Liked your Post.')
                     else:
                         like.delete()
