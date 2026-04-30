@@ -5,6 +5,7 @@ from .forms import addPostsForm
 from .models import UserPosts,Like,Notification,Comment,UserSavedPosts
 from django.contrib import messages
 from django.template.defaultfilters import slugify
+from django.utils.html import strip_tags
 import json
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -138,7 +139,15 @@ def add_posts(request):
 
 @login_required(login_url='login')
 def mark_notification_as_read(request, notification_id):
-    # Handle missing notification gracefully instead of 404
+    # SECURITY: Validate notification_id is a positive integer
+    try:
+        notification_id = int(notification_id)
+        if notification_id <= 0:
+            return JsonResponse({'status': 'invalid_id', 'message': 'Invalid notification ID'})
+    except (ValueError, TypeError):
+        return JsonResponse({'status': 'invalid_id', 'message': 'Invalid notification ID format'})
+
+    # SECURITY: Ownership check - ensure notification belongs to requesting user
     notification = Notification.objects.filter(id=notification_id, user=request.user).first()
 
     if not notification:
@@ -157,8 +166,12 @@ def mark_notification_as_read(request, notification_id):
 @login_required(login_url='login')
 def mark_all_as_read(request):
     if request.method == "POST":
-        Notification.objects.filter(user=request.user, read=False).update(read=True)
-        return JsonResponse({"success": True, "message": "All notifications marked as read."})
+        Notification.objects.filter(user=request.user, read=False).delete()
+        # Invalidate cache to ensure fresh data on next load
+        college_id = request.user.college.id if request.user.college else None
+        if college_id:
+            cache.delete(f'posts_list_{request.user.id}_{college_id}_page_1')
+        return JsonResponse({"success": True, "message": "All notifications cleared."})
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 
@@ -171,45 +184,69 @@ def mark_all_as_read(request):
 @ratelimit(key='user', rate='10/m', block=True, method=['POST'])
 def add_comment(request, post_id):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        comment_text = data.get('comment', 'No comment provided')
-        post_id = data.get('post_id', 'None')
-        parent_id = data.get('parent_id', None)  # Optional parent_id for replies
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON data'})
+
+        comment_text = data.get('comment', '').strip()
+        post_id = data.get('post_id')
+        parent_id = data.get('parent_id', None)
+
+        # SECURITY: Validate comment text - sanitize HTML tags to prevent XSS
+        if not comment_text:
+            return JsonResponse({'success': False, 'message': 'Comment text is required'})
+
+        # Strip HTML tags to prevent XSS attacks
+        comment_text = strip_tags(comment_text)
+
+        # Validate comment length (prevent DoS via huge payloads)
+        if len(comment_text) > 5000:
+            return JsonResponse({'success': False, 'message': 'Comment too long (max 5000 characters)'})
+
+        # SECURITY: Validate post_id is a positive integer
+        try:
+            post_id = int(post_id)
+            if post_id <= 0:
+                return JsonResponse({'success': False, 'message': 'Invalid post ID'})
+        except (ValueError, TypeError):
+            return JsonResponse({'success': False, 'message': 'Invalid post ID format'})
+
         user = request.user
+        post = get_object_or_404(UserPosts, id=post_id)
 
-        if comment_text:
-            post = get_object_or_404(UserPosts, id=post_id)
-
-            # If parent_id provided, verify it exists and belongs to same post
-            parent = None
-            if parent_id:
-                try:
-                    parent = get_object_or_404(Comment, id=parent_id, post=post)
-                except:
+        # If parent_id provided, verify it exists and belongs to same post
+        parent = None
+        if parent_id:
+            try:
+                parent_id = int(parent_id)
+                if parent_id <= 0:
                     parent = None
+                else:
+                    parent = Comment.objects.filter(id=parent_id, post=post).first()
+            except (ValueError, TypeError):
+                parent = None
 
-            comment = Comment.objects.create(
-                post=post,
-                user=user,
-                comment=comment_text,
-                parent=parent
-            )
+        comment = Comment.objects.create(
+            post=post,
+            user=user,
+            comment=comment_text,
+            parent=parent
+        )
 
-            response_data = {
-                'success': True,
-                'comment': {
-                    'id': comment.id,
-                    'comment': comment.comment,
-                    'user': comment.user.username,
-                    'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
-                    'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                    'parent_id': comment.parent.id if comment.parent else None,
-                    'is_reply': comment.is_reply
-                }
+        response_data = {
+            'success': True,
+            'comment': {
+                'id': comment.id,
+                'comment': comment.comment,
+                'user': comment.user.username,
+                'profile_picture': comment.user.userprofile.profile_picture.url if hasattr(comment.user, 'userprofile') and comment.user.userprofile.profile_picture else '/static/img/images.jpeg',
+                'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'parent_id': comment.parent.id if comment.parent else None,
+                'is_reply': comment.is_reply
             }
-            return JsonResponse(response_data)
-        else:
-            return JsonResponse({'success': False, 'message': 'Invalid form data.'})
+        }
+        return JsonResponse(response_data)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
@@ -220,8 +257,17 @@ def add_comment(request, post_id):
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import UserPosts, Comment
+
 @login_required(login_url='login')
 def get_comments(request, post_id):
+    # SECURITY: Validate post_id is a positive integer
+    try:
+        post_id = int(post_id)
+        if post_id <= 0:
+            return JsonResponse({'error': 'Invalid post ID'}, status=400)
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'Invalid post ID format'}, status=400)
+
     post = get_object_or_404(UserPosts, id=post_id)
     # Get top-level comments (no parent) with their replies
     comments = Comment.objects.filter(post=post, parent__isnull=True).select_related('user__userprofile')
@@ -365,20 +411,29 @@ def profile_details(request,user_id):
 
 
 from django.urls import reverse
+
 @login_required(login_url='login')
 def search_user(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "GET":
         users_id = request.GET.get('users_id', None)
         if users_id:
+            # SECURITY: Validate users_id format (should be numeric)
+            try:
+                users_id = str(users_id).strip()
+                if not users_id.isdigit():
+                    return JsonResponse({'error': 'Invalid user ID format'}, status=400)
+            except (ValueError, TypeError):
+                return JsonResponse({'error': 'Invalid user ID format'}, status=400)
+
             user = get_object_or_404(User, users_id=users_id)
-            profile_url = reverse('profile_details', args=[user.id])  # Dynamically create the profile URL
+            profile_url = reverse('profile_details', args=[user.id])
             data = {
                 'user_id': user.id,
                 'users_id': user.users_id,
                 'username': user.username,
                 'bio': user.userprofile.userBio,
                 'profile_picture': user.userprofile.profile_picture.url if user.userprofile.profile_picture else None,
-                'profile_url': profile_url,  # Add the profile URL to the response
+                'profile_url': profile_url,
             }
             return JsonResponse(data, status=200)
         else:

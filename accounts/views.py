@@ -484,7 +484,7 @@ def deletePost(request,post_slug):
     return redirect('UserDashboard')
 
 @login_required(login_url='login')
-# follow systems
+@ratelimit(key='user', rate='10/m', block=True, method=['POST'])
 def send_follow_request(request,user_id):
     to_user = get_object_or_404(User,id=user_id)
     from_user = request.user
@@ -797,9 +797,15 @@ def get_cities(request):
     if not state:
         return JsonResponse([], safe=False)
 
-    # Get distinct cities for the given state
+    # SECURITY: Validate state against known Indian states/UTs
+    from .utils import validate_indian_state
+    is_valid, normalized_state = validate_indian_state(state)
+    if not is_valid:
+        return JsonResponse([], safe=False)
+
+    # Get distinct cities for the given state (use validated state)
     cities = College.objects.filter(
-        state=state
+        state=normalized_state
     ).values_list('city', flat=True).distinct().order_by('city')
 
     # Filter out None/empty values and convert to list
@@ -827,6 +833,14 @@ def search_colleges(request):
     # Short-circuit: require minimum 2 chars for search
     if len(query) < 2:
         return JsonResponse([], safe=False)
+
+    # SECURITY: Validate state if provided
+    if state:
+        from .utils import validate_indian_state
+        is_valid, normalized_state = validate_indian_state(state)
+        if not is_valid:
+            return JsonResponse([], safe=False)
+        state = normalized_state
 
     # Normalize query for case-insensitive search
     query_lower = query.lower()

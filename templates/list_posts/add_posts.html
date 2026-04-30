@@ -652,6 +652,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="replies-container-${response.comment.id}" class="replies-container" style="display: none;"></div>
                             `;
                             $(`#comments-container-${postId}`).append(newCommentHtml);
                         }
@@ -785,13 +786,18 @@
             var commentId = $(this).data('comment-id');
             var postId = $(this).data('post-id');
 
-            // Find the comment wrapper and scroll to it
-            var $commentWrapper = $(this).closest('.comment-wrapper');
-            var $inputSection = $commentWrapper.find('.PostComments-Input');
+            // Find the input section for this specific post
+            var $inputSection = $('.PostComments-forPosts[data-id="' + postId + '"]').find('.PostComments-Input');
 
-            // If no input section found in comment wrapper, find the main input
+            // Fallback: try to find by closest comment wrapper
             if ($inputSection.length === 0) {
-                $inputSection = $('.PostComments-Input').first();
+                var $commentWrapper = $(this).closest('.ListsComments-All').parent();
+                $inputSection = $commentWrapper.find('.PostComments-Input');
+            }
+
+            // Final fallback: find by matching post id in the DOM
+            if ($inputSection.length === 0) {
+                $inputSection = $('#comments-container-' + postId).closest('.ListsComments-All, .ListComments-All').closest('.allPostLists, .postContainer').find('.PostComments-Input');
             }
 
             // Set the parent-id on the button

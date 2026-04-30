@@ -23,8 +23,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.user_id = None
 
     async def connect(self):
+        # SECURITY: Verify user is authenticated before allowing WebSocket connection
+        if not self.scope.get("user") or not self.scope["user"].is_authenticated:
+            logger.warning(f"WebSocket connection attempt by unauthenticated user")
+            await self.close()
+            return
+
         self.room_slug = self.scope['url_route']['kwargs']['room_slug']
         self.room = await self.get_room()
+
+        # SECURITY: Verify room exists and user is a participant
+        if not self.room:
+            logger.warning(f"WebSocket connection attempt to non-existent room: {self.room_slug}")
+            await self.close()
+            return
+
+        if not await self.is_user_participant(self.scope["user"].id, self.room.id):
+            logger.warning(f"WebSocket connection attempt by non-participant user {self.scope['user'].id} to room {self.room_slug}")
+            await self.close()
+            return
+
         self.room_group_name = f'chat_{self.room_slug}'
         self.user_id = self.scope["user"].id
 
@@ -484,6 +502,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Room.DoesNotExist:
             logger.error(f"Room with slug {self.room_slug} does not exist.")
             return None
+
+    @database_sync_to_async
+    def is_user_participant(self, user_id, room_id):
+        """Check if user is a participant of the room"""
+        return Room.objects.filter(id=room_id, participants__id=user_id).exists()
 
     @database_sync_to_async
     def get_rooms_with_photos(self, sender_id):
