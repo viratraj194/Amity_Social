@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'list_posts',
     'events',
     'django_ratelimit',
-    # 'compressor',
+    'compressor',
 ]
 
 
@@ -80,9 +80,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # 'compressor.finders.CompressorFinder',
+    'compressor.finders.CompressorFinder',
 ]
-
+COMPRESS_ENABLED = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
