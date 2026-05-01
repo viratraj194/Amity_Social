@@ -209,7 +209,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'collage social  <collages.socialmedia@gmail.com>'
 
 
-ALLOWED_HOSTS = ['*', '.railway.app',]
+ALLOWED_HOSTS = ['*']
 
 
 CSRF_TRUSTED_ORIGINS = [
