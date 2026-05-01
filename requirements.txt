@@ -26,7 +26,7 @@ idna==3.7
 incremental==24.7.2
 msgpack==1.0.8
 packaging==26.1
-pillow==10.3.0
+pillow>=10.4.0
 psycopg2==2.9.9
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
