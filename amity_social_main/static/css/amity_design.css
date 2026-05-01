@@ -598,7 +598,7 @@ footer {
     width: 1010px;
     margin: 20px auto;
     padding: 100px;
-    background-image: url(../img/Login-Screen-Background-Wood-5.jpg);
+    background-image: url(/static/img/Login-Screen-Background-Wood-5.jpg);
     background-size: cover;
     background-position: center;
     overflow: hidden;
@@ -2465,7 +2465,7 @@ swiper-slide {
 .eventPoster {
     width: 100%;
     height: 720px;
-    background: url(/img/pexels-wendywei-1190298.jpg);
+    background: url(/static/img/pexels-wendywei-1190298.jpg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

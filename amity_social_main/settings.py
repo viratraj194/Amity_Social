@@ -63,15 +63,6 @@ INSTALLED_APPS = [
 #     },
 # }
 
-# for production deployment 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [config('REDIS_URL')],
-        },
-    },
-}
 
 
 # STATICFILES_STORAGE = 'compressor.storage.CompressorFileStorage'
@@ -83,6 +74,9 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,9 +127,36 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #         'HOST':config('DB_HOST'),
 #     }
 # }
-DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
-}
+# for local development with postgresql 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME':config('DB_NAME'),
+#         'USER':config('DB_USER'),
+#         'PASSWORD':config('DB_PASSWORD'),
+#         'HOST':config('DB_HOST'),
+#     }
+# }
+import dj_database_url
+from decouple import config
+
+if config('DATABASE_URL', default=None):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL')
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='your_db_name'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 AUTH_USER_MODEL = 'accounts.User'
 
 
@@ -205,7 +226,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
 
 #Email setup
 
@@ -264,12 +286,26 @@ CSP_FORM_ACTION = ("'self'",)
 #     }
 # }
 
+from decouple import config
+
+REDIS_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/1')
+
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': config('REDIS_URL'),
-        'TIMEOUT': 60,
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
     }
+}
+
+
+# for production deployment 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
 }
 # for local 
 # Fallback to locmem if redis not available (development)
