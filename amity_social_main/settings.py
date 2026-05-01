@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from decouple import config
 from django import conf
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,8 +28,9 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default='False', cast=bool)
+# for local development 
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -45,35 +47,46 @@ INSTALLED_APPS = [
     'accounts',
     'list_posts',
     'events',
-    'compressor',
     'django_ratelimit',
+    # 'compressor',
 ]
 
 
 
-# settings.py
+# settings.py for local development with redis and channels
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [f"redis://:{config('REDIS_PASSWORD', default='')}@{config('REDIS_HOST', default='127.0.0.1')}:{config('REDIS_PORT', default='6379', cast=int)}/0"],
+#         },
+#     },
+# }
+
+# for production deployment 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [f"redis://:{config('REDIS_PASSWORD', default='')}@{config('REDIS_HOST', default='127.0.0.1')}:{config('REDIS_PORT', default='6379', cast=int)}/0"],
+            "hosts": [config('REDIS_URL')],
         },
     },
 }
 
 
-
-STATICFILES_STORAGE = 'compressor.storage.CompressorFileStorage'
+# STATICFILES_STORAGE = 'compressor.storage.CompressorFileStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
+    # 'compressor.finders.CompressorFinder',
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -106,19 +119,23 @@ TEMPLATES = [
 ASGI_APPLICATION = 'amity_social_main.asgi.application'
 
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+# for local development with postgresql 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME':config('DB_NAME'),
+#         'USER':config('DB_USER'),
+#         'PASSWORD':config('DB_PASSWORD'),
+#         'HOST':config('DB_HOST'),
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':config('DB_NAME'),
-        'USER':config('DB_USER'),
-        'PASSWORD':config('DB_PASSWORD'),
-        'HOST':config('DB_HOST'),
-    }
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
-
 AUTH_USER_MODEL = 'accounts.User'
 
 
@@ -161,10 +178,13 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR /'static'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'amity_social_main/static/'),
-]
+# for local development
+# STATIC_ROOT = BASE_DIR /'static'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'amity_social_main/static/'),
+# ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# for production devlopment 
 
 # media files 
 MEDIA_URL = '/media/'
@@ -189,17 +209,11 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'collage social  <collages.socialmedia@gmail.com>'
 
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'amity.loca.lt',
-    'afraid-ads-swim.loca.lt',
-    'harvey-rendered-toolkit-ali.trycloudflare.com',
-
-]
+ALLOWED_HOSTS = ['.railway.app',]
 
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
     'https://amity.loca.lt',
     'https://afraid-ads-swim.loca.lt',
     'https://harvey-rendered-toolkit-ali.trycloudflare.com',
@@ -229,30 +243,38 @@ CSP_BASE_URI = ("'self'",)
 CSP_FORM_ACTION = ("'self'",)
 
 
-# caching
+# caching for local development with redis, using database cache as fallback
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+#         'LOCATION': f"redis://:{config('REDIS_PASSWORD', default='')}@{config('REDIS_HOST', default='127.0.0.1')}:{config('REDIS_PORT', default='6379')}/1",
+#         'TIMEOUT': 60,
+#         'OPTIONS': {
+#             'socket_connect_timeout': 5,
+#         }
+#     }
+# }
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': f"redis://:{config('REDIS_PASSWORD', default='')}@{config('REDIS_HOST', default='127.0.0.1')}:{config('REDIS_PORT', default='6379')}/1",
+        'LOCATION': config('REDIS_URL'),
         'TIMEOUT': 60,
-        'OPTIONS': {
-            'socket_connect_timeout': 5,
-        }
     }
 }
-
+# for local 
 # Fallback to locmem if redis not available (development)
-try:
-    import redis
-    redis_host = config('REDIS_HOST', default='127.0.0.1')
-    redis_port = config('REDIS_PORT', default='6379', cast=int)
-    redis_password = config('REDIS_PASSWORD', default=None)
-    r = redis.Redis(host=redis_host, port=redis_port, db=1, password=redis_password)
-    r.ping()
-except:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
+# try:
+#     import redis
+#     redis_host = config('REDIS_HOST', default='127.0.0.1')
+#     redis_port = config('REDIS_PORT', default='6379', cast=int)
+#     redis_password = config('REDIS_PASSWORD', default=None)
+#     r = redis.Redis(host=redis_host, port=redis_port, db=1, password=redis_password)
+#     r.ping()
+# except:
+#     CACHES = {
+#         'default': {
+#             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#             'LOCATION': 'unique-snowflake',
+#         }
+#     }

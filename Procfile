@@ -1,0 +1,1 @@
+web: gunicorn amity_social_main.asgi:application -k uvicorn.workers.UvicornWorker
