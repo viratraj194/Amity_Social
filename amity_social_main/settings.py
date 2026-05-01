@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'events',
     'django_ratelimit',
     'compressor',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 
@@ -216,9 +218,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),   # ✅ important
 ]
-# media files 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# media files  for local 
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -323,3 +326,13 @@ CHANNEL_LAYERS = {
 #             'LOCATION': 'unique-snowflake',
 #         }
 #     }
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from decouple import config
+
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+)
