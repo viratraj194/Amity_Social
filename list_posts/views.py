@@ -93,7 +93,7 @@ def list_posts(request):
         cache.set(cache_key, context, 30)
 
     if request.headers.get('HX-Request') == 'true':
-        return render(request,'list_posts\loop_posts.html',context)
+        return render(request,'list_posts/loop_posts.html',context)
     return render(request, 'list_posts/list_posts.html', context)
 
 
