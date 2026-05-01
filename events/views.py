@@ -136,7 +136,7 @@ def userEvents(request):
 
     }
     if request.headers.get('HX-Request') == 'true':
-        return render(request,'events\loopUserEvents.html',context)
+        return render(request,'events/loopUserEvents.html',context)
     return render(request,'events/userEvents.html',context)
 @login_required(login_url='login')
 def eventDetails(request,event_id):

@@ -363,7 +363,7 @@ def UserDashboard(request):
 
     }
     if request.headers.get('HX-Request') == 'true':
-        return render(request,'accounts\loop_users_posts.html',context)
+        return render(request,'accounts/loop_users_posts.html',context)
     return render(request,'accounts/UserDashboard.html',context)
 
 
@@ -404,7 +404,7 @@ def SavedPosts(request):
         'page':page,
     }
     if request.headers.get('HX-Request') == 'true':
-        return render(request,'accounts\loop_saved.html',context)
+        return render(request,'accounts/loop_saved.html',context)
     return render(request,'accounts/SavedPosts.html',context)
 
 @login_required(login_url='login')
