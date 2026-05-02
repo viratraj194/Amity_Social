@@ -255,7 +255,7 @@ COMPRESS_URL = STATIC_URL
 COMPRESS_ROOT = STATIC_ROOT
 
 #Email setup
-
+EMAIL_TIMEOUT = 10  # Seconds
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT')
@@ -353,4 +353,3 @@ CHANNEL_LAYERS = {
 #             'LOCATION': 'unique-snowflake',
 #         }
 #     }
-print("CLOUDINARY:", config('CLOUDINARY_CLOUD_NAME'))
