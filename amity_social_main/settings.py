@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from decouple import config
 from pathlib import Path
 import os
 from django import conf
@@ -18,8 +18,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-from decouple import Config, RepositoryEnv
-import os
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 # config = Config(RepositoryEnv(os.path.join(BASE_DIR, '.env')))
