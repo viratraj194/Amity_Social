@@ -221,6 +221,7 @@ STATICFILES_DIRS = [
 # media files  for local 
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
@@ -268,7 +269,8 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'")
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
-CSP_IMG_SRC = ("'self'", 'data:', 'blob:')
+CSP_IMG_SRC = ("'self'", 'data:', 'blob:', 'https://res.cloudinary.com')
+CSP_MEDIA_SRC = ("'self'", 'https://res.cloudinary.com')
 CSP_FONT_SRC = ("'self'", 'data:')
 CSP_CONNECT_SRC = ("'self'", 'wss:', 'ws:')
 CSP_OBJECT_SRC = ("'none'",)
