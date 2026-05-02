@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-# from decouple import config
 from django import conf
 import dj_database_url
 import cloudinary
@@ -23,7 +22,7 @@ from decouple import Config, RepositoryEnv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-config = Config(RepositoryEnv(os.path.join(BASE_DIR, '.env')))
+# config = Config(RepositoryEnv(os.path.join(BASE_DIR, '.env')))
 
 
 
@@ -151,7 +150,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #     }
 # }
 import dj_database_url
-from decouple import config
+
 
 if config('DATABASE_URL', default=None):
     DATABASES = {
@@ -355,3 +354,4 @@ CHANNEL_LAYERS = {
 #             'LOCATION': 'unique-snowflake',
 #         }
 #     }
+print("CLOUDINARY:", config('CLOUDINARY_CLOUD_NAME'))
