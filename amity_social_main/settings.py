@@ -12,12 +12,18 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
+# from decouple import config
 from django import conf
 import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+
+from decouple import Config, RepositoryEnv
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+config = Config(RepositoryEnv(os.path.join(BASE_DIR, '.env')))
 
 
 
@@ -73,7 +79,7 @@ INSTALLED_APPS = [
 
 
 # STATICFILES_STORAGE = 'compressor.storage.CompressorFileStorage'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -236,9 +242,9 @@ STORAGES = {
     },
 }
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
-    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
-    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
 }
 
 # Default primary key field type
@@ -261,7 +267,11 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'collage social  <collages.socialmedia@gmail.com>'
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost',
+    cast=lambda v: [s.strip() for s in v.split(',')]
+)
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -308,7 +318,7 @@ CSP_FORM_ACTION = ("'self'",)
 #     }
 # }
 
-from decouple import config
+
 
 REDIS_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/1')
 
@@ -345,4 +355,3 @@ CHANNEL_LAYERS = {
 #             'LOCATION': 'unique-snowflake',
 #         }
 #     }
-
