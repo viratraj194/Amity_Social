@@ -259,10 +259,9 @@ EMAIL_TIMEOUT = 10  # Seconds
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-# EMAIL_PORT = config('EMAIL_PORT')
-EMAIL_PORT = 465
+EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = True
+EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'vircle  <collages.socialmedia@gmail.com>'
 
 
