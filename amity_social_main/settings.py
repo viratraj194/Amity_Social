@@ -255,14 +255,20 @@ COMPRESS_URL = STATIC_URL
 COMPRESS_ROOT = STATIC_ROOT
 
 #Email setup
-EMAIL_TIMEOUT = 10  # Seconds
+# Email setup
+EMAIL_TIMEOUT = 10  
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_PORT = config('EMAIL_PORT', cast=int) # Cast to int is important!
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'vircle  <collages.socialmedia@gmail.com>'
+
+# Match these to your Railway Dashboard variables
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+
+# This MUST match your verified SendGrid Single Sender
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='vircle <collages.socialmedia@gmail.com>')
 
 
 ALLOWED_HOSTS = config(
