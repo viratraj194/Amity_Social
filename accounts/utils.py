@@ -1,5 +1,6 @@
 import datetime
 import re
+import os
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -8,9 +9,11 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.utils.text import slugify
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 def users_id_generator(user_id):
-    current_datetime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')#202212281059 
+    current_datetime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')#202212281059
     users_id = current_datetime + str(user_id)
     print(users_id)
     return users_id
@@ -25,9 +28,8 @@ def detectUser(user):
         return redirectUrl
 
 
-
 def send_email_verification(request,user,mail_subject,mail_template):
-    from_mail = settings.DEFAULT_FROM_EMAIL
+    from_email = settings.DEFAULT_FROM_EMAIL
     current_site = get_current_site(request)
     message = render_to_string(mail_template,{
         'user':user,
@@ -36,24 +38,43 @@ def send_email_verification(request,user,mail_subject,mail_template):
         'token':default_token_generator.make_token(user)
     })
     to_email = user.email
-    mail = EmailMessage(mail_subject, message, from_mail, to=[to_email])
-    mail.content_subtype = "html"
-    mail.send()
+    _send_via_sendgrid(to_email, mail_subject, message, from_email)
 
 
 def send_notification_email(mail_subjects, mail_template, context):
     from_email = settings.DEFAULT_FROM_EMAIL
     message = render_to_string(mail_template, context)
-    if(isinstance(context['to_email'],str)):
-        to_email = []
-        to_email.append(context['to_email'])
+    if isinstance(context['to_email'], str):
+        to_email = [context['to_email']]
     else:
         to_email = context['to_email']
-    mail = EmailMessage(mail_subjects, message, from_email, to=to_email)
-    mail.content_subtype = "html"
-    # mail.attach(context['image'])
-    mail.send()
-    return
+    for email in to_email:
+        _send_via_sendgrid(email, mail_subjects, message, from_email)
+
+
+def _send_via_sendgrid(to_email, subject, html_content, from_email):
+    """Send email via SendGrid API directly with timeout"""
+    api_key = os.environ.get('SENDGRID_API_KEY') or settings.SENDGRID_API_KEY
+
+    if not api_key:
+        print("ERROR: SENDGRID_API_KEY not set")
+        return False
+
+    message = Mail(
+        from_email=from_email,
+        to_emails=to_email,
+        subject=subject,
+        html_content=html_content
+    )
+
+    try:
+        sg = SendGridAPIClient(api_key)
+        response = sg.send(message)
+        print(f"Email sent! Status code: {response.status_code}")
+        return response.status_code in [200, 202, 201]
+    except Exception as e:
+        print(f"ERROR sending email: {e}")
+        return False
 
 
 # Indian States and Union Territories - for validation
