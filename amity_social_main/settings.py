@@ -256,20 +256,29 @@ COMPRESS_ROOT = STATIC_ROOT
 
 #Email setup
 # Email setup
-EMAIL_TIMEOUT = 15  # Increased slightly to give the handshake more time
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_PORT = config('EMAIL_PORT', cast=int) 
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_TIMEOUT = 15  # Increased slightly to give the handshake more time
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = config('EMAIL_HOST')
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_PORT = config('EMAIL_PORT', cast=int) 
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-# Make these dynamic so Railway variables actually work
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+# # Make these dynamic so Railway variables actually work
+# EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+# EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
-# This must match your verified SendGrid identity
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='collages.socialmedia@gmail.com')
+# # This must match your verified SendGrid identity
+# DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='collages.socialmedia@gmail.com')
 
+# Email setup using SendGrid Web API
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = config("SENDGRID_API_KEY")
+
+# This must match your verified Single Sender in SendGrid
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="collages.socialmedia@gmail.com")
+
+# Optional: Set to True to see what would be sent without actually sending
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
