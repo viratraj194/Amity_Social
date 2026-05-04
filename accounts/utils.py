@@ -69,7 +69,9 @@ def _send_via_sendgrid(to_email, subject, html_content, from_email):
 
     try:
         sg = SendGridAPIClient(api_key)
-        response = sg.send(message)
+        # Add timeout of 10 seconds
+        sg.client._host = "https://api.sendgrid.com"
+        response = sg.send(message, timeout=10)
         print(f"Email sent! Status code: {response.status_code}")
         return response.status_code in [200, 202, 201]
     except Exception as e:

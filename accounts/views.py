@@ -170,7 +170,7 @@ def account(request):
     redirectUrl = detectUser(user)
     return redirect(redirectUrl)
 
-@ratelimit(key='ip', rate='5/h', block=True, method=['POST'])
+# @ratelimit(key='ip', rate='5/h', block=True, method=['POST'])
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST['email']
