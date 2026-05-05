@@ -38,7 +38,7 @@ def send_email_verification(request,user,mail_subject,mail_template):
         'token':default_token_generator.make_token(user)
     })
     to_email = user.email
-    _send_via_sendgrid(to_email, mail_subject, message, from_email)
+    return _send_via_sendgrid(to_email, mail_subject, message, from_email)
 
 
 def send_notification_email(mail_subjects, mail_template, context):
@@ -48,8 +48,12 @@ def send_notification_email(mail_subjects, mail_template, context):
         to_email = [context['to_email']]
     else:
         to_email = context['to_email']
+    all_sent = True
     for email in to_email:
-        _send_via_sendgrid(email, mail_subjects, message, from_email)
+        result = _send_via_sendgrid(email, mail_subjects, message, from_email)
+        if not result:
+            all_sent = False
+    return all_sent
 
 
 def _send_via_sendgrid(to_email, subject, html_content, from_email):
@@ -69,9 +73,8 @@ def _send_via_sendgrid(to_email, subject, html_content, from_email):
 
     try:
         sg = SendGridAPIClient(api_key)
-        # Add timeout of 10 seconds
         sg.client._host = "https://api.sendgrid.com"
-        response = sg.send(message, timeout=10)
+        response = sg.send(message)
         print(f"Email sent! Status code: {response.status_code}")
         return response.status_code in [200, 202, 201]
     except Exception as e:
