@@ -337,7 +337,20 @@ CSP_FORM_ACTION = ("'self'",)
 #for local env
 # REDIS_URL = config('REDIS_PUBLIC_URL', default='redis://127.0.0.1:6379/1')
 # for production env
-REDIS_URL = config('REDIS_PUBLIC_URL', default=None)
+raw_redis_url = config('REDIS_PUBLIC_URL', default=None)
+
+# Validate Redis URL - must be a valid redis:// URL (not template placeholders)
+def is_valid_redis_url(url):
+    if not url:
+        return False
+    if not isinstance(url, str):
+        return False
+    # Check for unresolved template variables
+    if '${{' in url or '}}' in url:
+        return False
+    return url.startswith('redis://')
+
+REDIS_URL = raw_redis_url if is_valid_redis_url(raw_redis_url) else None
 
 # Use Redis cache if REDIS_URL is available, otherwise use local memory cache
 if REDIS_URL:
@@ -356,11 +369,10 @@ if REDIS_URL:
         },
     }
 else:
-    # Fallback to local memory cache when Redis is not available
+    # Fallback to dummy cache when Redis is not available (required for django-ratelimit)
     CACHES = {
         "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "unique-snowflake",
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         }
     }
     # Fallback to in-memory channel layer (not suitable for multi-instance production)
@@ -369,7 +381,7 @@ else:
             "BACKEND": "channels.layers.InMemoryChannelLayer",
         },
     }
-    print("WARNING: Redis not configured - using local memory cache. WebSockets will not work with multiple servers.")
+    print(f"WARNING: Redis not configured (got: {raw_redis_url}). Using dummy cache (rate limiting disabled).")
 # for local 
 # Fallback to locmem if redis not available (development)
 # try:
