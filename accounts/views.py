@@ -86,11 +86,9 @@ def RegisterUser(request):
             # send verification
             mail_subject = 'please activate your account'
             mail_template = 'accounts/email/account_activate.html'
-            email_sent = send_email_verification(request,user,mail_subject,mail_template)
-            if email_sent:
-                messages.success(request,'Your account is registered successfully. Check your email(or spam) and activate your account.')
-            else:
-                messages.warning(request,'Your account is registered but we could not send the activation email. Please contact support or try password reset to verify your account.')
+            send_email_verification(request,user,mail_subject,mail_template)
+            # Email is sent in background - show success to user
+            messages.success(request,'Your account is registered successfully. Check your email(or spam) and activate your account.')
 
             return redirect('RegisterUser')
         else:
@@ -181,12 +179,9 @@ def forgot_password(request):
             user = User.objects.get(email__exact = email)
             mail_subject = 'please click below to reset your password'.title()
             mail_template = 'accounts/email/reset_password_mail.html'
-            email_sent = send_email_verification(request,user, mail_subject,mail_template)
-            if email_sent:
-                messages.success(request,'reset password link has sent to your'.title())
-            else:
-                messages.error(request,'Failed to send password reset email. Please try again or contact support.')
-                return redirect('forgot_password')
+            send_email_verification(request,user, mail_subject,mail_template)
+            # Email is sent in background - show success to user
+            messages.success(request,'reset password link has sent to your'.title())
             return redirect('login')
         else:
             messages.error(request,"email doesn't match")

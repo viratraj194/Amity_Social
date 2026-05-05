@@ -1,6 +1,7 @@
 import datetime
 import re
 import os
+import threading
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -38,7 +39,10 @@ def send_email_verification(request,user,mail_subject,mail_template):
         'token':default_token_generator.make_token(user)
     })
     to_email = user.email
-    return _send_via_sendgrid(to_email, mail_subject, message, from_email)
+    # Use threaded approach to prevent request timeout
+    _send_email_threaded(to_email, mail_subject, message, from_email)
+    # Return True immediately since email is being sent async
+    return True
 
 
 def send_notification_email(mail_subjects, mail_template, context):
@@ -48,16 +52,16 @@ def send_notification_email(mail_subjects, mail_template, context):
         to_email = [context['to_email']]
     else:
         to_email = context['to_email']
-    all_sent = True
+    # Use threaded approach to prevent request timeout
     for email in to_email:
-        result = _send_via_sendgrid(email, mail_subjects, message, from_email)
-        if not result:
-            all_sent = False
-    return all_sent
+        _send_email_threaded(email, mail_subjects, message, from_email)
+    return True
 
 
 def _send_via_sendgrid(to_email, subject, html_content, from_email):
     """Send email via SendGrid API directly with timeout"""
+    import socket
+
     api_key = os.environ.get('SENDGRID_API_KEY') or settings.SENDGRID_API_KEY
 
     if not api_key:
@@ -72,6 +76,9 @@ def _send_via_sendgrid(to_email, subject, html_content, from_email):
     )
 
     try:
+        # Set a socket timeout to prevent hanging
+        socket.setdefaulttimeout(10)
+
         sg = SendGridAPIClient(api_key)
         sg.client._host = "https://api.sendgrid.com"
         response = sg.send(message)
@@ -80,6 +87,16 @@ def _send_via_sendgrid(to_email, subject, html_content, from_email):
     except Exception as e:
         print(f"ERROR sending email: {e}")
         return False
+
+
+def _send_email_threaded(to_email, subject, html_content, from_email):
+    """Run SendGrid email in background thread to avoid blocking the request"""
+    def _send_in_background():
+        _send_via_sendgrid(to_email, subject, html_content, from_email)
+
+    thread = threading.Thread(target=_send_in_background, daemon=True)
+    thread.start()
+    # Don't wait for thread - fire and forget
 
 
 # Indian States and Union Territories - for validation
