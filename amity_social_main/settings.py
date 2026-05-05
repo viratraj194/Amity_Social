@@ -272,12 +272,14 @@ COMPRESS_ROOT = STATIC_ROOT
 
 # Email setup using SendGrid Web API
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = config("SENDGRID_API_KEY")
 
-# This must match your verified Single Sender in SendGrid
+# Decouple won't crash if you provide a default fallback or if the var exists
+SENDGRID_API_KEY = config("SENDGRID_API_KEY", default="")
+
+# Ensure this matches your verified SendGrid single sender identity
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="collages.socialmedia@gmail.com")
 
-# Optional: Set to True to see what would be sent without actually sending
+# Optional config
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 ALLOWED_HOSTS = config(
