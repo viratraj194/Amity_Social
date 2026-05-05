@@ -337,25 +337,39 @@ CSP_FORM_ACTION = ("'self'",)
 #for local env
 # REDIS_URL = config('REDIS_PUBLIC_URL', default='redis://127.0.0.1:6379/1')
 # for production env
-REDIS_URL = config('REDIS_PUBLIC_URL')
+REDIS_URL = config('REDIS_PUBLIC_URL', default=None)
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": REDIS_URL,
+# Use Redis cache if REDIS_URL is available, otherwise use local memory cache
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
     }
-}
-
-
-# for production deployment 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [REDIS_URL],
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
         },
-    },
-}
+    }
+else:
+    # Fallback to local memory cache when Redis is not available
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
+    # Fallback to in-memory channel layer (not suitable for multi-instance production)
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
+    print("WARNING: Redis not configured - using local memory cache. WebSockets will not work with multiple servers.")
 # for local 
 # Fallback to locmem if redis not available (development)
 # try:
