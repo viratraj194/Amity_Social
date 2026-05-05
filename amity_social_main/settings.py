@@ -334,8 +334,10 @@ CSP_FORM_ACTION = ("'self'",)
 # }
 
 
-
-REDIS_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/1')
+#for local env
+# REDIS_URL = config('REDIS_PUBLIC_URL', default='redis://127.0.0.1:6379/1')
+# for production env
+REDIS_URL = config('REDIS_PUBLIC_URL')
 
 CACHES = {
     "default": {
