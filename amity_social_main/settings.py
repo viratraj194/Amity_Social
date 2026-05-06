@@ -85,7 +85,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = False  # Set to True if you want to pre-compress files during deployment
+COMPRESS_OFFLINE = not DEBUG  # Set to True if you want to pre-compress files during deployment
 
 
 
