@@ -1,1 +1,1 @@
-web: gunicorn amity_social_main.asgi:application -k uvicorn.workers.UvicornWorker
+web: daphne -b 0.0.0.0 -p $PORT amity_social_main.asgi:application
