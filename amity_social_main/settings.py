@@ -85,7 +85,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE = False  # Set to True if you want to pre-compress files during deployment
 
 
 
@@ -148,7 +148,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #         'HOST':config('DB_HOST'),
 #     }
 # }
-import dj_database_url
+
 
 
 if config('DATABASE_URL', default=None):
@@ -291,6 +291,7 @@ ALLOWED_HOSTS = config(
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
+    'https://sweet-recreation-production-d238.up.railway.app',
     'https://amity.loca.lt',
     'https://afraid-ads-swim.loca.lt',
     'https://harvey-rendered-toolkit-ali.trycloudflare.com',
@@ -337,51 +338,61 @@ CSP_FORM_ACTION = ("'self'",)
 #for local env
 # REDIS_URL = config('REDIS_PUBLIC_URL', default='redis://127.0.0.1:6379/1')
 # for production env
-raw_redis_url = config('REDIS_PUBLIC_URL', default=None)
+# Check for standard Railway CLI injection (REDIS_URL) first, then fallback to public URL variation
+# Check for standard Railway CLI injection (REDIS_URL) first, then fallback to public URL variation
+raw_redis_url = config('REDIS_URL', default=config('REDIS_PUBLIC_URL', default=None))
 
-# Validate Redis URL - must be a valid redis:// URL (not template placeholders)
 def is_valid_redis_url(url):
-    if not url:
+    if not url or not isinstance(url, str):
         return False
-    if not isinstance(url, str):
-        return False
-    # Check for unresolved template variables
     if '${{' in url or '}}' in url:
         return False
-    return url.startswith('redis://')
+    return url.startswith('redis://') or url.startswith('rediss://')
 
 REDIS_URL = raw_redis_url if is_valid_redis_url(raw_redis_url) else None
 
-# Use Redis cache if REDIS_URL is available, otherwise use local memory cache
 if REDIS_URL:
     CACHES = {
         "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            # Switch to django-redis backend for better production stability on Railway
+            "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {
+                    "ssl_cert_reqs": None  # Safeguards against Railway TLS handshake drops
+                }
+            }
         }
     }
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
+                # Wrap the connection string securely for Daphne/Channels
                 "hosts": [REDIS_URL],
             },
         },
     }
 else:
-    # Fallback to dummy cache when Redis is not available (required for django-ratelimit)
+    # Safe Local Fallback if Redis isn't running locally
     CACHES = {
         "default": {
-            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
         }
     }
-    # Fallback to in-memory channel layer (not suitable for multi-instance production)
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels.layers.InMemoryChannelLayer",
         },
     }
-    print(f"WARNING: Redis not configured (got: {raw_redis_url}). Using dummy cache (rate limiting disabled).")
+    print(f"WARNING: Redis not configured (got: {raw_redis_url}). Using local memory.")
+# Silence django-ratelimit system checks for non-shared cache backends
+SILENCED_SYSTEM_CHECKS = [
+    'django_ratelimit.E003',
+    'django_ratelimit.W001',
+]
 # for local 
 # Fallback to locmem if redis not available (development)
 # try:

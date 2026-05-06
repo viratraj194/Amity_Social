@@ -17,6 +17,7 @@ daphne==4.1.2
 dj-database-url==3.1.2
 Django==5.0.6
 django-appconf==1.0.6
+django-redis>=5.4.0
 django-cloudinary-storage==0.3.0
 django-compressor==4.5.1
 django-csp==4.0
