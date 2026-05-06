@@ -18,7 +18,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-
+#now this settings work perfectly fine without this, but just in case if you want to use .env file for local development, you can uncomment this and create a .env file in the root directory of your project with the following content:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 # config = Config(RepositoryEnv(os.path.join(BASE_DIR, '.env')))
