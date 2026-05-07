@@ -1,1 +1,0 @@
-- [Chat Presence System Architecture](chat_presence_architecture.md) — Multi-room WebSocket presence tracking with Redis
