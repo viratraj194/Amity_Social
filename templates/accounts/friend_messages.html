@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% load static %}
 <style>
     @media (max-width: 480px) {
         .message_ChatContainer {
@@ -13,7 +14,11 @@
         <div class="chat_title flex" style="border-bottom: 1px solid white; padding: 10px 5px;">
             <h2>Chats</h2>
             <div class="loggedInUserImage">
+                {% if user.userprofile.profile_picture %}
                 <img src="{{user.userprofile.profile_picture.url}}" alt="">
+                {% else %}
+                <img src="{% static "img/images.jpg" %}" alt="">
+                {% endif %}
             </div>
         </div>
         <div class="message_userLists">
@@ -23,7 +28,11 @@
                 <li class="message_user_card">
                     <div class="messageUserCard flex">
                         <div class="userImg">
+                            {% if item.profile_photo %}
                             <img src="{{item.profile_photo}}" alt="">
+                            {% else %}
+                            <img src="{% static "img/images.jpg" %}" alt="">
+                            {% endif %}
                         </div>
                         <div class="messageUsersDetails colum">
                             <div class="flex">

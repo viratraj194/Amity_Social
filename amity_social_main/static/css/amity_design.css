@@ -1630,7 +1630,7 @@ h4 {
 /* floating post starts */
 
 .PostContainers {
-    background-color: rgba(33, 33, 33, 0.778);
+    background-color: #1a1d23;
     width: 650px;
     display: none;
     transform: translate(65%, 10%);
@@ -1643,8 +1643,73 @@ h4 {
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     z-index: 1000;
     border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
 
+.post-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
 
+.mode-toggle {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.toggle-btn {
+    padding: 8px 20px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+    background: linear-gradient(135deg, #2b68ff, #9733ee);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-btn:hover:not(.active) {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hide elements based on mode */
+.image-mode-content {
+    display: block;
+}
+
+.confession-mode-content {
+    display: none;
+}
+
+.image-mode-content.hidden,
+.confession-mode-content.hidden {
+    display: none;
+}
+
+.image-mode-footer {
+    display: flex;
+}
+
+.confession-mode-footer {
+    display: none;
+}
+
+.image-mode-footer.hidden,
+.confession-mode-footer.hidden {
+    display: none;
 }
 
 .PostContainer {
@@ -1696,7 +1761,8 @@ h4 {
     margin: 10px auto;
 }
 
-.PostContainer-caption textarea {
+.PostContainer-caption textarea,
+.caption-input {
     width: 500px;
     height: 50px;
     border: none;
@@ -1708,6 +1774,98 @@ h4 {
     color: rgb(152, 151, 151);
 }
 
+.caption-input {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.caption-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Image Preview Area */
+.image-preview-area {
+    display: none;
+    width: 100%;
+    margin: 15px 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.image-preview-area.has-image {
+    display: block;
+}
+
+.image-preview-wrapper {
+    position: relative;
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.image-preview-wrapper img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    display: block;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.remove-image-btn:hover {
+    background: rgba(255, 68, 68, 0.9);
+}
+
+/* Confession Textarea */
+.confession-textarea-container {
+    margin-top: 15px;
+}
+
+.confession-textarea {
+    width: 100%;
+    min-height: 200px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    resize: none;
+}
+
+.confession-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Progress Container */
+.progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .PostContainer-post-button {
     width: 170px;
 
@@ -1717,12 +1875,12 @@ h4 {
 .PostContainer-post-button button {
     width: 100px;
     height: 40px;
-    background-color: #777b7b;
+    background: linear-gradient(135deg, #3c3c3c, #303030) !important;
     border: none;
     outline: none;
     border-radius: 10px;
     margin: 0px 5px;
-    color: rgb(225, 224, 224);
+    color: white;
     font-size: large;
     font-weight: bold;
     cursor: pointer;

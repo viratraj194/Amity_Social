@@ -1630,26 +1630,84 @@ h4 {
 /* floating post starts */
 
 .PostContainers {
-    background-color: rgba(33, 33, 33, 0.778);
+    background-color: rgba(26, 29, 35, 0.8) !important;
     width: 650px;
     display: none;
-    transform: translate(65%, 10%);
     padding: 20px;
-    position: fixed;
-    top: 25px;
-    max-height: 600px;
-    overflow: hidden;
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    z-index: 1000;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    z-index: 9999 !important;
     border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    flex-direction: column;
+}
 
+@media screen and (max-width: 600px) {
+    .PostContainers {
+        width: 95vw !important;
+    }
+}
 
+.post-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.mode-toggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 25px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.toggle-btn {
+    padding: 8px 20px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.toggle-btn.active {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(43, 104, 255, 0.2);
+}
+
+.toggle-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: #2b68ff;
+    box-shadow: 0 0 8px #2b68ff;
+    border-radius: 2px;
+}
+
+.toggle-btn:hover:not(.active) {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .PostContainer {
-    overflow-y: auto;
-    max-height: 465px;
     padding-right: 5px;
     margin-bottom: 20px;
 }
@@ -1664,48 +1722,274 @@ h4 {
 .postContainer-image img {
     width: 100%;
     height: 100%;
-
 }
 
 .postContainer-input-image {
-    margin-top: 10px;
-    justify-content: space-between;
-}
-
-.postContainer-input-image {
-    justify-content: space-between;
+    margin-bottom: 15px;
+    align-items: center;
 }
 
 .PostContainer-postContent textarea {
-
-    width: 585px;
-    height: 200px;
+    width: 100%;
+    height: auto;
     border: none;
     outline: none;
     background-color: transparent;
     color: white;
-    font-size: x-large;
+    font-size: 16px;
+    resize: none;
+    padding: 10px;
 }
 
-.PostContainer-postContent textarea::placeholder {
-    padding-left: 10px;
+/* Image Post View */
+#image-post-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.image-preview-area {
+    width: 100%;
+    min-height: 150px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.image-preview-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.image-preview-wrapper img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.remove-image-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.caption-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 12px 0;
+    width: 100%;
+    outline: none;
+    font-size: 15px;
+    transition: border-bottom-color 0.3s;
+}
+
+.caption-input:focus {
+    border-bottom-color: #2b68ff;
+}
+
+.caption-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Confession View */
+#confession-post-view {
+    width: 100%;
+}
+
+.confession-textarea {
+    width: 100%;
+    height: 300px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    resize: none;
+    outline: none;
+    padding: 10px;
+}
+
+.confession-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Action Button */
+.postButton {
+    background: linear-gradient(135deg, #3c3c3c, #303030) !important;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.postButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(43, 104, 255, 0.4);
+}
+
+.postButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .PostContainer-border {
-    border-bottom: 1px solid silver;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin: 10px auto;
 }
 
-.PostContainer-caption textarea {
-    width: 500px;
-    height: 50px;
+
+.image-preview-area.has-image {
+    display: block;
+}
+
+.image-preview-wrapper {
+    position: relative;
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.image-preview-wrapper img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    display: block;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
     border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.remove-image-btn:hover {
+    background: rgba(255, 68, 68, 0.9);
+}
+
+/* Confession Textarea */
+.confession-textarea-container {
+    margin-top: 15px;
+}
+
+.confession-textarea {
+    width: 100%;
+    min-height: 200px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
     outline: none;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.02);
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    resize: none;
+    padding: 12px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.confession-textarea:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.empty-state-box {
+    height: 220px;
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.02);
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 20px;
+}
+
+.empty-state-box i, .empty-state-box lord-icon {
+    margin-bottom: 15px;
+    opacity: 0.6;
+}
+
+.empty-state-box span {
+    font-size: 14px;
+    max-width: 200px;
+    line-height: 1.4;
+}
+
+.file-input-label.wide-upload-btn {
+    background-color: #2a2e35;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 60%;
+    margin: 10px auto;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.file-input-label.wide-upload-btn:hover {
+    background-color: #353a42;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.file-input-label.wide-upload-btn span {
     font-size: 15px;
-    font-weight: 400;
-    padding-left: 10px;
-    color: rgb(152, 151, 151);
+}
+
+.confession-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Progress Container */
+.progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .PostContainer-post-button {
@@ -1717,12 +2001,12 @@ h4 {
 .PostContainer-post-button button {
     width: 100px;
     height: 40px;
-    background-color: #777b7b;
+    background: linear-gradient(135deg, #2b68ff, #9733ee);
     border: none;
     outline: none;
     border-radius: 10px;
     margin: 0px 5px;
-    color: rgb(225, 224, 224);
+    color: white;
     font-size: large;
     font-weight: bold;
     cursor: pointer;
@@ -1730,26 +2014,19 @@ h4 {
 }
 
 /* progress circle  */
-.contenteditable {
-    width: 100%;
-    height: 100px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-}
-
 .progress-circle {
     position: relative;
-    width: 40px;
-    height: 40px;
-    display: inline-block;
+    width: 60px;
+    height: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .progress-circle svg {
     transform: rotate(-90deg);
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
 }
 
 .progress-circle circle {
@@ -1758,17 +2035,17 @@ h4 {
 }
 
 .progress-circle .bg {
-    stroke: #e6e6e6;
+    stroke: rgba(255, 255, 255, 0.1);
 }
 
 .progress-circle .progress {
-    stroke: #4caf50;
+    stroke: #2b68ff;
     stroke-linecap: round;
-    transition: stroke 0.3s;
+    transition: stroke-dashoffset 0.3s ease, stroke 0.3s;
 }
 
 .progress-circle .over-limit {
-    stroke: red;
+    stroke: #ff4444;
 }
 
 .progress-circle .text {
@@ -1776,8 +2053,11 @@ h4 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 10px;
-    font-weight: bold;
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
 }
 
 .highlight {

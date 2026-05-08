@@ -212,7 +212,11 @@
         <div class="chat_title flex" style="border-bottom: 1px solid white; padding: 10px 5px;">
             <h2>Chats</h2>
             <div class="loggedInUserImage">
+                {% if user.userprofile.profile_picture %}
                 <img src="{{user.userprofile.profile_picture.url}}" alt="">
+                {% else %}
+                <img src="{% static "img/images.jpg" %}" alt="">
+                {% endif %}
             </div>
         </div>
         <div class="message_userLists">
@@ -272,7 +276,11 @@
         <a href="{% url 'profile_details' receiver.id%}">
             <div class="messageSelectedUser flex">
                 <div class="messageSelectedUserImg">
+                    {% if receiver.userprofile.profile_picture %}
                     <img src="{{ receiver.userprofile.profile_picture.url}}" alt="">
+                    {% else %}
+                    <img src="{% static "img/images.jpg" %}" alt="">
+                    {% endif %}
                 </div>
                 <div class="messageSelectedUserDetails  colum">
                     <span style="margin: 0px 10px;"><strong>{{receiver.username}}</strong></span>
@@ -323,7 +331,11 @@
                 {% else %}
                 <div class="receiverMessage">
                     <div class="receiverMessageImg">
-                        <img src="{{ message.sender.userprofile.profile_picture.url }}" alt="">
+                        {% if message.sender.userprofile.profile_picture %}
+                            <img src="{{ message.sender.userprofile.profile_picture.url }}" alt="">
+                        {% else %}
+                            <img src="{% static "img/images.jpg" %}" alt="">
+                        {% endif %}
                     </div>
                     <div class="message-bubble">
                         <span class="message-text">{{ message.content }}</span>
@@ -423,7 +435,7 @@
                     'message': message,
                     'sender_id': senderId,
                     'receiver_id': receiverId,
-                    'sender_profile_pic': '{{ user.userprofile.profile_picture.url }}',
+                    'sender_profile_pic': '{% if user.userprofile.profile_picture %}{{ user.userprofile.profile_picture.url }}{% else %}/static/images/image.jpg{% endif %}',
                     'room_slug': roomSlug
                 }));
                 messageInput.value = '';

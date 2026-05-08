@@ -50,75 +50,111 @@
 <!-- post popup start  -->
 <script src="{% static 'js/js_components_for_ajax.js'%}"></script>
 <div class="PostContainers">
-    <div class="close-button close " style="cursor: pointer;">
-        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-        <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
-            style="width:20px;height:20px">
-        </lord-icon>
+    <div class="post-modal-header">
+        <div class="close-button close" style="cursor: pointer;">
+            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+            <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+                style="width:20px;height:20px">
+            </lord-icon>
+        </div>
+        <!-- Segmented Control Toggle -->
+        <div class="mode-toggle">
+            <button type="button" class="toggle-btn active" data-mode="image" onclick="switchTab('image')">Image Post</button>
+            <button type="button" class="toggle-btn" data-mode="confession" onclick="switchTab('confession')">Confession</button>
+        </div>
     </div>
     <form action="{%url 'add_posts'%}" method="post" enctype="multipart/form-data">
         {%csrf_token%}
 
         <div class="PostContainer">
-            <div class="postContainer-input-image flex">
-                {% if user_profile.profile_picture %}
-                <div class="postContainer-image">
-                    <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
-                </div>
-                {% else %}
-                <div class="postContainer-image">
-                    <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
-                </div>
-                {%endif%}
-                <div class="PostContainer-postContent">
-                    <label for="userInput"></label>
-                    <textarea contenteditable="true" name="content" id="userInput"
-                        placeholder="Something is in your mind? Say it here......" style="resize: none;"></textarea>
-                </div>
-            </div>
-            <!-- hidden image  -->
-            <div class="hidden-image image-container" id="preview">
-                <img src="" alt="">
-            </div>
-            <!-- caption  -->
-            <div class="PostContainer-caption">
-                <textarea name="caption" placeholder="add caption to post..." style="resize: none;"></textarea>
-            </div>
-
-
-        </div>
-        <div class="PostContainer-border"></div>
-        <div class="PostContainer-image-input">
-            <div class="Post-image-input space_between flex">
-                <div class="saySomething-attachment" style="width: 200px; margin: 0px;">
-                    <input type="file" class="file-input" name="post_image" src="" accept="image/*" alt=""
-                        id="imageInput">
-                    <label for="imageInput" class="file-input-label">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
-                            colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
-                        </lord-icon>
-
-                    </label>
-                    <span class="moreWords" style="display:none; margin-left: 5px; color: red;">ist more then
-                        60words</span>
-                </div>
-                <div class="PostContainer-post-button space_between flex">
-                    <div class="progress-circle">
-                        <svg width="40" height="40">
-                            <circle class="bg" cx="20" cy="20" r="15"></circle>
-                            <circle class="progress" cx="20" cy="20" r="15" stroke-dasharray="94.2"
-                                stroke-dashoffset="94.2"></circle>
-                        </svg>
-                        <div class="text">0%</div>
+            <!-- IMAGE POST VIEW -->
+            <div id="image-post-view">
+                <div class="postContainer-input-image flex">
+                    {% if user_profile.profile_picture %}
+                    <div class="postContainer-image">
+                        <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
                     </div>
+                    {% else %}
+                    <div class="postContainer-image">
+                        <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                    </div>
+                    {%endif%}
+                    <div class="PostContainer-postContent" style="display:none;">
+                        <textarea name="content" id="userInputImage" placeholder="Add a title..."></textarea>
+                    </div>
+                </div>
+                <!-- Empty State for Image -->
+                <div id="emptyImageState" class="empty-state-box" style="">
+                    <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                        colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:60px;height:60px">
+                    </lord-icon>
+                    <span>No image selected.<br>Click the button below to upload.</span>
+                </div>
+                <!-- Image Preview Area -->
+                <div class="image-preview-area" id="imagePreviewContainer" style="display:none;">
+                    <div class="image-preview-wrapper">
+                        <img src="" alt="" id="imagePreview">
+                        <button type="button" class="remove-image-btn" id="removeImageBtn" title="Remove image">
+                            <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover"
+                                colors="primary:#ff4444" style="width:16px;height:16px">
+                            </lord-icon>
+                        </button>
+                    </div>
+                </div>
+                <!-- Caption Input -->
+                <div class="PostContainer-caption">
+                    <input type="text" name="caption" class="caption-input" placeholder="Write a caption for this photo...">
+                </div>
+            </div>
 
-                    <div class="" style="border-right: 1px solid silver; height: 30px; width: 1px;"></div>
-                    <button class="postButton" type="submit">Post</button>
+            <!-- CONFESSION POST VIEW -->
+            <div id="confession-post-view" style="display: none;">
+                <div class="postContainer-input-image flex">
+                    {% if user_profile.profile_picture %}
+                    <div class="postContainer-image">
+                        <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="postContainer-image">
+                        <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                    </div>
+                    {%endif%}
+                </div>
+                <!-- Large Confession Textarea -->
+                <div class="confession-textarea-container">
+                    <textarea name="content" id="userInputConfession" class="confession-textarea"
+                        placeholder="Write your secret confession here..."></textarea>
                 </div>
             </div>
         </div>
 
+        <div class="PostContainer-footer flex space_between" style="align-items: center; margin-top: 15px;">
+            <div class="saySomething-attachment" style="width: auto; flex: 1;">
+                <input type="file" class="file-input" name="post_image" accept="image/*" id="imageInput" style="display:none;">
+                <label for="imageInput" class="file-input-label wide-upload-btn" id="imageLabel" style="cursor: pointer;">
+                    <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                        colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:25px;height:25px">
+                    </lord-icon>
+                    <span>📷 Upload Photo</span>
+                </label>
+            </div>
+
+            <!-- Progress circle -->
+            <div class="progress-container" id="confessionProgress" style="display: none; margin-right: 15px;">
+                <div class="progress-circle">
+                    <svg width="60" height="60">
+                        <circle class="bg" cx="30" cy="30" r="25"></circle>
+                        <circle class="progress" cx="30" cy="30" r="25" stroke-dasharray="157.1"
+                            stroke-dashoffset="157.1"></circle>
+                    </svg>
+                    <div class="text">0/60 words</div>
+                </div>
+            </div>
+
+            <div class="PostContainer-post-button">
+                <button class="postButton" type="submit">Post</button>
+            </div>
+        </div>
     </form>
     {% if messages %}
     <ul class="messages" style="color: red;">

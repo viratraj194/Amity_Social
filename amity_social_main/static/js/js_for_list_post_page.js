@@ -45,92 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// JavaScript code for word count and progress circle
-document.addEventListener('DOMContentLoaded', function () {
-    const userInput = document.getElementById('userInput');
-    const progressCircle = document.querySelector('.progress-circle .progress');
-    const progressText = document.querySelector('.progress-circle .text');
-    const postButton = document.querySelector('.postButton');
-    const moreWordsMessage = document.querySelector('.moreWords');
-    let alertShown = false;  // Flag to track if alert message has been shown
-
-    userInput.addEventListener('input', () => {
-        const text = userInput.value.trim();
-        const words = text.split(/\s+/).filter(word => word.length > 0);
-        const wordCount = words.length;
-        const progress = Math.min(wordCount / 60 * 100, 100);
-        const offset = 94.2 - (94.2 * progress / 100);
-
-        progressCircle.style.strokeDashoffset = offset;
-        progressText.textContent = `${Math.floor(progress)}%`;
-
-        // Change circle color based on progress
-        if (progress >= 100) {
-            progressCircle.classList.add('over-limit');
-        } else {
-            progressCircle.classList.remove('over-limit');
-        }
-
-        // Show/hide postButton based on circle color
-        if (progress >= 100) {
-            postButton.style.display = 'none';  // Hide the postButton if word count exceeds 60
-        } else {
-            postButton.style.display = 'block';  // Show the postButton if within word limit
-        }
-
-        // Show moreWordsMessage only when progressCircle is over limit and not at 100%
-        if (progress >= 100) {
-            moreWordsMessage.style.display = 'block';
-        } else {
-            moreWordsMessage.style.display = 'none';
-        }
-    });
-
-    // Optional: If you want to handle backspace to reset alertShown and moreWordsMessage
-    userInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Backspace') {
-            const text = userInput.value.trim();
-            const words = text.split(/\s+/).filter(word => word.length > 0);
-            const wordCount = words.length;
-
-            if (wordCount <= 60) {
-                progressCircle.classList.remove('over-limit');
-                postButton.style.display = 'block';  // Show the postButton if within word limit
-                moreWordsMessage.style.display = 'none';  // Hide .moreWords message
-                alertShown = false;  // Reset alertShown flag
-            }
-        }
-    });
-});
 
 
-// image auto updating 
-document.addEventListener('DOMContentLoaded', function () {
-    const imageInput = document.getElementById('imageInput');
-    const imageContainer = document.getElementById('preview');
-
-    imageInput.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                imageContainer.style.display = 'block'; // Show the div
-                imageContainer.querySelector('img').src = e.target.result; // Set the image src
-
-            }
-            reader.readAsDataURL(file);
-        } else {
-            imageContainer.style.display = 'none'; // Hide the div if no file is selected
-            imageContainer.querySelector('img').src = ''; // Clear the image src
-        }
-    });
-});
-
-
-
-
-
-// pop us posts page 
+// pop us posts page
 function redirectToPath(path) {
     window.location.href = path;
 }
@@ -152,4 +69,131 @@ document.addEventListener('DOMContentLoaded', function () {
             postDiv.style.display = 'none';
         }
     });
+});
+
+// Mode Toggle - Image Post / Confession
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    const imageModeContent = document.querySelectorAll('.image-mode-content');
+    const confessionModeContent = document.querySelectorAll('.confession-mode-content');
+    const imageModeFooter = document.querySelectorAll('.image-mode-footer');
+    const confessionModeFooter = document.querySelectorAll('.confession-mode-footer');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+
+    let currentMode = 'image';
+
+    toggleButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const mode = this.getAttribute('data-mode');
+            if (mode === currentMode) return;
+
+            // Update active button state
+            toggleButtons.forEach(function (b) {
+                b.classList.remove('active');
+            });
+            this.classList.add('active');
+
+            currentMode = mode;
+
+            if (mode === 'confession') {
+                // Switch to Confession mode - hide image elements using CSS classes
+                imageModeContent.forEach(function (el) {
+                    el.classList.add('hidden');
+                });
+                confessionModeContent.forEach(function (el) {
+                    el.classList.remove('hidden');
+                });
+                imageModeFooter.forEach(function (el) {
+                    el.classList.add('hidden');
+                });
+                confessionModeFooter.forEach(function (el) {
+                    el.classList.remove('hidden');
+                });
+            } else {
+                // Switch to Image mode - hide confession elements using CSS classes
+                imageModeContent.forEach(function (el) {
+                    el.classList.remove('hidden');
+                });
+                confessionModeContent.forEach(function (el) {
+                    el.classList.add('hidden');
+                });
+                imageModeFooter.forEach(function (el) {
+                    el.classList.remove('hidden');
+                });
+                confessionModeFooter.forEach(function (el) {
+                    el.classList.add('hidden');
+                });
+            }
+        });
+    });
+
+    // Image preview functionality
+    if (imageInput && imagePreviewContainer && imagePreview) {
+        imageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    imagePreview.src = event.target.result;
+                    imagePreviewContainer.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Remove image button functionality
+    if (removeImageBtn && imageInput && imagePreviewContainer && imagePreview) {
+        removeImageBtn.addEventListener('click', function () {
+            imageInput.value = '';
+            imagePreview.src = '';
+            imagePreviewContainer.classList.remove('has-image');
+        });
+    }
+});
+
+// Character counter for Confession mode (2200 char limit)
+document.addEventListener('DOMContentLoaded', function () {
+    const userInput = document.getElementById('userInputConfession');
+    const progressCircle = document.querySelector('.confession-mode-footer .progress');
+    const progressText = document.querySelector('.confession-mode-footer .text');
+    const postButton = document.querySelector('.postButton');
+    let currentMode = 'image';
+
+    // Listen for mode changes
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    toggleButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            currentMode = this.getAttribute('data-mode');
+        });
+    });
+
+    if (userInput && progressCircle && progressText) {
+        userInput.addEventListener('input', function () {
+            if (currentMode !== 'confession') return;
+
+            const text = userInput.value;
+            const charCount = text.length;
+            const maxChars = 2200;
+            const progress = Math.min((charCount / maxChars) * 100, 100);
+            const dashOffset = 94.2 - (94.2 * progress / 100);
+
+            progressCircle.style.strokeDashoffset = dashOffset;
+            progressText.textContent = charCount + '/' + maxChars;
+
+            // Change color based on progress
+            if (progress >= 100) {
+                progressCircle.style.stroke = '#ff4444';
+                postButton.disabled = true;
+                postButton.style.opacity = '0.5';
+            } else {
+                progressCircle.style.stroke = '#667eea';
+                postButton.disabled = false;
+                postButton.style.opacity = '1';
+            }
+        });
+    }
 });

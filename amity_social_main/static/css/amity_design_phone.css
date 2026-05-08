@@ -87,17 +87,23 @@
     }
 
     .PostContainers {
-        background-color: rgb(35, 35, 35);
+        background-color: #1a1d23;
         width: 95%;
+        max-width: 550px;
         display: none;
-        transform: translate(1%, 2%);
-        padding: 10px;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        padding: 15px;
         position: fixed;
-        top: 25px;
-        max-height: 600px;
+        max-height: 90vh;
         overflow: hidden;
         z-index: 1000;
         border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
     }
 
     .PostContainer-postContent textarea {
@@ -721,17 +727,71 @@
     }
 
     .PostContainers {
-        background-color: rgb(35, 35, 35);
-        width: 100%;
+        background-color: #1a1d23;
+        width: 95%;
+        max-width: 550px;
         display: none;
-        transform: translate(1%, 2%);
-        padding: 20px;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        padding: 15px;
         position: fixed;
-        top: 25px;
-        max-height: 600px;
+        max-height: 90vh;
         overflow: hidden;
         z-index: 1000;
         border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+    }
+
+    .post-modal-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .mode-toggle {
+        display: flex;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 25px;
+        padding: 4px;
+        gap: 4px;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .toggle-btn {
+        flex: 1;
+        padding: 10px 15px;
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .toggle-btn.active {
+        background: linear-gradient(89deg, #303030 0%, #1f1f1f 100%);
+        color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .PostContainer {
+        max-height: calc(90vh - 180px);
     }
 
     .PostContainer-postContent textarea {
