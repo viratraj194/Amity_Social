@@ -283,13 +283,15 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="collages.socialmedia@
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost',
+    'ALLOWED_HOSTS', 
+    default='vircle.in,www.vircle.in,127.0.0.1,localhost',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://vircle.in',
+    'https://www.vircle.in',
     'https://*.railway.app',
     'https://sweet-recreation-production-d238.up.railway.app',
     'https://amity.loca.lt',
@@ -307,6 +309,7 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Content Security Policy (CSP)
 CSP_DEFAULT_SRC = ("'self'",)
