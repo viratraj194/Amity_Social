@@ -1,239 +1,171 @@
 {% load static %}
 
-<div class="allPostLists">
-    <div class="postContainer">
-        <a href="{%url 'profile_details' post.user.id %}">
-            <div class="posting-user-Image_details flex">
-                {% if post.is_following  %}
-                {%if post.user.userprofile.profile_picture%}
-                <div class="posting-user-Image">
-                    <img style="object-fit: cover; " src="{{post.user.userprofile.profile_picture.url}}" alt="">
-                </div>
-                {%else%}
-                <div class="posting-user-Image">
-                    <img src="{%static 'img/images.jpeg'%}" alt="">
-                </div>
-                {%endif%}
-                {% else %}
-                {%if post.user.userprofile.profile_picture%}
-                {% if post.is_following %}
-                <div class="posting-user-Image">
-                    <img style="object-fit: cover; filter: blur(4px);" src="{{post.user.userprofile.profile_picture.url}}" alt="">
-                </div>
-                {%else%}
-                <div class="posting-user-Image">
-                    <img src="{%static 'img/images.jpeg'%}" alt="">
-                </div>
-                {%endif%}
-                {%else%}
-                <div class="posting-user-Image">
-                    <img src="{%static 'img/images.jpeg'%}" alt="">
-                </div>
-                {%endif%}
-
-                {%endif%}
-                <div style="display:flex; flex-direction: column;">
+<div class="allPostLists allPostLists-premium-reset">
+    <div class="premium-post-card">
+        <!-- Header -->
+        <div class="premium-card-header">
+            <a href="{%url 'profile_details' post.user.id %}" class="premium-user-info">
+                <div class="premium-avatar-wrapper">
                     {% if post.is_following %}
-                    <span style="font-size: small; font-weight: 400;">{{post.user.username}}</span>
+                        {% if post.user.userprofile.profile_picture %}
+                            <img src="{{post.user.userprofile.profile_picture.url}}" alt="" class="premium-avatar">
+                        {% else %}
+                            <img src="{%static 'img/images.jpeg'%}" alt="" class="premium-avatar">
+                        {% endif %}
                     {% else %}
-                    <span style="font-size: small; font-weight: 400;">{{post.user.users_id}}</span>
+                        {% if post.user.userprofile.profile_picture %}
+                            <img src="{{post.user.userprofile.profile_picture.url}}" alt="" class="premium-avatar" style="filter: blur(4px);">
+                        {% else %}
+                            <img src="{%static 'img/images.jpeg'%}" alt="" class="premium-avatar">
+                        {% endif %}
                     {% endif %}
-                    <span style="font-size: small; font-weight: 300;">{{post.created_at}}</span>
                 </div>
-            </div>
-        </a>
-        <div class="postContainer-card">
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    {% if post.post_image %}
-                    {% if post.is_portrait %}
-                    <div class="swiper-slide">
-                        <div class="postContainer-Post_Big-image">
-                            <img src="{{post.post_image.url}}" alt="">
-                        </div>
-                    </div>
-                    {%else%}
-                    <div class="swiper-slide">
-                        <div class="postContainer-Post_image">
-                            <img src="{{post.post_image.url}}" alt="">
-                        </div>
-                    </div>
-                    {%endif%}
-                    {% endif %}
-                    {% if post.content %}
-                    <div class="swiper-slide">
-                        <style>
-                            .swiper-slide-active {
-                                margin: auto;
-                            }
-                        </style>
-                        <div class="postContainer-Post_image "
-                            style="justify-content: center;align-items: center;">
-                            <p style="text-align: center; text-wrap: wrap; padding:10px;color: #a3a3a3; ">
-                                {{post.content}}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <!-- Add more swiper slides as needed -->
+                <div class="premium-user-details">
+                    <span class="premium-username">
+                        {% if post.is_following %}
+                            {{post.user.username}}
+                        {% else %}
+                            {{post.user.users_id}}
+                        {% endif %}
+                    </span>
+                    <span class="premium-timestamp">{{post.created_at}}</span>
                 </div>
-                <!-- Pagination -->
+            </a>
+            <button class="premium-options-btn">
+                <div class="premium-options-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </button>
+        </div>
 
-                <div class="Pagination-Dots">
-                    <div class="swiper-pagination"></div>
+        <!-- Media -->
+        <div class="premium-card-media">
+            <div class="premium-media-container">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        {% if post.post_image %}
+                            <div class="swiper-slide">
+                                <img src="{{post.post_image.url}}" alt="" style="width: 100%; object-fit: cover; display: block;">
+                            </div>
+                        {% endif %}
+                        
+                        {% if post.content %}
+                            <div class="swiper-slide" style="display: flex; align-items: center; justify-content: center;">
+                                <div class="premium-confession-content" style="width: 100%; height: 100%;">
+                                    <p class="premium-confession-text">{{post.content}}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if post.post_image and post.content %}
+                    <div class="Pagination-Dots">
+                        <div class="swiper-pagination"></div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="posts-likes-comments-saves flex">
-            <div class="flex">
-                <div class="posts-like-comment-save">
-                    <a  class="like_post" data-id="{{ post.id }}"
-                        data-url="{% url 'post_like' post.id %}">
-                        <div class="post_icon flex {% if post.liked_by_user %}postLiked_icon{% else %}postUnliked_icon{% endif %}"
-                            style="align-items: center;">
+        <!-- Action Bar -->
+        <div class="premium-action-bar">
+            <div class="premium-actions-left">
+                <!-- Like -->
+                <div class="premium-action-item">
+                    <a class="like_post" data-id="{{ post.id }}" data-url="{% url 'post_like' post.id %}">
+                        <div class="post_icon flex {% if post.liked_by_user %}postLiked_icon{% else %}postUnliked_icon{% endif %}" style="align-items: center;">
                             {% if post.liked_by_user %}
-                            <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover"
-                                colors="primary:#e83a30" style="width:30px;height:30px"></lord-icon>
+                                <lord-icon src="https://cdn.lordicon.com/ulnswmkk.json" trigger="hover" colors="primary:#e83a30" style="width:28px;height:28px"></lord-icon>
                             {% else %}
-                            <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
-                                colors="primary:#848484" style="width:30px;height:30px"></lord-icon>
+                                <lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover" colors="primary:#848484" style="width:28px;height:28px"></lord-icon>
                             {% endif %}
                         </div>
                     </a>
-                    {% if post.total_likes%}
-                    <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
-                        Likes</span>
-                    {%else%}
-                    <span style="color: #777b7b; margin: 0px 5px;"><strong>{{ post.total_likes }}</strong>
-                        Likes</span>
-                    {%endif%}
+                    <span class="premium-likes-count"><strong>{{ post.total_likes }}</strong> Likes</span>
                 </div>
 
-                <div class="posts-like-comment-save Comment-onPost">
-                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                    <lord-icon class="Comment-onPost show-comments-btn" data-post-id="{{ post.id }}"
-                        data-id="{{post.id}}" data-url="{% url 'get_comments' post.id %}"
-                        src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:#777b7b"
-                        style="width:30px;height:30px">
+                <!-- Comment -->
+                <div class="premium-action-item">
+                    <lord-icon class="Comment-onPost show-comments-btn" data-post-id="{{ post.id }}" data-id="{{post.id}}" data-url="{% url 'get_comments' post.id %}"
+                        src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover" colors="primary:#848484" style="width:28px;height:28px">
                     </lord-icon>
                 </div>
-
             </div>
-            <!-- adding comment  starts  -->
 
-            <div class="PostComments-forPosts" id="PostComments-forPosts" data-id="{{post.id}}" style="display: none;">
-
-                <div class="Comment-Close comment-close"  style="cursor: pointer;">
-                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                    <lord-icon  data-id="{{post.id}}" class="Comment-Close comment-close" src="https://cdn.lordicon.com/jkppkiom.json" trigger="hover"
-                        colors="primary:#848484" style="width:20px;height:20px">
-                    </lord-icon>
-                </div>
-
-                <div class="PostComments-forPostsTitle">
-                    <h3>Comments</h3>
-                </div>
-                <div class="PostComments-All">
-                    <div class="ListsComments-All">
-
-                        <div id="comments-container-{{ post.id }}"
-                            class="ListComments-All comments-container flex">
-                            <div class="ListComments-UserProfile">
-
-                            </div>
-                            <div class="Comments_contents">
-                                <div>
-                                    <small><strong></strong>
-                                        <span></span></small>
-                                </div>
-
-                                <div class="Comment_details-time flex">
-                                    <span style="margin: 0px 10px;"></span>
-                                    <span style="margin: 0px 10px;"></span>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- Add more comments as needed -->
-                    </div>
-
-                    <div class="PostComments-Input flex">
-                        {%if user_profile.profile_picture %}
-                        <div class="comment-posting-user">
-                            <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
-                        </div>
-                        {%else%}
-
-                        <div class="comment-posting-user">
-                            <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
-                        </div>
-                        {%endif%}
-                        <div class=" Main-commentdiv flex">
-                            <textarea class="textareamain" name="comment" style="resize: none;"
-                                placeholder="Comment......"></textarea>
-                            <div class="Comment-PostButton">
-
-                                <button class="add_comments" data-id="{{ post.id }}"
-                                    data-url="{% url 'add_comment' post.id %}" type="submit">Post</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- adding comment  ends -->
-
-            <div >
-                <a class="posts-save" href="#like" data-id="{{post.id}}" data-url="{% url 'save_post' post.id %}">
+            <!-- Save/Bookmark -->
+            <div class="premium-action-item">
+                <a class="posts-save" href="#save" data-id="{{post.id}}" data-url="{% url 'save_post' post.id %}">
                     {% if post.saved_by_user %}
-                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                    <lord-icon class="save_post_icon" src="https://cdn.lordicon.com/oiiqgosg.json" trigger="hover"
-                    colors="primary:#777b7b" style="width:30px;height:30px">
-                    </lord-icon>
-                    {%else%}
-                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                    <lord-icon class="save_post_icon" src="https://cdn.lordicon.com/prjooket.json" trigger="hover"
-                        colors="primary:#777b7b" style="width:30px;height:30px">
-                    </lord-icon>
-                    {%endif%}
+                        <lord-icon class="save_post_icon" src="https://cdn.lordicon.com/oiiqgosg.json" trigger="hover" colors="primary:#848484" style="width:28px;height:28px"></lord-icon>
+                    {% else %}
+                        <lord-icon class="save_post_icon" src="https://cdn.lordicon.com/prjooket.json" trigger="hover" colors="primary:#848484" style="width:28px;height:28px"></lord-icon>
+                    {% endif %}
                 </a>
             </div>
-
         </div>
 
+        <div class="premium-divider"></div>
 
-
-
-        <div class="postsCaptions">
-            <div class="post-caption">
-                {% if post.is_following %}
-                <h4><strong style="font-size: smaller;font-weight: 100;">@{{post.user.username}}</strong>
-                {% else %}
-                <h4><strong style="font-size: smaller;font-weight: 100;color: #afabab;">@{{post.user.users_id}}</strong>
+        <!-- Engagement / Caption -->
+        <div class="premium-card-engagement">
+            <div class="premium-caption-container">
+                <a href="{%url 'profile_details' post.user.id %}" class="premium-handle">
+                    {% if post.is_following %}@{{post.user.username}}{% else %}@{{post.user.users_id}}{% endif %}
+                </a>
+                <span class="premium-caption-text caption-text-truncated" id="caption-{{post.id}}">{{post.caption}}</span>
+                {% if post.caption|length > 80 %}
+                    <button class="premium-view-more" onclick="toggleCaption({{post.id}})">View more</button>
                 {% endif %}
-                    <span class="caption-text caption-text-truncated" id="caption-{{post.id}}">{{post.caption}}</span>
-                    {% if post.caption|length > 80 %}
-                    <button class="view-more-btn" onclick="toggleCaption({{post.id}})">View more</button>
-                    {% endif %}
-                </h4>
             </div>
         </div>
 
-        <script>
-            function toggleCaption(id) {
-                var caption = document.getElementById('caption-' + id);
-                var btn = caption.nextElementSibling;
-                if (caption.classList.contains('caption-text-truncated')) {
-                    caption.classList.remove('caption-text-truncated');
-                    caption.classList.add('caption-text-expanded');
-                    btn.textContent = 'View less';
-                } else {
-                    caption.classList.remove('caption-text-expanded');
-                    caption.classList.add('caption-text-truncated');
-                    btn.textContent = 'View more';
-                }
-            }
-        </script>
+        <!-- Comments Section (Triggered by show-comments-btn) -->
+        <div class="PostComments-forPosts premium-comments-section" id="PostComments-forPosts" data-id="{{post.id}}" style="display: none;">
+            <div class="premium-comments-title">
+                <span>Comments</span>
+                <div class="Comment-Close comment-close" style="cursor: pointer;">
+                    <lord-icon data-id="{{post.id}}" class="Comment-Close comment-close" src="https://cdn.lordicon.com/jkppkiom.json" trigger="hover" colors="primary:#848484" style="width:20px;height:20px"></lord-icon>
+                </div>
+            </div>
+            
+            <div class="premium-comments-list">
+                <div id="comments-container-{{ post.id }}" class="comments-container">
+                    <!-- Comments injected via AJAX -->
+                </div>
+            </div>
 
+            <div class="PostComments-Input premium-comment-input-area">
+                <div class="comment-posting-user">
+                    {% if user_profile.profile_picture %}
+                        <img src="{{user_profile.profile_picture.url}}" alt="" class="premium-comment-avatar">
+                    {% else %}
+                        <img src="{%static 'img/images.jpeg'%}" alt="" class="premium-comment-avatar">
+                    {% endif %}
+                </div>
+                <div class="premium-comment-field-wrapper">
+                    <textarea class="textareamain premium-comment-input" name="comment" rows="1" placeholder="Add a comment..."></textarea>
+                    <button class="add_comments premium-comment-post-btn" data-id="{{ post.id }}" data-url="{% url 'add_comment' post.id %}" type="submit">Post</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    if (typeof toggleCaption !== 'function') {
+        function toggleCaption(id) {
+            var caption = document.getElementById('caption-' + id);
+            var btn = caption.nextElementSibling;
+            if (caption.classList.contains('caption-text-truncated')) {
+                caption.classList.remove('caption-text-truncated');
+                caption.classList.add('caption-text-expanded');
+                btn.textContent = 'View less';
+            } else {
+                caption.classList.remove('caption-text-expanded');
+                caption.classList.add('caption-text-truncated');
+                btn.textContent = 'View more';
+            }
+        }
+    }
+</script>

@@ -2853,59 +2853,515 @@ swiper-slide {
 }
 
 .modal-dialog {
-    background-color: #ffffff;
-    border-radius: 10px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-radius: 20px;
     width: 400px;
-    padding: 20px;
-    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .modal-header {
     display: flex;
     align-items: center;
     border-bottom: none;
-    padding-bottom: 0;
+    padding-bottom: 15px;
 }
 
 .warning-icon {
-    font-size: 2rem;
-    margin-right: 10px;
-    color: #FF4C4C;
+    font-size: 1.5rem;
+    margin-right: 12px;
 }
 
 .modal-title {
     font-size: 1.25rem;
-    font-weight: bold;
-    color: #484848;
+    font-weight: 700;
+    color: #ffffff;
 }
 
 .modal-body {
-    margin: 15px 0;
-    color: #6b7280;
+    margin: 0 0 24px 0;
+    color: #d1d1d1;
+    line-height: 1.5;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 12px;
 }
 
 .cancel-btn {
-    background-color: #e0e0e0;
-    color: #6b7280;
+    background-color: #333333;
+    color: #ffffff;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #444444;
 }
 
 .deactivate-btn {
-    background-color: #FF4C4C;
+    background-color: #0095f6;
     color: white;
+    font-weight: 700;
+    transition: background 0.2s;
+}
+
+.deactivate-btn:hover {
+    background-color: #1877f2;
 }
 
 .cancel-btn,
 .deactivate-btn {
-    padding: 10px 15px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 10px;
     cursor: pointer;
     border: none;
 }
 
 /* if not profile end */
+/* Premium Post Card Styles */
+.premium-post-card {
+    max-width: 420px;
+    margin: 1.5rem auto;
+    background: #0f0f0f;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premium-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+}
+
+.premium-user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.premium-avatar-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    background: #1a1a1a;
+}
+
+.premium-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.premium-user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+
+.premium-username {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
+.premium-timestamp {
+    font-size: 0.75rem;
+    color: #71767b;
+    font-weight: 400;
+}
+
+.premium-options-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #71767b;
+}
+
+.premium-options-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+.premium-card-media {
+    padding: 0 0.75rem; /* Nested look */
+}
+
+.premium-media-container {
+    border-radius: 18px;
+    overflow: hidden;
+    background: #161616;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.premium-media-container .swiper-container {
+    width: 100%;
+    height: auto;
+}
+
+.premium-media-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 480px;
+    object-fit: cover;
+}
+
+.premium-confession-content {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.premium-confession-text {
+    font-size: 1.15rem;
+    color: #e0e0e0;
+    line-height: 1.6;
+    font-style: italic;
+    font-weight: 300;
+    max-width: 90%;
+}
+
+.premium-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+}
+
+.premium-actions-left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.premium-action-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.premium-action-item:hover {
+    opacity: 0.8;
+}
+
+.premium-likes-count {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.premium-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 0.5rem 1.5rem 0;
+}
+
+.premium-card-engagement {
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+.premium-caption-container {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.premium-handle {
+    font-weight: 700;
+    color: #ffffff;
+    margin-right: 6px;
+    text-decoration: none;
+}
+
+.premium-caption-text {
+    color: #d1d1d1;
+    white-space: pre-wrap;
+}
+
+.premium-view-more {
+    background: none;
+    border: none;
+    color: #71767b;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    font-weight: 500;
+}
+
+.premium-view-more:hover {
+    color: #ffffff;
+}
+
+/* Comments Section Integration */
+.premium-comments-section {
+    background: #0a0a0a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 1.5rem 1.5rem 20px 1.5rem !important;
+    display: flex;
+    flex-direction: column !important;
+    height: 600px !important;
+    max-height: 85vh !important;
+    position: fixed !important;
+    bottom: 30px !important;
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10001 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
+    width: 440px !important;
+}
+
+.premium-comments-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.premium-comments-list {
+    flex-grow: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 1rem !important;
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
+}
+
+.premium-comments-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.premium-comments-list::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+.premium-comment-input-area {
+    margin-top: auto !important;
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.premium-comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.premium-comment-field-wrapper {
+    flex: 1 !important;
+    display: flex !important;
+    background: #1a1a1a !important;
+    border-radius: 50px !important;
+    padding: 10px 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: border-color 0.2s !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+.premium-comment-field-wrapper:focus-within {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.premium-comment-input {
+    flex: 1 !important;
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-size: 0.9rem !important;
+    outline: none !important;
+    resize: none !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.textareamain.premium-comment-input {
+    width: 100% !important;
+}
+
+.premium-comment-post-btn {
+    background: none !important;
+    border: none !important;
+    color: #0095f6 !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    padding: 0 4px !important;
+    transition: opacity 0.2s !important;
+}
+
+.premium-comment-post-btn:hover {
+    opacity: 0.8 !important;
+}
+
+/* Options Button Dots */
+.premium-options-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 4px;
+}
+
+.premium-options-dots div {
+    width: 3px;
+    height: 3px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+/* Premium Post Card Wrapper Reset */
+.allPostLists-premium-reset {
+    background: transparent !important;
+    width: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: visible !important;
+}
+
+/* Swiper Pagination Premium Styles */
+.Pagination-Dots {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.premium-post-card .swiper-pagination-bullet {
+    background: #555 !important;
+    opacity: 1 !important;
+}
+
+.premium-post-card .swiper-pagination-bullet-active {
+    background: #fff !important;
+}
+
+/* SweetAlert2 Custom Classes */
+.rounded-24 {
+    border-radius: 24px !important;
+}
+
+.rounded-pill {
+    border-radius: 50px !important;
+    padding: 10px 24px !important;
+    font-weight: 600 !important;
+}
+
+/* Premium Sweep - Feed Components */
+.saySomething, .postingPageLinks, .allNotifications, .loggedInUserProfile {
+    background: #0f0f0f !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    color: #ffffff !important;
+}
+
+.saySomething {
+    width: 440px !important; /* Match post card width */
+    margin-bottom: 2rem !important;
+}
+
+.saySomething-submain input, .saySomethinInputSpan {
+    background-color: #1a1a1a !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+}
+
+.saySomethinInputSpan {
+    color: #71767b !important;
+}
+
+.postingPageLinks ul li a {
+    color: #d1d1d1 !important;
+    font-weight: 500 !important;
+    transition: color 0.2s;
+}
+
+.postingPageLinks ul li a:hover {
+    color: #ffffff !important;
+}
+
+.allNotifications h4 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.postActivity:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.postActivityDetails span strong {
+    color: #ffffff !important;
+}
+
+.postActivityDetails span {
+    color: #71767b !important;
+}
+
+/* Ensure SweetAlert2 appears above the post creation modal */
+.swal2-container {
+    z-index: 10000 !important;
+}
+
+/* Refined Premium SweetAlert2 Sizes */
+.premium-swal-popup {
+    padding: 1.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.premium-swal-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.premium-swal-text {
+    font-size: 0.95rem !important;
+    color: #d1d1d1 !important;
+    margin-bottom: 1rem !important;
+}
+
+.premium-swal-button {
+    font-size: 0.9rem !important;
+    padding: 8px 24px !important;
+}

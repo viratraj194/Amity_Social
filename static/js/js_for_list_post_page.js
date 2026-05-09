@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     var swiper = new Swiper('.swiper-container', {
-        slidesPerView: 'auto',
-        spaceBetween: 10,
+        autoHeight: true,
+        slidesPerView: 1,
+        spaceBetween: 0,
         grabCursor: true,
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
         pagination: {
             el: '.swiper-pagination',
             clickable: true,
@@ -25,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
             if (targetDiv) {
-                targetDiv.style.display = targetDiv.style.display === 'block' ? 'none' : 'block';
+                targetDiv.style.display = targetDiv.style.display === 'flex' ? 'none' : 'flex';
             }
         }
     });
@@ -33,12 +30,15 @@ document.addEventListener('DOMContentLoaded', function () {
 // close the comment section
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('Comment-Close')) {
+        const closeBtn = e.target.closest('.Comment-Close');
+        if (closeBtn) {
             e.preventDefault();
-            const post_id = e.target.getAttribute('data-id');
-            const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
-            if (targetDiv) {
-                targetDiv.style.display = targetDiv.style.display === 'block' ? 'none' : 'block';
+            const post_id = closeBtn.getAttribute('data-id') || closeBtn.querySelector('[data-id]')?.getAttribute('data-id');
+            if (post_id) {
+                const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+                if (targetDiv) {
+                    targetDiv.style.display = 'none';
+                }
             }
         }
     });
@@ -112,9 +112,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     closeButton.addEventListener('click', function () {
-        if (confirm('Are you sure you want to discard the post?')) {
-            postDiv.style.display = 'none';
-        }
+        Swal.fire({
+            title: 'Discard Post',
+            text: 'Are you sure you want to discard this post?',
+            icon: 'warning',
+            width: '320px',
+            background: '#1a1a1a',
+            color: '#ffffff',
+            showCancelButton: true,
+            confirmButtonColor: '#ff4d4d',
+            cancelButtonColor: '#333333',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            customClass: {
+                popup: 'rounded-24 premium-swal-popup',
+                title: 'premium-swal-title',
+                htmlContainer: 'premium-swal-text',
+                confirmButton: 'rounded-pill premium-swal-button',
+                cancelButton: 'rounded-pill premium-swal-button'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Clear inputs
+                const textarea = postDiv.querySelector('textarea');
+                const inputs = postDiv.querySelectorAll('input');
+                if (textarea) textarea.value = '';
+                inputs.forEach(input => input.value = '');
+                
+                // Reset image preview
+                const imagePreview = document.getElementById('imagePreview');
+                const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                const emptyImageState = document.getElementById('emptyImageState');
+                if (imagePreview) imagePreview.src = '';
+                if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+                if (emptyImageState) emptyImageState.style.display = 'flex';
+                
+                postDiv.style.display = 'none';
+            }
+        });
     });
 
     // Image preview functionality

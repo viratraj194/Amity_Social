@@ -340,22 +340,6 @@
         width: 110px !important;
     }
 
-    .PostComments-All,
-    .PostComments-forPosts {
-        width: 100%;
-        margin-left:17px ;
-
-    }
-
-    .ListComments-All .Comments_contents {
-        width: 234px !important;
-    }
-
-    .ListsComments-All {
-        width: 100%;
-        margin: auto;
-    }
-
     .userPostContent,
     .post_content {
         width: 100px;
@@ -1306,4 +1290,214 @@
     }
 
     /* Styles for large desktops */
+}
+/* Premium Post Card Mobile Adjustments */
+@media (max-width: 480px) {
+    .premium-post-card {
+        max-width: 95vw;
+        margin: 1rem auto;
+        border-radius: 16px;
+    }
+
+    .premium-card-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .premium-avatar-wrapper {
+        width: 36px;
+        height: 36px;
+    }
+
+    .premium-username {
+        font-size: 0.85rem;
+    }
+
+    .premium-card-media {
+        padding: 0 5px; /* Less nesting on mobile */
+    }
+
+    .premium-media-container {
+        border-radius: 12px;
+    }
+
+    .premium-media-container img {
+        max-height: 400px; /* Shorter images for mobile screens */
+    }
+
+    .premium-confession-content {
+        padding: 2.5rem 1rem;
+        min-height: 180px;
+    }
+
+    .premium-confession-text {
+        font-size: 0.95rem;
+    }
+
+    .premium-action-bar {
+        padding: 0.5rem 1rem;
+    }
+
+    .premium-likes-count {
+        font-size: 0.8rem;
+    }
+
+    .premium-card-engagement {
+        padding: 0.75rem 1rem 1rem;
+    }
+
+    /* Modal Mobile Adjustments */
+    .modal-dialog {
+        width: 90vw;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+    }
+
+    .modal-body p {
+        font-size: 0.9rem;
+    }
+
+    .cancel-btn, .deactivate-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Ensure SweetAlert2 appears above the post creation modal */
+.swal2-container {
+    z-index: 10000 !important;
+}
+
+/* Refined Premium SweetAlert2 Sizes */
+.premium-swal-popup {
+    padding: 1.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.premium-swal-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.premium-swal-text {
+    font-size: 0.95rem !important;
+    color: #d1d1d1 !important;
+    margin-bottom: 1rem !important;
+}
+
+.premium-swal-button {
+    font-size: 0.9rem !important;
+    padding: 8px 24px !important;
+}
+
+/* Comment Modal Layout Fixes */
+.premium-comments-section {
+    background: #0a0a0a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 1.5rem 1.5rem 20px 1.5rem !important;
+    display: flex;
+    flex-direction: column !important;
+    height: 600px !important;
+    max-height: 85vh !important;
+    position: fixed !important;
+    bottom: 30px !important;
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10001 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
+    width: 440px !important;
+}
+
+.premium-comments-list {
+    flex-grow: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 1rem !important;
+}
+
+.premium-comment-input-area {
+    margin-top: auto !important;
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.premium-comment-field-wrapper {
+    flex: 1 !important;
+    display: flex !important;
+    background: #1a1a1a !important;
+    border-radius: 50px !important;
+    padding: 10px 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: border-color 0.2s !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+.premium-comment-input {
+    flex: 1 !important;
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-size: 0.9rem !important;
+    outline: none !important;
+    resize: none !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.premium-comment-post-btn {
+    background: none !important;
+    border: none !important;
+    color: #0095f6 !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    padding: 0 4px !important;
+    transition: opacity 0.2s !important;
+}
+
+.premium-comment-post-btn:hover {
+    opacity: 0.8 !important;
+}
+
+/* Responsive Comment Modal */
+@media (max-width: 480px) {
+    .premium-comments-section {
+        width: 96vw !important;
+        height: 75vh !important;
+        max-height: 75vh !important;
+        bottom: 20px !important;
+        padding: 1rem 1rem 15px 1rem !important;
+        margin: 0 !important;
+    }
+    
+    .premium-comment-input-area {
+        padding-top: 0.75rem !important;
+        gap: 8px !important;
+    }
+
+    .premium-comment-field-wrapper {
+        padding: 8px 16px !important;
+        border-radius: 50px !important;
+        gap: 8px !important;
+    }
+
+    .premium-comment-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .premium-comment-input {
+        font-size: 0.85rem !important;
+    }
 }
