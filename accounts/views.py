@@ -411,11 +411,62 @@ def SavedPosts(request):
 
 @login_required(login_url='login')
 def post_details(request,post_slug):
+    from django.core.paginator import Paginator
+
     post = get_object_or_404(UserPosts,post_slug=post_slug)
-    comments = Comment.objects.filter(post=post)
+
+    # Optimized query: fetch top-level comments with prefetched replies in single query
+    top_level_comments = Comment.objects.filter(
+        post=post,
+        parent__isnull=True
+    ).select_related(
+        'user', 'user__userprofile'
+    ).order_by('-created_at')  # Most recent first
+
+    # Paginate to 20 comments per page
+    paginator = Paginator(top_level_comments, 20)
+    page_number = request.GET.get('page', 1)
+
+    # Validate page number
+    try:
+        page_number = int(page_number)
+    except (ValueError, TypeError):
+        page_number = 1
+
+    if page_number > paginator.num_pages:
+        page_number = paginator.num_pages
+    if page_number < 1:
+        page_number = 1
+
+    comments_page = paginator.get_page(page_number)
+
+    # Prefetch replies only for comments on current page
+    comment_ids = [c.id for c in comments_page.object_list]
+    if comment_ids:
+        replies = Comment.objects.filter(
+            parent_id__in=comment_ids
+        ).select_related(
+            'user', 'user__userprofile'
+        ).order_by('created_at')
+
+        # Group replies by parent_id for quick lookup
+        replies_by_parent = {}
+        for reply in replies:
+            if reply.parent_id not in replies_by_parent:
+                replies_by_parent[reply.parent_id] = []
+            replies_by_parent[reply.parent_id].append(reply)
+
+        # Attach replies to comments
+        for comment in comments_page.object_list:
+            comment.page_replies = replies_by_parent.get(comment.id, [])
+    else:
+        for comment in comments_page.object_list:
+            comment.page_replies = []
+
     likes = Like.objects.filter(post=post)
     total_likes = likes.count()
-    total_comments = comments.count()
+    # Calculate total comments including replies for a more accurate count
+    total_comments = Comment.objects.filter(post=post).count()
     profile = UserProfile.objects.get(user=request.user)
     user_posts = UserPosts.objects.filter(user=request.user)
     saved_posts = UserSavedPosts.objects.filter(user=request.user).order_by('-created_at')
@@ -437,13 +488,24 @@ def post_details(request,post_slug):
             new_comment = form.save(commit=False)
             new_comment.post = post
             new_comment.user = request.user
+
+            # Handle parent_id for replies
+            parent_id = request.POST.get('parent_id') # Assuming parent_id is passed in the form
+            if parent_id:
+                try:
+                    parent = Comment.objects.get(id=parent_id, post=post) # Ensure parent belongs to the same post
+                    new_comment.parent = parent
+                except Comment.DoesNotExist:
+                    # If parent_id is invalid or doesn't exist, treat as top-level comment
+                    pass
+
             new_comment.save()
             return redirect('post_details',post_slug=post_slug)
     comment_form = addCommentForm()
     liked_by_user = Like.objects.filter(user=user, post=post).exists()
     context = {
         'post':post,
-        'comments':comments,
+        'comments':comments_page,
         'comment_form':comment_form,
         'profile':profile,
         'saved_posts':saved_posts,
@@ -455,8 +517,9 @@ def post_details(request,post_slug):
         'total_comments':total_comments,
         'total_likes':total_likes,
         'liked_by_user':liked_by_user,
-        
-        
+        'current_page': page_number,
+        'total_pages': paginator.num_pages,
+        'next_page': page_number + 1 if page_number < paginator.num_pages else None,
     }
 
     return render(request,'accounts/post_details.html',context)

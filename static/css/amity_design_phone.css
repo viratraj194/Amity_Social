@@ -239,7 +239,7 @@
     .user_profiles {
         width: 95%;
     }
-
+   
     .following_follow_posts {
         width: 95%;
     }
@@ -427,7 +427,7 @@
         z-index: 2;
         background-color: #222222f6;
         width: 90%;
-        height: 509px;
+        height: 555px;
         padding: 5px;
         overflow: hidden;
     }
@@ -1101,7 +1101,7 @@
         z-index: 2;
         background-color: #222222f6;
         width: 90%;
-        height: 509px;
+        height: 555px;
         padding: 5px;
         overflow: hidden;
     }

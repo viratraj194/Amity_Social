@@ -215,10 +215,41 @@
                                 </h6>
                             </div>
                         </div>
+                        {%for reply in comment.page_replies%}
+                        <div class="postDetailsAll-comment-lists flex" style="margin: 10px auto; margin-left: 50px;">
+                            <div class="PostDetailsAll-comment-img">
+                                <img src="{{reply.user.userprofile.profile_picture.url}}" alt="">
+                            </div>
+
+                            <div class="PostDetailsAll-comment-details">
+                                <h4 class="flex"><strong
+                                        style="font-size: small;font-weight: 400;">@{{reply.user.users_id}}</strong>
+                                    <span class="phone_comment"
+                                        style="word-wrap: break-word;font-size: small;font-weight: 300;color:#939393; width:340px;">{{reply.comment}}</span>
+                                </h4>
+                                <h6 style="color: #625f5f;">
+                                    <span style="margin: 0px 10px; font-weight: 300;">{{reply.created_at}}</span>
+                                </h6>
+                            </div>
+                        </div>
+                        {%endfor%}
                         {%endfor%}
                         {%else%}
                         <h6 style="text-align: center; ">No Comments</h6>
                         {%endif%}
+
+                        <!-- Pagination: View More Comments -->
+                        {% if total_comments > 20 %}
+                        <div class="view-more-comments" style="text-align: center; margin: 20px 0;">
+                            {% if next_page %}
+                            <a href="?page={{ next_page }}" class="view-more-link" style="color: #747475; font-weight: 400; text-decoration: none; padding: 10px 20px; border: 1px solid #595765; border-radius: 5px; display: inline-block;">
+                                View More Comments ({{ current_page }} of {{ total_pages }})
+                            </a>
+                            {% else %}
+                            <span style="color: #747475;">No more comments</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                     <form action="{% url 'post_details' post_slug=post.post_slug %}" method="post">
                         {%csrf_token%}

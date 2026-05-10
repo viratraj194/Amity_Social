@@ -217,7 +217,6 @@
                         <h6>Following</h6>
                     </div>
                 </div>
-                
             </div>
             <!-- posting page links start  -->
             <div class="postingPageLinks postingPageLinks_phone">
@@ -859,8 +858,9 @@
     // Adding the comment using event delegation
     $(document).ready(function () {
         // Use event delegation to handle the click event
-        $(document).on('click', '.add_comments', function (e) {
+        $(document).off('click', '.add_comments').on('click', '.add_comments', function (e) {
             e.preventDefault();
+            e.stopPropagation();
 
             const postId = $(this).attr('data-id');
             const url = $(this).attr('data-url');
@@ -872,12 +872,18 @@
                 return;
             }
 
-            const parentId = $(this).data('parent-id');
+            const parentId = $(this).attr('data-parent-id');
+
             const data = {
                 comment: commentText,
                 post_id: postId,
-                parent_id: parentId
+                parent_id: parentId || ""
             };
+            
+            const $btn = $(e.currentTarget);
+            const originalText = $btn.text();
+            const isReply = !!parentId;
+            $btn.prop('disabled', true).text(isReply ? 'Replying...' : 'Posting...');
 
             $.ajax({
                 type: 'POST',
@@ -892,11 +898,11 @@
 
                     if (response.success) {
                         // Clear the textarea and reset reply mode
-                        const $textarea = $(this).closest('.PostComments-Input').find('.textareamain');
+                        const $textarea = $btn.closest('.PostComments-Input').find('.textareamain');
                         $textarea.val('');
                         // Remove parent-id attribute to reset reply mode
-                        $(this).removeData('parent-id');
-                        $(this).attr('data-parent-id', '');
+                        $btn.removeAttr('data-parent-id');
+                        $btn.text('Post');
 
                         // Determine if this is a reply or a new comment
                         if (response.comment.parent_id) {
@@ -916,7 +922,15 @@
                                     </div>
                                 </div>
                             `;
-                            $(`#replies-container-${response.comment.parent_id}`).append(replyHtml);
+                            var $repliesContainer = $btn.closest('.PostComments-forPosts').find(`#replies-container-${response.comment.parent_id}`);
+                            if ($repliesContainer.length) {
+                                $repliesContainer.append(replyHtml);
+                                $repliesContainer.show();
+                                var $viewBtn = $btn.closest('.PostComments-forPosts').find(`.view-replies-btn[data-comment-id="${response.comment.parent_id}"]`);
+                                if ($viewBtn.length) {
+                                    $viewBtn.text($viewBtn.text().replace('View', 'Hide'));
+                                }
+                            }
                         } else {
                             // It's a new top-level comment
                             const newCommentHtml = `
@@ -936,14 +950,21 @@
                                 </div>
                                 <div id="replies-container-${response.comment.id}" class="replies-container" style="display: none;"></div>
                             `;
-                            $(`#comments-container-${postId}`).append(newCommentHtml);
+                            $btn.closest('.PostComments-forPosts').find('.comments-container').append(newCommentHtml);
                         }
                     } else {
                         console.error('Failed to post comment:', response.message);
+                        alert(response.message);
                     }
                 }.bind(this),
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
+                    if ($btn.text() === 'Posting...' || $btn.text() === 'Replying...') {
+                        $btn.text(originalText);
+                    }
                 }
             });
         });
@@ -975,8 +996,9 @@
         $(document).on('click', '.show-comments-btn', function (e) {
             e.preventDefault();
 
-            var postId = $(this).data('post-id');
-            var url = $(this).data('url');
+            var $btn = $(this);
+            var postId = $btn.data('post-id');
+            var url = $btn.data('url');
 
             $.ajax({
                 url: url,
@@ -1038,12 +1060,102 @@
                         `;
                     });
 
+                    // Add "View More" button if there are more comments
+                    var viewMoreBtn = '';
+                    if (response.has_more) {
+                        viewMoreBtn = `<div class="load-more-comments" style="text-align: center; margin: 10px 0; cursor: pointer; color: #747475; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" data-post-id="${postId}" data-current-page="${response.current_page}" data-url="${url}">View More Comments (${response.current_page} of ${response.total_pages})</div>`;
+                    }
+
                     // Update the specific comments container for the current post
-                    $('#comments-container-' + postId).html(commentsHtml);
+                    var $container = $btn.closest('.postContainer, .premium-post-card, .allPostLists').find('.comments-container').first();
+                    $container.html('<div class="comments-list">' + commentsHtml + '</div>' + viewMoreBtn);
                 },
                 error: function (xhr, status, error) {
                     console.error('Error fetching comments:', error);
                 }
+            });
+
+            // Add click handler for loading more comments
+            $(document).off('click', '.load-more-comments').on('click', '.load-more-comments', function(e) {
+                e.preventDefault();
+                var $loadBtn = $(this);
+                var postId = $loadBtn.data('post-id');
+                var currentPage = $loadBtn.data('current-page');
+                var baseUrl = $loadBtn.data('url');
+
+                $.ajax({
+                    url: baseUrl + '?page=' + (currentPage + 1),
+                    method: 'GET',
+                    success: function(response) {
+                        var comments = response.comments;
+                        var commentsHtml = '';
+
+                        comments.forEach(function (comment) {
+                            var repliesHtml = '';
+                            if (comment.replies && comment.replies.length > 0) {
+                                comment.replies.forEach(function (reply) {
+                                    repliesHtml += `
+                                        <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
+                                            <div class="ListComments-UserProfile">
+                                                <img src="${reply.profile_picture}" alt="${reply.user}">
+                                            </div>
+                                            <div class="Comments_contents">
+                                                <div>
+                                                    <small><strong>${reply.user}</strong> <span>${reply.comment}</span></small>
+                                                </div>
+                                                <div class="Comment_details-time flex">
+                                                    <span style="margin: 0px 10px;">${reply.created_at}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            }
+
+                            var viewRepliesBtn = '';
+                            if (comment.replies && comment.replies.length > 0) {
+                                viewRepliesBtn = `<span style="margin: 0px 10px; cursor: pointer; color: #555;" class="view-replies-btn" data-comment-id="${comment.id}">View replies (${comment.replies.length})</span>`;
+                            }
+
+                            commentsHtml += `
+                                <div class="comment-wrapper" data-comment-id="${comment.id}">
+                                    <div class="ListComments-All flex">
+                                        <div class="ListComments-UserProfile">
+                                            <img src="${comment.profile_picture}" alt="${comment.user}">
+                                        </div>
+                                        <div class="Comments_contents">
+                                            <div>
+                                                <small><strong>${comment.user}</strong> <span>${comment.comment}</span></small>
+                                            </div>
+                                            <div class="Comment_details-time flex">
+                                                <span style="margin: 0px 10px;">${comment.created_at}</span>
+                                                <span style="margin: 0px 10px; cursor: pointer;" class="reply-link" data-comment-id="${comment.id}" data-post-id="${postId}">Reply</span>
+                                                ${viewRepliesBtn}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="replies-container-${comment.id}" class="replies-container" style="display: none;">
+                                        ${repliesHtml}
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        // Append new comments
+                        var $commentsContainer = $loadBtn.closest('.comments-container');
+                        $commentsContainer.find('.comments-list').append(commentsHtml);
+
+                        // Update or remove load more button
+                        if (response.has_more) {
+                            $loadBtn.data('current-page', response.current_page);
+                        } else {
+                            $loadBtn.remove();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading more comments:', error);
+                    }
+                });
             });
         });
 
@@ -1069,18 +1181,10 @@
             var commentId = $(this).data('comment-id');
             var postId = $(this).data('post-id');
 
-            // Find the input section for this specific post
-            var $inputSection = $('.PostComments-forPosts[data-id="' + postId + '"]').find('.PostComments-Input');
-
-            // Fallback: try to find by closest comment wrapper
+            // Find the input section for this specific post strictly via closest relative paths
+            var $inputSection = $(this).closest('.PostComments-forPosts').find('.PostComments-Input');
             if ($inputSection.length === 0) {
-                var $commentWrapper = $(this).closest('.ListsComments-All').parent();
-                $inputSection = $commentWrapper.find('.PostComments-Input');
-            }
-
-            // Final fallback: find by matching post id in the DOM
-            if ($inputSection.length === 0) {
-                $inputSection = $('#comments-container-' + postId).closest('.ListsComments-All, .ListComments-All').closest('.allPostLists, .postContainer').find('.PostComments-Input');
+                $inputSection = $(this).closest('.postContainer, .premium-post-card, .allPostLists').find('.PostComments-forPosts, .PostComments-Input').last();
             }
 
             // Set the parent-id on the button
@@ -1089,7 +1193,12 @@
 
             // Focus the textarea
             var $textarea = $inputSection.find('.textareamain');
-            $textarea.val('@' + $(this).prevAll('small').first().find('strong').text() + ' ').focus();
+            var username = $(this).closest('.Comments_contents').find('small strong').first().text();
+            if (username) {
+                $textarea.val('@' + username + ' ').focus();
+            } else {
+                $textarea.focus();
+            }
 
             // Change button text to indicate reply mode
             $commentButton.text('Reply');

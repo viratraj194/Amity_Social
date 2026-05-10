@@ -1,405 +1,229 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="terms_container" style="width: 80%; margin:auto;">
-    <h2 style="text-align:center;margin: 10px;">
 
-        <strong>Terms and Conditions</strong><br>
-    </h2>
-    Effective Date: [Insert Date]
-    Last Updated: [Insert Date]
-    <div class="terms_title">
-        <span>
-            By accessing or using the Vercle platform, you agree to comply with and be bound by the following terms and
-            conditions. These terms govern your use of the platform, and any violations of these terms can result in account
-            suspension, termination, or legal action.
+<div class="terms-page">
+    <div class="terms-container">
+        <div class="terms-header">
+            <h1>Terms and Conditions</h1>
+            <div class="terms-meta">
+                <span>Effective Date: January 1, 2026</span>
+                <span>Last Updated: <span>{% now "jS F Y" %}</span></span>
+            </div>
+        </div>
 
-        </span>
+        <div class="terms-intro">
+            <p>By accessing or using the Vircle platform, you agree to comply with and be bound by the following terms and conditions. These terms govern your use of the platform, and any violations of these terms can result in account suspension, termination, or legal action.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>1. General Terms</h2>
+
+            <div class="terms-subsection">
+                <h3>1.1. Eligibility</h3>
+                <p>You must be at least 13 years of age to use Vircle. By using the platform, you affirm that you are of legal age and have the legal capacity to agree to these terms.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>1.2. Account Responsibility</h3>
+                <p>You are responsible for maintaining the confidentiality of your account and password, and you agree to accept responsibility for all activities that occur under your account.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>1.3. Account Security</h3>
+                <p>If you suspect unauthorized access to your account, you must immediately notify Vircle.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>2. User Conduct</h2>
+
+            <div class="terms-subsection">
+                <h3>2.1. Prohibited Content</h3>
+                <p>You agree not to post, share, or distribute any content that:</p>
+                <ul>
+                    <li>Violates any law, regulation, or third-party rights, including copyright and intellectual property laws.</li>
+                    <li>Contains hate speech, threats, harassment, or is defamatory or abusive.</li>
+                    <li>Promotes violence, self-harm, or encourages illegal activities.</li>
+                    <li>Is sexually explicit, pornographic, or involves child exploitation.</li>
+                    <li>Contains malware, viruses, or any harmful code intended to damage or disrupt the platform.</li>
+                </ul>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>2.2. Respect for Others</h3>
+                <p>You agree to interact respectfully with other users. Harassment, bullying, or sending unwanted communications to other users is strictly prohibited.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>2.3. Impersonation</h3>
+                <p>You may not impersonate any person, entity, or falsely represent your affiliation with any person or entity.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>2.4. False Information</h3>
+                <p>You must not share misleading or false information, including fake profiles, deceptive advertising, or content intended to manipulate public opinion.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>3. Intellectual Property</h2>
+
+            <div class="terms-subsection">
+                <h3>3.1. Your Content</h3>
+                <p>By posting content on Vircle, you grant us a non-exclusive, royalty-free, worldwide license to use, distribute, modify, publicly display, and reproduce the content as necessary for the operation of the platform.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>3.2. Ownership of Content</h3>
+                <p>You retain ownership of your content, but you are responsible for ensuring it does not infringe on third-party intellectual property rights.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>3.3. Copyright Violations</h3>
+                <p>If you believe that content posted on the platform infringes on your copyright or intellectual property rights, you can file a complaint through our Copyright Infringement Policy.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>3.4. Third-Party Content</h3>
+                <p>The platform may contain content owned by third parties. You may not copy, distribute, or modify such content without permission from the rightful owner.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>4. Privacy and Data Protection</h2>
+
+            <div class="terms-subsection">
+                <h3>4.1. Personal Data</h3>
+                <p>Vircle collects and processes user data in accordance with our Privacy Policy. By using the platform, you consent to our collection and use of your personal data.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>4.2. Content Privacy</h3>
+                <p>While we take steps to safeguard your privacy, we cannot guarantee the privacy or security of any information you post on the platform. Public posts, comments, and messages may be visible to other users.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>4.3. Third-Party Access</h3>
+                <p>We may share certain information with third-party service providers to improve the functionality of the platform. However, we will never sell your personal information without your explicit consent.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>5. Content Moderation</h2>
+
+            <div class="terms-subsection">
+                <h3>5.1. Monitoring</h3>
+                <p>Vircle reserves the right to monitor user activity and content to ensure compliance with these terms. We may remove or disable access to content that violates our policies, without prior notice.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>5.2. Reporting Violations</h3>
+                <p>Users may report violations of these terms through the platform's reporting tools. We will review all reports and take appropriate action.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>5.3. Automated Systems</h3>
+                <p>Some content moderation may be conducted via automated systems or algorithms to detect and remove prohibited content or accounts.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>6. Content Ownership and Licensing</h2>
+
+            <div class="terms-subsection">
+                <h3>6.1. User-Generated Content</h3>
+                <p>You retain ownership of all content you create and post on Vircle, but you grant us a license to use and distribute this content in connection with the platform's operations.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>6.2. License Duration</h3>
+                <p>The license granted to Vircle for your content is perpetual and irrevocable unless you delete the content or your account is terminated.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>7. Advertising and Promotions</h2>
+
+            <div class="terms-subsection">
+                <h3>7.1. Sponsored Content</h3>
+                <p>Vircle may feature advertisements or sponsored content. These promotions are clearly marked, and users may interact with or ignore them at their discretion.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>7.2. User Advertising</h3>
+                <p>Users may not post unsolicited advertisements, spam, or promotional content without explicit permission from Vircle.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>8. Account Termination and Suspension</h2>
+
+            <div class="terms-subsection">
+                <h3>8.1. Termination by User</h3>
+                <p>You may terminate your account at any time by following the instructions provided in the account settings.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>8.2. Termination by Vircle</h3>
+                <p>We reserve the right to terminate or suspend your account at any time, without notice, if you violate these terms or engage in prohibited conduct.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>8.3. Post-Termination Data</h3>
+                <p>Upon account termination, your data and content may be deleted, and your access to the platform will be revoked.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>9. Legal Compliance</h2>
+
+            <div class="terms-subsection">
+                <h3>9.1. Compliance with Laws</h3>
+                <p>You agree to comply with all local, national, and international laws and regulations while using Vircle.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>9.2. Age Restrictions</h3>
+                <p>Users under the age of 18 must obtain parental consent to use the platform. Users under the age of 13 are prohibited from using Vircle entirely.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>10. Limitation of Liability</h2>
+
+            <div class="terms-subsection">
+                <h3>10.1. No Liability for User Content</h3>
+                <p>Vircle is not liable for any user-generated content, including offensive, inappropriate, or illegal content posted by other users.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>10.2. Service Availability</h3>
+                <p>While we strive to provide uninterrupted access to the platform, we do not guarantee that the platform will always be available, secure, or error-free.</p>
+            </div>
+
+            <div class="terms-subsection">
+                <h3>10.3. Indemnity</h3>
+                <p>You agree to indemnify and hold Vircle, its employees, and affiliates harmless from any claims, damages, liabilities, or expenses arising from your use of the platform.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h2>11. Governing Law</h2>
+            <p>These terms are governed by the laws of India. Any disputes arising from these terms or your use of the platform will be subject to the jurisdiction of the courts in India.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>12. Amendments and Updates</h2>
+            <p>We may update these terms from time to time, and will notify users of significant changes via email or platform notifications. Continued use of the platform after changes are made constitutes acceptance of the new terms.</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>13. Contact Information</h2>
+            <p>For any questions or concerns about these terms, you can contact us at:</p>
+            <p class="contact-info">collages.socialmedia@gmail.com</p>
+            <p class="contact-info">Vircle.in, India</p>
+        </div>
     </div>
-
-    
-    <div class="terms_title">
-        <div class="terms_title_card">
-            1. General Terms
-        </div>
-        <div class="terms_subtitle">
-            1.1. Eligibility:
-
-        </div>
-        <span>
-            You must be at least 13 years of age to use Vercle. By using the platform, you affirm that you
-            are of legal age and have the legal capacity to agree to these terms.
-
-        </span>
-
-        <div class="terms_subtitle">
-
-            1.2. Account Responsibility:
-        </div>
-        <span>
-            You are responsible for maintaining the confidentiality of your account and
-           password, and you agree to accept responsibility for all activities that occur under your account.
-
-        </span>
-
-        <div class="terms_subtitle">
-
-            1.3. Account Security:
-        </div>
-        <span>
-            If you suspect unauthorized access to your account, you must immediately notify Vercle.
-
-        </span>
-
-    </div>
-
-       
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            2. User Conduct
-
-        </div>
-        <div class="terms_subtitle">
-            2.1. Prohibited Content:
-
-        </div> 
-        <span>
-            You agree not to post, share, or distribute any content that: <br>
-            Violates any law, regulation, or third-party rights, including copyright and intellectual property laws.
-            Contains hate speech, threats, harassment, or is defamatory or abusive.
-            Promotes violence, self-harm, or encourages illegal activities.
-            Is sexually explicit, pornographic, or involves child exploitation.
-            Contains malware, viruses, or any harmful code intended to damage or disrupt the platform.
-        </span>
-        <div class="terms_subtitle">
-            2.2. Respect for Others:
-
-        </div>
-        <span>
-            You agree to interact respectfully with other users. Harassment, bullying, or sending
-            unwanted communications to other users is strictly prohibited.
-        </span>
-        <div class="terms_subtitle">
-            2.3. Impersonation:
-
-        </div>
-        <span>
-            You may not impersonate any person, entity, or falsely represent your affiliation with any
-            person or entity.
-        </span>
-        <div class="terms_subtitle">
-            2.4. False Information:
-
-        </div>
-        <span>
-            You must not share misleading or false information, including fake profiles, deceptive
-            advertising, or content intended to manipulate public opinion (e.g., misinformation, disinformation).
-        </span> 
-    
-
-    </div>    
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            3. Intellectual Property
-
-        </div>
-        <div class="terms_subtitle">
-            3.1. Your Content:
-
-        </div> 
-        <span>
-            By posting content on Vercle, you grant us a non-exclusive, royalty-free, worldwide license
-            to
-            use, distribute, modify, publicly display, and reproduce the content as necessary for the operation of the
-            platform.
-        </span>
-        <div class="terms_subtitle">
-            3.2. Ownership of Content:
-
-        </div> 
-        <span>
-            You retain ownership of your content, but you are responsible for ensuring it does
-            not
-            infringe on third-party intellectual property rights.
-        </span>
-        <div class="terms_subtitle">
-            3.3. Copyright Violations:
-
-        </div>
-        <span>
-            If you believe that content posted on the platform infringes on your copyright or
-            intellectual property rights, you can file a complaint through our Copyright Infringement Policy.
-        </span>
-        <div class="terms_subtitle">
-            3.4. Third-Party Content:
-
-        </div> 
-        <span>
-            The platform may contain content owned by third parties. You may not copy, distribute,
-            or
-            modify such content without permission from the rightful owner.
-
-        </span>
-    </div>
-    <div class="terms_title">
-        <div class="terms_title_card">
-
-            4. Privacy and Data Protection
-        </div>
-        <div class="terms_subtitle">
-            4.1. Personal Data:
-
-        </div>
-        <span>
-            Vercle collects and processes user data in accordance with our Privacy Policy. By using the
-            platform, you consent to our collection and use of your personal data.
-
-        </span>
-        <div class="terms_subtitle">
-            4.2. Content Privacy:
-
-        </div>
-        <span>
-
-            While we take steps to safeguard your privacy, we cannot guarantee the privacy or security
-            of
-            any information you post on the platform. Public posts, comments, and messages may be visible to other users.
-        </span>
-        <div class="terms_subtitle">
-            4.3. Third-Party Access:
-
-        </div>
-        <span>
-
-            We may share certain information with third-party service providers to improve the
-            functionality of the platform. However, we will never sell your personal information without your explicit
-            consent.
-        </span>
-
-    </div>
-    <div class="terms_title">
-        <div class="terms_title_card">
-            5. Content Moderation
-        </div>
-        <div class="terms_subtitle">
-            5.1. Monitoring:
-
-        </div> 
-        <span>
-
-            Vercle reserves the right to monitor user activity and content to ensure compliance with these
-            terms. We may remove or disable access to content that violates our policies, without prior notice.
-        </span>
-        <div class="terms_subtitle">
-            5.2. Reporting Violations:
-
-        </div> 
-        <span>
-
-            Users may report violations of these terms through the platform’s reporting tools. We
-            will review all reports and take appropriate action, which may include warnings, content removal, or account
-            suspension.
-        </span>
-        <div class="terms_subtitle">
-            5.3. Automated Systems:
-
-        </div> 
-        <span>
-
-            Some content moderation may be conducted via automated systems or algorithms to detect
-            and
-            remove prohibited content or accounts. False positives may occur, and we encourage users to appeal such actions
-            if
-            they believe a mistake was made.
-        </span>
-
-    </div>
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            6. Content Ownership and Licensing
-        </div>
-        <div class="terms_subtitle">
-            6.1. User-Generated Content:
-
-        </div> 
-        <span>
-
-            You retain ownership of all content you create and post on Vercle, but you grant us
-            a
-            license to use and distribute this content in connection with the platform’s operations.
-        </span>
-        <div class="terms_subtitle">
-            6.2. License Duration:
-
-        </div> 
-        <span>
-
-            The license granted to Vercle for your content is perpetual and irrevocable unless you
-            delete
-            the content or your account is terminated.
-        </span>
-    </div>
-    <div class="terms_title">
-        <div class="terms_title_card">
-            7. Advertising and Promotions
-        </div>
-        <div class="terms_subtitle">
-            7.1. Sponsored Content:
-
-        </div> 
-        <span>
-
-            Vercle may feature advertisements or sponsored content. These promotions are clearly
-            marked,
-            and users may interact with or ignore them at their discretion.
-        </span>
-        <div class="terms_subtitle">
-            7.2. User Advertising:
-
-        </div> 
-        <span>
-
-            Users may not post unsolicited advertisements, spam, or promotional content without
-            explicit
-            permission from Vercle. Violations will result in account suspension or termination.
-        </span>
-
-    </div>
-
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            8. Account Termination and Suspension
-        </div>
-        <div class="terms_subtitle">
-            8.1. Termination by User:
-
-        </div> 
-        <span>
-
-            You may terminate your account at any time by following the instructions provided in the
-            account settings.
-        </span>
-        <div class="terms_subtitle">
-            8.2. Termination by Vercle:
-
-        </div> 
-        <span>
-
-            We reserve the right to terminate or suspend your account at any time, without notice,
-            if
-            you violate these terms or engage in prohibited conduct.
-        </span>
-        <div class="terms_subtitle">
-            8.3. Post-Termination Data:
-
-        </div> 
-        <span>
-
-            Upon account termination, your data and content may be deleted, and your access to the
-            platform will be revoked. We may retain certain information as required by law or for legitimate business purposes.
-        </span>
-
-    </div>    
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            9. Legal Compliance
-        </div>
-        <div class="terms_subtitle">
-            9.1. Compliance with Laws:
-
-        </div> 
-        <span>
-
-            You agree to comply with all local, national, and international laws and regulations
-            while
-            using Vercle. Any use of the platform that violates laws or regulations will result in immediate termination of
-            your
-            account and possible legal action.
-        </span>
-        <div class="terms_subtitle">
-            9.2. Age Restrictions:
-
-        </div> 
-        <span>
-
-            Users under the age of 18 must obtain parental consent to use the platform. Users under
-            the
-            age
-            of 13 are prohibited from using Vercle entirely.
-        </span>
-    </div>
-
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            10. Limitation of Liability
-        </div>
-        <div class="terms_subtitle">
-            10.1. No Liability for User Content:
-
-        </div> 
-        <span>
-
-            Vercle is not liable for any user-generated content, including offensive,
-            inappropriate, or illegal content posted by other users.
-        </span>
-        <div class="terms_subtitle">
-            10.2. Service Availability:
-
-        </div> 
-        <span>
-            While we strive to provide uninterrupted access to the platform, we do not guarantee
-            that
-            the platform will always be available, secure, or error-free.
-
-        </span>
-        <div class="terms_subtitle">
-            10.3. Indemnity:
-
-        </div> 
-        <span>
-            You agree to indemnify and hold Vercle, its employees, and affiliates harmless from any claims,
-            damages, liabilities, or expenses arising from your use of the platform.
-
-        </span>
-
-    </div>
-
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-
-            11. Governing Law
-        </div>
-        These terms are governed by the laws of India. Any disputes arising from these terms or your use of the
-        platform will be subject to the jurisdiction of the courts in India.
-
-    </div>
-
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            12. Amendments and Updates
-        </div>
-        We may update these terms from time to time, and will notify users of significant changes via email or platform
-        notifications. Continued use of the platform after changes are made constitutes acceptance of the new terms.
-
-    </div>
-
-
-    <div class="terms_title">
-        <div class="terms_title_card">
-            13. Contact Information
-        </div>
-        For any questions or concerns about these terms, you can contact us at:
-        [Insert Contact Email]
-        [Insert Company Address]
-    </div>
-
 </div>
-{%endblock%}
+{% endblock %}
