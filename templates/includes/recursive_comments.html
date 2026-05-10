@@ -1,0 +1,191 @@
+{% load static %}
+<style>
+    .comment-container {
+        margin-left: 0px;
+        border-left: 0px solid #eee; /* No border for top-level comments */
+        padding-left: 0px;
+        margin-bottom: 15px; /* Add space between comments */
+        background-color: #222222; /* Darker background for comments */
+        padding: 10px;
+        border-radius: 8px;
+    }
+    .reply-container {
+        margin-left: 20px; /* Indent replies less, or adjust based on screenshot */
+        border-left: 2px solid #555; /* Darker border for replies */
+        padding-left: 10px;
+        margin-top: 10px;
+        background-color: #333333; /* Slightly lighter background for replies */
+        border-radius: 0 8px 8px 0; /* Round only right corners for replies */
+    }
+    .comment-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px; /* Slightly more space below header */
+    }
+    .comment-avatar {
+        width: 35px; /* Slightly larger avatar */
+        height: 35px; /* Slightly larger avatar */
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
+    .comment-author {
+        font-weight: bold;
+        color: #f0f0f0; /* Lighter color for username */
+        margin-right: 10px;
+    }
+    .comment-text p {
+        margin-bottom: 8px;
+        color: #d0d0d0; /* Lighter color for comment text */
+        line-height: 1.4;
+    }
+    .comment-actions {
+        font-size: 0.8em;
+        color: #999; /* Slightly lighter gray for actions */
+        display: flex; /* Use flex for reply button and reply count */
+        align-items: center;
+        margin-top: 5px;
+    }
+    .comment-actions button {
+        background: none;
+        border: none;
+        color: #007bff; /* Blue color for reply button */
+        cursor: pointer;
+        margin-left: 0; /* Remove extra margin if flex is used */
+        padding: 0;
+        font-weight: 500;
+    }
+    .comment-actions span { /* Style for reply count */
+        margin-left: 10px;
+        color: #999;
+    }
+    .reply-form {
+        display: none; /* Hidden by default */
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #444; /* Separator for reply form */
+    }
+    .reply-form form {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .reply-form input[type="text"] {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #555; /* Darker border */
+        border-radius: 5px;
+        background-color: #444; /* Darker background */
+        color: #f0f0f0; /* Light text */
+    }
+    .reply-form input[type="text"]::placeholder {
+        color: #888;
+    }
+    .reply-form button {
+        padding: 8px 12px;
+        background-color: #007bff; /* Blue button */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    /* Main comment form group (for top-level comments) */
+    .comment-form-group {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .comment-form-group textarea { /* Assuming comment_form.comment renders a textarea */
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        background-color: #444;
+        color: #f0f0f0;
+        resize: vertical; /* Allow vertical resizing */
+        min-height: 40px;
+    }
+    .comment-form-group textarea::placeholder {
+        color: #888;
+    }
+    .comment-form-group button {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+</style>
+
+{% for comment in comments %}
+    <div class="comment-container" id="comment-{{ comment.id }}">
+        <div class="comment-header">
+            {% if comment.user.userprofile.profile_picture %}
+                <img src="{{ comment.user.userprofile.profile_picture.url }}" alt="{{ comment.user.username }}" class="comment-avatar">
+            {% else %}
+                <img src="{% static 'img/empty profile image.jpg' %}" alt="{{ comment.user.username }}" class="comment-avatar">
+            {% endif %}
+            <span class="comment-author">{{ comment.user.username }}</span>
+            <span class="comment-actions">{{ comment.created_at|date:"M d, Y H:i" }}</span>
+        </div>
+        <div class="comment-text">
+            <p>{{ comment.comment }}</p>
+        </div>
+        <div class="comment-actions">
+            <button type="button" class="reply-button" data-comment-id="{{ comment.id }}" data-post-slug="{{ post.post_slug }}">Reply</button>
+            {% if comment.replies.count > 0 %}
+                <span>{{ comment.replies.count }} replies</span>
+            {% endif %}
+        </div>
+
+        {# Dynamic reply form container #}
+        <div id="reply-form-container-{{ comment.id }}"></div>
+
+        {% if comment.replies.all %}
+            <div class="replies-list reply-container">
+                {% with comments=comment.replies.all %}
+                    {% include 'includes/recursive_comments.html' %}
+                {% endwith %}
+            </div>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No comments yet. Be the first to comment!</p>
+{% endfor %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.reply-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const postSlug = this.dataset.postSlug;
+                const formContainer = document.getElementById(`reply-form-container-${commentId}`);
+
+                // Toggle visibility
+                if (formContainer.innerHTML.trim() !== '') {
+                    formContainer.innerHTML = ''; // Hide form
+                } else {
+                    // Show form
+                    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+                    const formHtml = `
+                        <div class="reply-form" style="display: flex;">
+                            <form method="post" action="/accounts/post_details/${postSlug}/">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                                <input type="hidden" name="parent_id" value="${commentId}">
+                                <div class="comment-form-group">
+                                    <input type="text" name="comment" placeholder="Write a reply..." required>
+                                    <button type="submit">Reply</button>
+                                </div>
+                            </form>
+                        </div>
+                    `;
+                    formContainer.innerHTML = formHtml;
+                    formContainer.querySelector('input[name="comment"]').focus();
+                }
+            });
+        });
+    });
+</script>

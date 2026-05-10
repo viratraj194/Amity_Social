@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block content  %}
+{% block content %}
 {% load static %}
 <body>
     <div class="container">
@@ -16,43 +16,69 @@
             <img src="{%static 'img/pexels-keenan-constance-545154-2865901.jpg'%}" alt="">
         </div>
     </div>
+
+    <!-- Features Section -->
     <div class="home_title_l">
         <h1>The social network you've been waiting for</h1>
         <span>Finally, a social network that respects your privacy and gives you full control.</span>
     </div>
-    <div class="cards flex">
-        <div class="card">
-            <div class="card_img">
-                <img src="{%static 'img/no ads.jpeg'%}" alt="">
+    <div class="features-container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-eye-slash"></i>
+                </div>
+                <h2>No ads</h2>
+                <span>We don't sell your data to advertisers</span>
             </div>
-            <h2>No ads</h2>
-            <span>We don't sell your data to advertisers</span>
-        </div>
-        <div class="card">
-            <div class="card_img">
-                <img src="{%static 'img/no algorithms.jpeg'%}" alt="">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+                <h2>No algorithms</h2>
+                <span>We don't manipulate your feed with algorithms</span>
             </div>
-            <h2>No algorithms</h2>
-            <span>We don't manipulate your feed with algorithms</span>
-        </div>
-        <div class="card">
-            <div class="card_img">
-                <img src="{%static 'img/no tracking.jpeg'%}" alt="">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-geo-slash"></i>
+                </div>
+                <h2>No tracking</h2>
+                <span>We don't track you location or you behaviours</span>
             </div>
-            <h2>No tracking</h2>
-            <span>We don't track you location or you behaviours</span>
         </div>
     </div>
-    <div class="sign_up_container flex">
-        <div class="sign_up_img">
-            <img src="{%static 'img/signup.jpeg'%}" alt="">
-        </div>
-        <div class="sign_up">
-            <h1>Jon the Vircle. Sign up today.</h1>
-            <a href="{% url 'RegisterUser' %}">Sign up</a>
+
+    <!-- Community/Email Section -->
+    <div class="community-section">
+        <div class="community-container">
+            <div class="community-image">
+                <img src="{%static 'img/signup.jpeg'%}" alt="Join our community">
+            </div>
+            <div class="community-content">
+                <h1>Connect with Vircle friends, find some one of your like</h1>
+                <div class="email-form">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" name="" id="" placeholder="Enter you email for latest update">
+                    <button type="submit">Submit</button>
+                </div>
+            </div>
         </div>
     </div>
-    
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+        <div class="cta-card">
+            <div class="cta-image">
+                <img src="{%static 'img/footer_img.png'%}" alt="Join Vircle">
+            </div>
+            <div class="cta-content">
+                <h1>Jon the Vircle. Sign up today.</h1>
+                <p>Be part of the movement towards a more private internet.</p>
+            </div>
+            <a href="{% url 'RegisterUser' %}" class="cta-button">Sign up</a>
+        </div>
+    </div>
+
 </body>
 
 {% endblock %}

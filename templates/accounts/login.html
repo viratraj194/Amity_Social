@@ -2,61 +2,71 @@
 {% block content %}
 {% load static %}
 
-<!-- login page design  starts here  -->
+<!-- login page design starts here -->
+<div class="login-page-wrapper">
+    <div class="login-background"></div>
+    <div class="login-overlay"></div>
 
-
-<div class="login_container flex">
-    <div class="login_welcom">
-
-        <h3><strong>Welcome,</strong> To Vircle</h3>
-        <p>This is a privet, secure social network that respect your privacy. No adds, no algorithms, no tracking.</p>
-    </div>
-    <form action="{% url "login" %}" method="post">
-        {% csrf_token %}
-
-        <div class="login_card">
-            <div class="login_image">
-                <i class="bi bi-person"></i>
-            </div>
-            <div class="login_inputs flex colum">
-                <input type="email" name="email" placeholder="Enter The Email">
-                <i class="bi bi-unlock" onclick="togglePassword(), changeClass()" id="lock"></i>
-                <input type="password" name="password" id="passwordInput" placeholder="Enter Password">
-                
-              
-                <a href="{% url "forgot_password" %}">
-                    <span class="forgot_password">Forgot Password?</span>
-                </a>
-                <button type="submit">Login</button>
-            </div>
-            <a href="{%url 'RegisterUser'%}">
-                <div class="flex space_between" style="color: black; background-color: #86829a; padding: 10px; border-radius: 10px;">
-                    <span>Still didn't joined US?</span>
-                    <span>Sign up <i class="bi bi-arrow-right"></i></span>
-                    
-                </div>
-            </a>
-
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Welcome Back</h1>
+            <p>Enter your credentials to access your private circle.</p>
         </div>
-        
-    </form>
-</div>
-<script>
-    function togglePassword(){
-        var passwordInput = document.getElementById('passwordInput');
-        if(passwordInput.type === 'password'){
-            passwordInput.type = 'text';
-        }else{
-            passwordInput.type = 'password';
-        }
-    }
 
-    function changeClass(){
-        var lock = document.getElementById('lock');
-        lock.classList.toggle('bi-unlock');
-        lock.classList.toggle('bi-lock-fill');
+        <form action="{% url "login" %}" method="post" class="login-form">
+            {% csrf_token %}
+
+            <div class="login-inputs">
+                <div class="input-group">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="bi bi-lock" id="lockIcon"></i>
+                    <input type="password" name="password" id="passwordInput" placeholder="Enter password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                    </button>
+                </div>
+
+                <a href="{% url "forgot_password" %}" class="forgot-link">
+                    <span>Forgot Password?</span>
+                </a>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <a href="{%url 'RegisterUser'%}" class="signup-link">
+            <div class="signup-prompt">
+                <span>Still didn't join us?</span>
+                <span class="signup-text">Sign up <i class="bi bi-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <div class="login-footer">
+            <i class="bi bi-shield-lock"></i>
+            <span>END-TO-END ENCRYPTED</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        var passwordInput = document.getElementById('passwordInput');
+        var eyeIcon = document.getElementById('eyeIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('bi-eye-slash');
+            eyeIcon.classList.add('bi-eye');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('bi-eye');
+            eyeIcon.classList.add('bi-eye-slash');
+        }
     }
 </script>
 {% include "includes/alerts.html" %}
-<!-- login page design  ends here  -->
+<!-- login page design ends here -->
 {% endblock %}

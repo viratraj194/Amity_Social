@@ -36,7 +36,7 @@ def list_posts(request):
     if cached_data and request.headers.get('HX-Request') != 'true':
         return render(request, 'list_posts/list_posts.html', cached_data)
 
-    posts = UserPosts.objects.filter(user__college_id=college_id).select_related('user__userprofile').order_by('-created_at')
+    posts = UserPosts.objects.filter(user__college_id=college_id).select_related('user__userprofile').prefetch_related('comments__user').order_by('-created_at')
     total_posts = UserPosts.objects.filter(user=user)
 
     # Sending the follow request
@@ -59,15 +59,7 @@ def list_posts(request):
     liked_posts = set(Like.objects.filter(user=user).values_list('post_id', flat=True))
 
     # Add attributes to posts: is_saved, is_portrait, is_liked, is_following
-    for post in posts:
-        post.saved_by_user = post.id in saved_posts
-        post.is_portrait = post.image_height > post.image_width if post.image_height and post.image_width else False
-        post.liked_by_user = post.id in liked_posts
-        post.is_following = post.user.id in following_users
-        # Add show_user_info flag to comments based on following status
-        for comment in post.comments.all():
-            comment.show_user_info = comment.user.id in following_users
-
+    # Only process posts that will be displayed (after pagination)
     notifications = Notification.objects.filter(user=request.user, read=False).order_by('-timestamp')
     user_messages = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ)
     paginator = Paginator(posts,15)
@@ -75,6 +67,14 @@ def list_posts(request):
         posts = paginator.page(page)
     except:
         return HttpResponse('')
+
+    # Now enrich only the displayed posts
+    for post in posts:
+        post.saved_by_user = post.id in saved_posts
+        post.is_portrait = post.image_height > post.image_width if post.image_height and post.image_width else False
+        post.liked_by_user = post.id in liked_posts
+        post.is_following = post.user.id in following_users
+
     context = {
         'user_profile': user_profile,
         'user': user,
@@ -272,6 +272,9 @@ from .models import UserPosts, Comment
 
 @login_required(login_url='login')
 def get_comments(request, post_id):
+    from django.core.paginator import Paginator
+    import html
+
     # SECURITY: Validate post_id is a positive integer
     try:
         post_id = int(post_id)
@@ -281,17 +284,32 @@ def get_comments(request, post_id):
         return JsonResponse({'error': 'Invalid post ID format'}, status=400)
 
     post = get_object_or_404(UserPosts, id=post_id)
-    # Get top-level comments (no parent) with their replies
-    comments = Comment.objects.filter(post=post, parent__isnull=True).select_related('user__userprofile')
+    page = int(request.GET.get('page', 1))
+
+    # Get top-level comments (no parent) with optimized prefetching for replies
+    top_level_comments = Comment.objects.filter(
+        post=post, parent__isnull=True
+    ).select_related(
+        'user', 'user__userprofile'
+    ).prefetch_related(
+        'replies__user', 'replies__user__userprofile'
+    ).order_by('-created_at')
+
+    # Paginate to 20 comments per page
+    paginator = Paginator(top_level_comments, 20)
+
+    try:
+        comments_page = paginator.page(page)
+    except:
+        return JsonResponse({'comments': [], 'has_more': False, 'total_pages': 0, 'current_page': 1})
+
     user = request.user
-    # Note: Notification is created in add_comment view when comment is actually posted, not here
 
     # Get following users set for comment visibility check
     following_users = set(Follower.objects.filter(follower=user).values_list('following_id', flat=True))
 
-    import html
     def serialize_comment(comment):
-        """Serialize a comment and its replies recursively"""
+        """Serialize a comment and its replies"""
         show_user_info = comment.user.id in following_users
         comment_data = {
             'id': comment.id,
@@ -304,9 +322,8 @@ def get_comments(request, post_id):
             'reply_count': comment.replies.count(),
             'replies': []
         }
-        # Get replies for this comment
-        replies = comment.replies.select_related('user__userprofile').order_by('created_at')
-        for reply in replies:
+        # Use prefetched replies instead of making new queries
+        for reply in comment.replies.all():
             reply_show_user_info = reply.user.id in following_users
             comment_data['replies'].append({
                 'id': reply.id,
@@ -319,8 +336,13 @@ def get_comments(request, post_id):
             })
         return comment_data
 
-    comments_data = [serialize_comment(comment) for comment in comments]
-    return JsonResponse({'comments': comments_data})
+    comments_data = [serialize_comment(comment) for comment in comments_page.object_list]
+    return JsonResponse({
+        'comments': comments_data,
+        'has_more': comments_page.has_next(),
+        'total_pages': paginator.num_pages,
+        'current_page': page
+    })
 
 from django.db import transaction
 
