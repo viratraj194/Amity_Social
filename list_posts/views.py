@@ -137,6 +137,31 @@ def add_posts(request):
     }
     return render(request, 'list_posts/list_posts.html', context)
 
+
+
+# Delete post view
+def delete_post(request, post_id):
+    post = get_object_or_404(UserPosts, id=post_id)
+
+    if request.user != post.user:
+        messages.error(request, 'You do not have permission to delete this post.')
+        return redirect('post_details', post_slug=post.post_slug)
+
+    post.delete()
+    # Invalidate cache for the user's college feed
+    college_id = request.user.college.id if request.user.college else None
+    cache.delete(f'posts_list_{request.user.id}_{college_id}_page_1')           
+    messages.success(request, 'Post has been deleted.')
+    return redirect('list_posts')
+
+
+
+
+
+
+
+
+
 @login_required(login_url='login')
 def mark_notification_as_read(request, notification_id):
     # SECURITY: Validate notification_id is a positive integer
@@ -479,3 +504,6 @@ def unread_message_count(request):
         unread_count = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ).count()
         return JsonResponse({"unread_count": unread_count})
     return JsonResponse({"unread_count": 0})
+
+
+

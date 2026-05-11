@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.text import slugify
-from .utils import send_notification_email
+from .utils import send_notification_email, secure_hash_filename
 
 
 class College(models.Model):
@@ -136,12 +136,12 @@ class User(AbstractBaseUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='users/profile_picture', blank=True, null=True,width_field='image_width',height_field='image_height')
-    # profile picture  width and height 
+    profile_picture = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True,width_field='image_width',height_field='image_height')
+    # profile picture  width and height
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     userBio = models.TextField(blank=True, null=True)
-    cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True,width_field='cover_width',height_field='cover_height')
+    cover_photo = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True,width_field='cover_width',height_field='cover_height')
     # cover photo width and height
     # user is privet 
     is_privet = models.BooleanField(default=False, db_index=True)
@@ -198,7 +198,7 @@ class Room(models.Model):
     is_private = models.BooleanField(default=False,db_index=True)
     is_group = models.BooleanField(default=False,db_index=True)
     description = models.TextField(blank=True, null=True,db_index=True)
-    room_picture = models.ImageField(upload_to='room_pictures/', blank=True, null=True,db_index=True)
+    room_picture = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True,db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

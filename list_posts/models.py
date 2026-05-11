@@ -2,13 +2,14 @@ from django.db import models
 from accounts.models import User
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from .utils import secure_hash_filename
 
 class UserPosts(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,db_index=True)
     content = models.TextField(blank=True,null=True)
     caption = models.TextField(max_length=200,blank=True,null=True)
 
-    post_image = models.ImageField(upload_to = 'users/posts/post_image',blank=True, null = True, width_field='image_width', height_field='image_height')   
+    post_image = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True, width_field='image_width', height_field='image_height')
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     

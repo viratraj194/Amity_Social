@@ -181,7 +181,7 @@ def forgot_password(request):
             mail_template = 'accounts/email/reset_password_mail.html'
             send_email_verification(request,user, mail_subject,mail_template)
             # Email is sent in background - show success to user
-            messages.success(request,'reset password link has sent to your'.title())
+            messages.success(request,'reset password link has sent to your email'.title())
             return redirect('login')
         else:
             messages.error(request,"email doesn't match")
@@ -804,40 +804,112 @@ def get_user_status(request, user_id):
 @login_required(login_url='login')
 def followers(request):
     if request.method == 'GET':
-        user_id = request.user.id
+        user_id = request.GET.get('user_id')
+        if not user_id:
+            user_id = request.user.id
+
+        try:
+            page = int(request.GET.get('page', 1))
+        except ValueError:
+            page = 1
+
+        cache_key = f'followers_list_{user_id}_page_{page}'
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return JsonResponse(cached_data, status=200)
 
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
 
-        followers = Follower.objects.filter(following=user).select_related('follower')
-       
+        followers_qs = Follower.objects.filter(following=user).select_related('follower', 'follower__userprofile').order_by('-created')
+        
+        paginator = Paginator(followers_qs, 15)
+        try:
+            followers_page = paginator.page(page)
+        except Exception:
+            return JsonResponse({'followers': [], 'has_next': False, 'total_count': paginator.count}, status=200)
 
-        followers_list = [{'id': follower.follower.id, 'username': follower.follower.username,'profile_picture': follower.follower.userprofile.profile_picture.url,'first_name': follower.follower.first_name,'last_name': follower.follower.last_name} for follower in followers]
+        followers_list = []
+        for follower in followers_page:
+            profile_pic = '/static/img/images.jpeg'
+            if hasattr(follower.follower, 'userprofile') and follower.follower.userprofile.profile_picture:
+                profile_pic = follower.follower.userprofile.profile_picture.url
 
-        return JsonResponse({'followers': followers_list}, status=200)
+            followers_list.append({
+                'id': follower.follower.id, 
+                'username': follower.follower.username,
+                'profile_picture': profile_pic,
+                'first_name': follower.follower.first_name,
+                'last_name': follower.follower.last_name
+            })
+
+        data = {
+            'followers': followers_list,
+            'has_next': followers_page.has_next(),
+            'total_count': paginator.count,
+            'current_page': page
+        }
+        cache.set(cache_key, data, 300) # Cache for 5 minutes
+        return JsonResponse(data, status=200)
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 @login_required(login_url='login')
 def following(request):
     if request.method == 'GET':
-        user_id = request.user.id
+        user_id = request.GET.get('user_id')
+        if not user_id:
+            user_id = request.user.id
+
+        try:
+            page = int(request.GET.get('page', 1))
+        except ValueError:
+            page = 1
+
+        cache_key = f'following_list_{user_id}_page_{page}'
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            return JsonResponse(cached_data, status=200)
 
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
 
-        followings = Follower.objects.filter(follower=user).select_related('following')
+        followings_qs = Follower.objects.filter(follower=user).select_related('following', 'following__userprofile').order_by('-created')
 
-        followers_list = [{'id': following.following.id, 'username': following.following.username,
-                           'profile_picture': following.following.userprofile.profile_picture.url,
-                           'first_name': following.following.first_name, 'last_name': following.following.last_name}
-                          for following in followings]
+        paginator = Paginator(followings_qs, 15)
+        try:
+            followings_page = paginator.page(page)
+        except Exception:
+            return JsonResponse({'followers': [], 'has_next': False, 'total_count': paginator.count}, status=200)
 
-        return JsonResponse({'followers': followers_list}, status=200)
+        followers_list = []
+        for following in followings_page:
+            profile_pic = '/static/img/images.jpeg'
+            if hasattr(following.following, 'userprofile') and following.following.userprofile.profile_picture:
+                profile_pic = following.following.userprofile.profile_picture.url
+
+            followers_list.append({
+                'id': following.following.id, 
+                'username': following.following.username,
+                'profile_picture': profile_pic,
+                'first_name': following.following.first_name, 
+                'last_name': following.following.last_name
+            })
+
+        data = {
+            'followers': followers_list,
+            'has_next': followings_page.has_next(),
+            'total_count': paginator.count,
+            'current_page': page
+        }
+        cache.set(cache_key, data, 300) # Cache for 5 minutes
+        return JsonResponse(data, status=200)
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
     # Get all users the logged-in user is following
     # following = Follower.objects.filter(follower=user).select_related('following')
 

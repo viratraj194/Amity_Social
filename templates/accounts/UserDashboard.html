@@ -40,7 +40,7 @@
                 <strong>{{total_followers}}</strong>
             </h5>
             <a href="#">
-                <span id="load-followers-btn">Followers</span>
+                <span id="load-followers-btn" data-user-id="{{user.id}}">Followers</span>
             </a>
 
         </div>
@@ -49,7 +49,7 @@
                 <strong>{{total_following}}</strong>
             </h5>
             <a href="#">
-                <span id="load-following-btnS">Following</span>
+                <span id="load-following-btnS" data-user-id="{{user.id}}">Following</span>
             </a>
 
         </div>
@@ -134,165 +134,214 @@
 
         </div>
     </div>
-    <div id="followers-list" style="display: none;">
-        <div class="close-button close-button-follow  " style="cursor: pointer;margin: 10px;">
-            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-            <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
-                style="width:20px;height:20px">
-            </lord-icon>
-        </div>
-        <!-- Followers will be displayed here -->
-        <input type="text" id="search-followers" placeholder="Search followers by username" style="padding: 5px;
-            width: 80%;
-            border-radius: 5px;
-            outline: none;
-            background-color: #d3d3d3;
-            margin-left: 45px;">
+    <!-- Overlay for modal -->
+    <div id="followers-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 998;"></div>
 
-        <ul class="followers-lists">
+    <div id="followers-list" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 420px; max-width: 90%; background-color: #1c1c1f; border-radius: 16px; z-index: 1000; padding: 24px; color: #ffffff; box-shadow: 0 10px 40px rgba(0,0,0,0.5); box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 id="followers-modal-title" style="margin: 0; font-size: 20px; font-weight: 600;">Followers</h3>
+            <div class="close-button-follow" style="cursor: pointer; color: #a1a1aa; font-size: 20px; line-height: 1;">
+                &#x2715;
+            </div>
+        </div>
+
+        <div style="position: relative; margin-bottom: 24px;">
+            <i class="bi bi-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #a1a1aa;"></i>
+            <input type="text" id="search-followers" placeholder="Search followers by username" style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 8px; border: none; background-color: #2a2a2d; color: white; outline: none; box-sizing: border-box; font-size: 14px;">
+        </div>
+
+        <ul class="followers-lists" style="list-style: none; padding: 0; margin: 0; max-height: 350px; overflow-y: auto;">
         </ul>
+
+        <div id="followers-footer" style="text-align: center; margin-top: 15px; padding-top: 15px; font-size: 13px; color: #a1a1aa; border-top: 1px solid rgba(255,255,255,0.05);">
+            Showing 0 of 0 followers
+        </div>
     </div>
+
+    <style>
+        .followers-lists::-webkit-scrollbar {
+            width: 6px;
+        }
+        .followers-lists::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 4px;
+        }
+        .list-item-user {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+        .list-item-user .followersImg img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #3f3f46;
+        }
+        .list-item-user .followersDetails h5 {
+            margin: 0 0 2px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+        .list-item-user .followersDetails span {
+            font-size: 13px;
+            color: #a1a1aa;
+        }
+        .list-item-user .followAndUnfollowBtn a {
+            display: inline-block;
+            padding: 6px 16px;
+            background-color: transparent;
+            border: 1px solid #3f3f46;
+            border-radius: 8px;
+            color: #f4f4f5;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .list-item-user .followAndUnfollowBtn a:hover {
+            background-color: #3f3f46;
+        }
+    </style>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#load-followers-btn').click(function () {
-                var userId = $(this).data('user-id'); // Get the user ID from the button's data attribute
+            var currentPage = 1;
+            var isLoading = false;
+            var currentUserId = null;
+            var currentUrl = null;
+            var currentType = null;
+            var hasNextPage = true;
+            var totalAvailableCount = 0;
 
-                // Show the hidden div
-                $('#followers-list').css('display', 'block');
+            function updateFooterCount(type, visibleCount, totalCount) {
+                $('#followers-footer').text('Showing ' + visibleCount + ' of ' + totalCount + ' ' + type);
+            }
 
-                // Make the Ajax request to get the followers
+            function loadData(append = false) {
+                if (isLoading || !hasNextPage) return;
+                isLoading = true;
+
                 $.ajax({
-                    url: "{% url 'followers' %}",  // Django URL pattern for the followers view
+                    url: currentUrl,
                     type: 'GET',
-                    data: {
-                        user_id: userId  // Pass the user ID to the view
-                    },
+                    data: { user_id: currentUserId, page: currentPage },
                     success: function (response) {
                         if (response.followers) {
                             var followersHtml = '';
                             $.each(response.followers, function (index, follower) {
-                                // Construct the profile URL dynamically
-                                var profileUrl = "/profile_details/" + follower.id + "/";  // Assuming the URL pattern is something like '/profile/<id>/'
+                                var profileUrl = "/profile_details/" + follower.id + "/";
 
                                 followersHtml +=
-                                    '<li class="flex follower-item">' +  // Add the `follower-item` class here
-                                    '<div class="flex" style="align-items: center;">' +
+                                    '<li class="list-item-user">' +
+                                    '<div style="display: flex; align-items: center;">' +
                                     '<div class="followersImg">' +
                                     '<img src="' + follower.profile_picture + '" alt="' + follower.username + '">' +
                                     '</div>' +
                                     '<div class="followersDetails" style="margin-left: 15px;">' +
-                                    '<h5 id="follower-username-' + follower.id + '">' + follower.username + '</h5>' +
-                                    '<span style="font-size: small;color: #898989;">' + follower.first_name + ' ' + follower.last_name + '</span>' +
+                                    '<h5>' + follower.username + '</h5>' +
+                                    '<span>' + follower.first_name + ' ' + follower.last_name + '</span>' +
                                     '</div>' +
                                     '</div>' +
                                     '<div class="followAndUnfollowBtn">' +
-                                    '<a href="' + profileUrl + '" style="background-color: #918d8d;padding: 5px;border-radius: 8px;">View</a>' +
+                                    '<a href="' + profileUrl + '">View</a>' +
                                     '</div>' +
                                     '</li>';
                             });
-                            $('.followers-lists').html(followersHtml);  // Update the HTML with the list of followers
+                            
+                            if (append) {
+                                $('.followers-lists').append(followersHtml);
+                            } else {
+                                $('.followers-lists').html(followersHtml);
+                            }
+
+                            hasNextPage = response.has_next;
+                            totalAvailableCount = response.total_count;
+                            if (hasNextPage) {
+                                currentPage++;
+                            }
+
+                            // Keep search filter working on newly appended items
+                            var searchQuery = $('#search-followers').val().toLowerCase();
+                            if (searchQuery) {
+                                $('.list-item-user').each(function () {
+                                    var username = $(this).find('h5').text().toLowerCase();
+                                    if (username.includes(searchQuery)) {
+                                        $(this).show();
+                                    } else {
+                                        $(this).hide();
+                                    }
+                                });
+                            }
+
+                            updateFooterCount(currentType, $('.list-item-user:visible').length, totalAvailableCount);
                         }
+                        isLoading = false;
                     },
                     error: function (xhr, status, error) {
-                        // console.log('Error:', error);
+                        console.error('Error fetching data:', error);
+                        isLoading = false;
                     }
                 });
+            }
+
+            function openModal(title, url, userId) {
+                $('#followers-modal-title').text(title);
+                $('#followers-overlay').fadeIn(200);
+                $('#followers-list').fadeIn(200);
+                $('#search-followers').val('');
+                
+                // Reset pagination variables
+                currentPage = 1;
+                hasNextPage = true;
+                currentUserId = userId;
+                currentUrl = url;
+                currentType = title.toLowerCase();
+                $('.followers-lists').html(''); // Clear list
+
+                loadData(false);
+            }
+
+            // Detect scroll to bottom of the list to load more
+            $('.followers-lists').on('scroll', function() {
+                if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 10) {
+                    loadData(true);
+                }
             });
 
-            // Search and filter followers by username using the h5 id
+            $('#load-followers-btn').click(function (e) {
+                e.preventDefault();
+                var userId = $(this).data('user-id');
+                openModal('Followers', "{% url 'followers' %}", userId);
+            });
+
+            $('#load-following-btnS').click(function (e) {
+                e.preventDefault();
+                var userId = $(this).data('user-id');
+                openModal('Following', "{% url 'following' %}", userId);
+            });
+
             $('#search-followers').on('keyup', function () {
-                var searchQuery = $(this).val().toLowerCase();  // Get the search input and convert to lowercase
+                var searchQuery = $(this).val().toLowerCase();
 
-                // Loop through all the follower items and hide those that don't match the search
-                $('.follower-item').each(function () {
-                    var userId = $(this).find('h5[id^="follower-username"]').attr('id'); // Get the h5 tag with the id that starts with 'follower-username'
-                    var username = $('#' + userId).text().toLowerCase();  // Get the username text from the id
+                $('.list-item-user').each(function () {
+                    var username = $(this).find('h5').text().toLowerCase();
 
-                    // If the username includes the search query, show the item, else hide it
                     if (username.includes(searchQuery)) {
                         $(this).show();
                     } else {
                         $(this).hide();
                     }
                 });
-            });
-        });
-    </script>
-
-    <!-- following  -->
-    <script>
-        $(document).ready(function () {
-            $('#load-following-btnS').click(function () {
-                var userId = $(this).data('user-id'); // Get the user ID from the button's data attribute
-
-                // Show the hidden div
-                $('#followers-list').css('display', 'block');
-
-                // Make the Ajax request to get the followings
-                $.ajax({
-                    url: "{% url 'following' %}",  // Django URL pattern for the following view
-                    type: 'GET',
-                    data: {
-                        user_id: userId  // Pass the user ID to the view
-                    },
-                    success: function (response) {
-                        if (response.followers) {  // Ensure this key is correct based on your response
-                            var followersHtml = '';
-                            $.each(response.followers, function (index, follower) {  // Fix: using 'follower'
-                                // Construct the profile URL dynamically
-                                var profileUrl = "/profile_details/" + follower.id + "/";  // Assuming the URL pattern is something like '/profile/<id>/'
-
-                                followersHtml +=
-                                    '<li class="flex following-item">' +  // Add the `following-item` class here
-                                    '<div class="flex" style="align-items: center;">' +
-                                    '<div class="followersImg">' +
-                                    '<img src="' + follower.profile_picture + '" alt="' + follower.username + '">' +
-                                    '</div>' +
-                                    '<div class="followersDetails" style="margin-left: 15px;">' +
-                                    '<h5 id="following-username-' + follower.id + '">' + follower.username + '</h5>' +  // Add the unique ID here
-                                    '<span style="font-size: small;color: #898989;">' + follower.first_name + ' ' + follower.last_name + '</span>' +
-                                    '</div>' +
-                                    '</div>' +
-                                    '<div class="followAndUnfollowBtn">' +
-                                    '<a href="' + profileUrl + '" style="background-color: #918d8d;padding: 5px;border-radius: 8px;">View</a>' +
-                                    '</div>' +
-                                    '</li>';
-                            });
-                            $('.followers-lists').html(followersHtml);  // Update the HTML with the list of followers
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        // console.log('Error:', error);
-                    }
-                });
+                updateFooterCount($('#followers-modal-title').text().toLowerCase(), $('.list-item-user:visible').length, totalAvailableCount);
             });
 
-            // Search and filter following by username using the h5 id
-            $('#search-followers').on('keyup', function () {
-                var searchQuery = $(this).val().toLowerCase();  // Get the search input and convert to lowercase
-
-                // Loop through all the following items and hide those that don't match the search
-                $('.following-item').each(function () {
-                    var userId = $(this).find('h5[id^="following-username"]').attr('id'); // Get the h5 tag with the id that starts with 'following-username'
-                    var username = $('#' + userId).text().toLowerCase();  // Get the username text from the id
-
-                    // If the username includes the search query, show the item, else hide it
-                    if (username.includes(searchQuery)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            });
-        });
-    </script>
-
-
-    <script>
-        $(document).ready(function () {
-            $('.close-button-follow').click(function () {
-                $('#followers-list').css('display', 'none'); // Hide the followers list
+            $('.close-button-follow, #followers-overlay').click(function () {
+                $('#followers-overlay').fadeOut(200);
+                $('#followers-list').fadeOut(200);
             });
         });
     </script>

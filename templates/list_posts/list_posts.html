@@ -1068,7 +1068,11 @@
 
                     // Update the specific comments container for the current post
                     var $container = $btn.closest('.postContainer, .premium-post-card, .allPostLists').find('.comments-container').first();
-                    $container.html('<div class="comments-list">' + commentsHtml + '</div>' + viewMoreBtn);
+                    if (comments.length === 0) {
+                        $container.html('<p class="no-comments-message" style="text-align: center; color: #848484; padding: 20px;">Be the first one to comment</p>');
+                    } else {
+                        $container.html('<div class="comments-list">' + commentsHtml + '</div>' + viewMoreBtn);
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error('Error fetching comments:', error);

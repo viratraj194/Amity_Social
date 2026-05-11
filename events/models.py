@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from accounts.utils import secure_hash_filename
 
 class Event(models.Model):
     title = models.CharField(max_length=255, db_index=True)
@@ -9,7 +10,7 @@ class Event(models.Model):
     end_datetime = models.DateTimeField(db_index=True)
     eventCreator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='eventCreator', db_index=True)
     organizer = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='events/images', blank=True, null=True)
+    image = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True)
     attendees = models.CharField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)

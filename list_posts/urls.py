@@ -4,6 +4,7 @@ from.import views
 urlpatterns = [
     path('list-posts/',views.list_posts, name='list_posts'),
     path('add-posts/',views.add_posts,name='add_posts'),
+    path('delete-post/<int:post_id>/',views.delete_post,name='delete_post'),
     path('post_like/<int:post_id>/', views.post_like, name='post_like'),
 
     # test notification 
