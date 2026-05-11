@@ -215,7 +215,7 @@
                 {% if user.userprofile.profile_picture %}
                 <img src="{{user.userprofile.profile_picture.url}}" alt="">
                 {% else %}
-                <img src="{% static "img/images.jpg" %}" alt="">
+                <img src="{% static "img/images.jpeg" %}" alt="">
                 {% endif %}
             </div>
         </div>
@@ -231,7 +231,7 @@
                         </div>
                         {% else %}
                         <div class="userImg">
-                            <img src="{% static "img/images.jpg" %}" alt="">
+                            <img src="{% static "img/images.jpeg" %}" alt="">
                         </div>
                         {% endif %}
                         <div class="messageUsersDetails column">
@@ -279,7 +279,7 @@
                     {% if receiver.userprofile.profile_picture %}
                     <img src="{{ receiver.userprofile.profile_picture.url}}" alt="">
                     {% else %}
-                    <img src="{% static "img/images.jpg" %}" alt="">
+                    <img src="{% static "img/images.jpeg" %}" alt="">
                     {% endif %}
                 </div>
                 <div class="messageSelectedUserDetails  colum">
@@ -334,7 +334,7 @@
                         {% if message.sender.userprofile.profile_picture %}
                             <img src="{{ message.sender.userprofile.profile_picture.url }}" alt="">
                         {% else %}
-                            <img src="{% static "img/images.jpg" %}" alt="">
+                            <img src="{% static "img/images.jpeg" %}" alt="">
                         {% endif %}
                     </div>
                     <div class="message-bubble">

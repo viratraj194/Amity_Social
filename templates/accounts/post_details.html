@@ -115,7 +115,7 @@
             </a>
         </div>
     </div>
-    <div class="usersAllPosts">
+    <div class="usersAllPosts" style="height: 800px;">
         <div class="UserAllPostList indetails flex ">
             <div class="PostDetailsContents">
                 <div class="PostDetailsContent">
@@ -261,7 +261,11 @@
                     </form>
                 </div>
             </div>
+            
+        </div>
+        <div class="delete_post" style=" margin: 50px auto;">
 
+            <a href="{% url 'delete_post' post_id=post.id %}" class="btn btn-danger" style="border-radius: 10px;">Delete Post</a>
         </div>
     </div>
     <!-- post details for phone responsive start  -->

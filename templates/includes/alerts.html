@@ -1,105 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
+{% if messages %}
+<!-- SweetAlert2 CDN (Ensure it's loaded if not already in base.html) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alert Message</title>
-    <style>
-        .alert {
-            position: fixed;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            padding: 20px;
-            background-color: #403f3fdd;
-            color: white;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            animation: slide-in 0.5s ease-in-out forwards;
-            z-index: 1000;
-        }
+<style>
+    /* Custom styles matching the specific UI requirements */
+    .custom-swal-popup {
+        border-radius: 24px !important; /* approx 3xl rounded corners */
+        background-color: #1e1e1e !important; /* Dark theme background */
+        color: #ffffff !important;
+    }
+    
+    .custom-swal-title {
+        text-align: center !important;
+        font-weight: 600 !important;
+    }
 
-        .alert.hidden {
-            animation: fade-out 0.5s ease-in-out forwards;
-        }
+    .custom-swal-text {
+        text-align: center !important;
+        color: #cccccc !important;
+    }
 
-        .closebtn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: white;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    .custom-swal-confirm-btn {
+        border-radius: 9999px !important; /* Pill style */
+        padding: 12px 32px !important;
+        font-weight: bold !important;
+        min-width: 100px;
+    }
 
-        .closebtn:hover {
-            color: black;
-        }
+    .custom-swal-cancel-btn {
+        border-radius: 9999px !important; /* Pill style */
+        padding: 12px 32px !important;
+        font-weight: bold !important;
+        background-color: #333333 !important; /* Dark gray for cancel/No */
+        color: #ffffff !important;
+        min-width: 100px;
+    }
+</style>
 
-        @keyframes slide-in {
-            from {
-                transform: translateX(100%);
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        // Collect all messages from Django
+        const messages = [
+            {% for message in messages %}
+            {
+                text: "{{ message|escapejs }}",
+                tags: "{{ message.tags|default:'' }}".toLowerCase()
+            },
+            {% endfor %}
+        ];
+
+        // Process messages sequentially using async/await so they don't overlap
+        for (const msg of messages) {
+            let swalIcon = 'info';
+            let btnColor = '#3085d6'; // Default blue
+            let swalTitle = 'Notification';
+
+            // Map Django message levels to icons and button colors
+            if (msg.tags.includes('success')) {
+                swalIcon = 'success';
+                btnColor = '#4caf50'; // Green
+                swalTitle = 'Success';
+            } else if (msg.tags.includes('error') || msg.tags.includes('danger')) {
+                swalIcon = 'error';
+                btnColor = '#d33'; // Red
+                swalTitle = 'Error';
+            } else if (msg.tags.includes('warning')) {
+                swalIcon = 'warning';
+                btnColor = '#ff9800'; // Orange/Peach color matching the reference
+                swalTitle = 'Warning';
+            } else {
+                swalIcon = 'info';
+                btnColor = '#3085d6'; // Blue
+                swalTitle = 'Information';
             }
 
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fade-out {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0;
-                transform: translateY(100%);
-            }
-        }
-    </style>
-</head>
-
-<body>
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert">
-        <span class="closebtn">&times;</span>
-        <strong style="padding-right: 10px;">{{ message }}</strong>
-    </div>
-    {% endfor %}
-    {% endif %}
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const alertDiv = document.querySelector(".alert");
-
-            if (alertDiv) {
-                const closeBtn = alertDiv.querySelector(".closebtn");
-
-                if (closeBtn) {
-                    closeBtn.addEventListener("click", function () {
-                        alertDiv.classList.add("hidden");
-                    });
+            await Swal.fire({
+                title: swalTitle,
+                text: msg.text,
+                icon: swalIcon,
+                background: '#1e1e1e',
+                color: '#ffffff',
+                confirmButtonColor: btnColor,
+                confirmButtonText: 'OK',
+                // Show cancel button only if we want to emulate the Yes/No look exactly, 
+                // but for standard messages, usually one button is enough.
+                // showCancelButton: true, 
+                // cancelButtonText: 'No',
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    title: 'custom-swal-title',
+                    htmlContainer: 'custom-swal-text',
+                    confirmButton: 'custom-swal-confirm-btn',
+                    cancelButton: 'custom-swal-cancel-btn'
                 }
-
-                // Automatically fade out after 5 seconds
-                setTimeout(function () {
-                    alertDiv.classList.add("hidden");
-                }, 5000); // 5000 milliseconds = 5 seconds
-
-                // Remove the alert from the DOM after the fade-out animation
-                alertDiv.addEventListener("animationend", function (event) {
-                    if (event.animationName === "fade-out") {
-                        alertDiv.style.display = "none";
-                    }
-                });
-            }
-        });
-
-    </script>
-</body>
-
-</html>
+            });
+        }
+    });
+</script>
+{% endif %}

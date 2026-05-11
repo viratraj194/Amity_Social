@@ -1,7 +1,9 @@
 import datetime
+import hashlib
 import re
 import os
 import threading
+import time
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,6 +14,18 @@ from django.core.mail import EmailMessage
 from django.utils.text import slugify
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+
+
+def secure_hash_filename(instance, filename):
+    """
+    Generate a SHA-256 hashed filename for secure uploads.
+    """
+    ext = os.path.splitext(filename)[1].lower()
+    user_id = getattr(getattr(instance, 'user', None), 'id', 0) if instance else 0
+    timestamp = str(int(time.time()))
+    hash_input = f"{filename}_{user_id}_{timestamp}"
+    hash_digest = hashlib.sha256(hash_input.encode()).hexdigest()[:32]
+    return f"{hash_digest}{ext}"
 
 def users_id_generator(user_id):
     current_datetime = datetime.datetime.now().strftime('%Y%m%d%H%M%S')#202212281059
