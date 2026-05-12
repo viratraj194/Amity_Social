@@ -85,7 +85,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = False  # Pre-compress files during deployment
+COMPRESS_OFFLINE = True  # Pre-compress files during deployment
 # COMPRESS_OFFLINE = not DEBUG  # Set to True if you want to pre-compress files during deployment
 
 
@@ -228,6 +228,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),   # ✅ important
 ]
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
 # media files  for local 
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -242,7 +244,8 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # Removed "Manifest" from the backend name
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage", 
     },
 }
 
@@ -252,8 +255,7 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 WHITENOISE_MANIFEST_STRICT = False
-COMPRESS_URL = STATIC_URL
-COMPRESS_ROOT = STATIC_ROOT
+
 
 #Email setup
 # Email setup
