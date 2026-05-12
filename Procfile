@@ -1,1 +1,1 @@
-web: daphne -b 0.0.0.0 -p $PORT amity_social_main.asgi:application
+web: python manage.py compress && daphne -b 0.0.0.0 -p $PORT amity_social_main.asgi:application
