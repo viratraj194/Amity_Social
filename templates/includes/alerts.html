@@ -3,37 +3,82 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-    /* Custom styles matching the specific UI requirements */
+    /* Vircle Glassmorphism SweetAlert2 Overrides */
+    
+    /* Backdrop */
+    div:where(.swal2-container) {
+        background: rgba(0, 0, 0, 0.8) !important;
+    }
+
+    /* Popup Modal */
     .custom-swal-popup {
-        border-radius: 24px !important; /* approx 3xl rounded corners */
-        background-color: #1e1e1e !important; /* Dark theme background */
+        background: rgba(26, 22, 36, 0.7) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 -2px 10px rgba(253, 137, 37, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
         color: #ffffff !important;
+        font-family: 'DM Sans', 'Inter', sans-serif !important;
     }
     
+    /* Title */
     .custom-swal-title {
-        text-align: center !important;
-        font-weight: 600 !important;
-    }
-
-    .custom-swal-text {
-        text-align: center !important;
-        color: #cccccc !important;
-    }
-
-    .custom-swal-confirm-btn {
-        border-radius: 9999px !important; /* Pill style */
-        padding: 12px 32px !important;
-        font-weight: bold !important;
-        min-width: 100px;
-    }
-
-    .custom-swal-cancel-btn {
-        border-radius: 9999px !important; /* Pill style */
-        padding: 12px 32px !important;
-        font-weight: bold !important;
-        background-color: #333333 !important; /* Dark gray for cancel/No */
         color: #ffffff !important;
-        min-width: 100px;
+        font-weight: 300 !important;
+        font-size: 1.75rem !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    /* Body Text */
+    .custom-swal-text {
+        color: #a3a3a3 !important;
+        font-size: 0.95rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Confirm Button */
+    .custom-swal-confirm-btn {
+        background: linear-gradient(90deg, #fd8925, #ff0c00) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 32px !important;
+        font-weight: 500 !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+        outline: none !important;
+    }
+    .custom-swal-confirm-btn:hover {
+        box-shadow: 0 4px 15px rgba(253, 137, 37, 0.4) !important;
+        transform: translateY(-2px) !important;
+        filter: brightness(1.1) !important;
+    }
+
+    /* Customizing SweetAlert Icons (Success) */
+    .swal2-icon.swal2-success {
+        border-color: #fd8925 !important;
+    }
+    .swal2-icon.swal2-success [class^="swal2-success-line"] {
+        background-color: #fd8925 !important;
+    }
+    .swal2-icon.swal2-success .swal2-success-ring {
+        border-color: rgba(253, 137, 37, 0.3) !important;
+    }
+
+    /* Customizing SweetAlert Icons (Error) */
+    .swal2-icon.swal2-error {
+        border-color: #fd8925 !important;
+    }
+    .swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+        background-color: #fd8925 !important;
+    }
+
+    /* Customizing SweetAlert Icons (Warning / Info) */
+    .swal2-icon.swal2-warning, .swal2-icon.swal2-info {
+        border-color: #fd8925 !important;
+        color: #fd8925 !important;
     }
 </style>
 
@@ -49,49 +94,33 @@
             {% endfor %}
         ];
 
-        // Process messages sequentially using async/await so they don't overlap
+        // Process messages sequentially using async/await
         for (const msg of messages) {
             let swalIcon = 'info';
-            let btnColor = '#3085d6'; // Default blue
             let swalTitle = 'Notification';
 
-            // Map Django message levels to icons and button colors
             if (msg.tags.includes('success')) {
                 swalIcon = 'success';
-                btnColor = '#4caf50'; // Green
                 swalTitle = 'Success';
             } else if (msg.tags.includes('error') || msg.tags.includes('danger')) {
                 swalIcon = 'error';
-                btnColor = '#d33'; // Red
                 swalTitle = 'Error';
             } else if (msg.tags.includes('warning')) {
                 swalIcon = 'warning';
-                btnColor = '#ff9800'; // Orange/Peach color matching the reference
                 swalTitle = 'Warning';
-            } else {
-                swalIcon = 'info';
-                btnColor = '#3085d6'; // Blue
-                swalTitle = 'Information';
             }
 
             await Swal.fire({
                 title: swalTitle,
                 text: msg.text,
                 icon: swalIcon,
-                background: '#1e1e1e',
-                color: '#ffffff',
-                confirmButtonColor: btnColor,
-                confirmButtonText: 'OK',
-                // Show cancel button only if we want to emulate the Yes/No look exactly, 
-                // but for standard messages, usually one button is enough.
-                // showCancelButton: true, 
-                // cancelButtonText: 'No',
+                buttonsStyling: false, // Fully unstyle default buttons
+                confirmButtonText: 'Continue',
                 customClass: {
                     popup: 'custom-swal-popup',
                     title: 'custom-swal-title',
                     htmlContainer: 'custom-swal-text',
                     confirmButton: 'custom-swal-confirm-btn',
-                    cancelButton: 'custom-swal-cancel-btn'
                 }
             });
         }
