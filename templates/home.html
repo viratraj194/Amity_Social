@@ -1,24 +1,156 @@
 {% load static %}
-<body>
-    <div class="container">
-        <div class="quot">
-            <div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vircle | Campus Confessions</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-void-base: #0e0918;
+            --color-elevated-surface: #1a1624;
+            --color-deep-panel: #1b1728;
+            --color-muted-shell: #2c2834;
+            --color-border-smoke: rgba(62, 58, 70, 0.5); /* softer border for glass */
+            --color-ash-text: #d1cece;
+            --color-fog-text: #9d9797;
+            --color-cloud-white: #ffffff;
+            --gradient-ember-cta: linear-gradient(30deg, rgb(253, 137, 37), rgb(255, 12, 0));
+            --gradient-electric-current: linear-gradient(141deg, rgb(7, 122, 199), rgb(107, 33, 239));
+            --font-display: 'DM Sans', 'Inter', sans-serif; 
+        }
 
-                <h1>Your thoughts, your secrets</h1>
-                <h4>Vircle is a private and secure social network that respects your privacy. No ads. No algorithms. No tracking.
-                </h4>
-            </div>
-            <a href="{% url 'RegisterUser'%}">Sign up</a>
-        </div>
-        <div class="display_img">
-            <img src="{%static 'img/pexels-keenan-constance-545154-2865901.jpg'%}" alt="">
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-display);
+            overflow-x: hidden;
+            color: var(--color-cloud-white);
+        }
+
+        /* Typography Utilities */
+        .headline-display { font-weight: 300; line-height: 0.88; letter-spacing: -0.04em; }
+        .body-text { font-weight: 400; color: var(--color-ash-text); line-height: 1.6; }
+
+        .ghost-pill {
+            background: rgba(13,10,25,0.28);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--color-ash-text);
+            font-size: 0.875rem;
+        }
+
+        /* 60% Glassmorphism Base Class */
+        .glass-35 {
+            background: rgba(26, 22, 36, 0.60); /* #1a1624 at 60% */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-deep-35 {
+            background: rgba(27, 23, 40, 0.60); /* #1b1728 at 60% */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .inset-glowing-card {
+            background-color: rgba(26, 22, 36, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset, rgba(255, 142, 93, 0.3) 0px 1px 0px 0px inset;
+            border-radius: 16px;
+        }
+
+        .ember-cta {
+            background: var(--gradient-ember-cta);
+            color: var(--color-cloud-white);
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        .ember-cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .electric-current-border { position: relative; }
+        .electric-current-border::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 4px;
+            background: var(--gradient-electric-current);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        /* 3D Tilt */
+        .tilt-wrapper { perspective: 1200px; }
+        .tilt-element {
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+            transform: rotateY(-15deg) rotateX(5deg);
+        }
+        .tilt-wrapper:hover .tilt-element {
+            transform: rotateY(0deg) rotateX(0deg);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Animations */
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        
+        @keyframes scan {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+            100% { transform: translateX(0); }
+        }
+
+        .blur-huge { filter: blur(120px); }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Premium Preloader -->
+    <div id="vircle-preloader" style="transition-duration: 800ms;" class="fixed inset-0 z-[9999] bg-[#050505] flex items-center justify-center transition-opacity ease-in-out pointer-events-none">
+        <div class="relative w-20 h-20 flex items-center justify-center">
+            <div class="absolute inset-0 border-t-2 border-orange-500 rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-r-2 border-white/20 rounded-full animate-[spin_1.5s_reverse_infinite]"></div>
+            <div class="absolute inset-0 bg-orange-500/20 blur-xl rounded-full"></div>
+            <span class="text-orange-500 font-bold text-lg tracking-tighter animate-pulse">V.</span>
         </div>
     </div>
+    <script>
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('vircle-preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 800);
+            }
+        });
+    </script>
 
-    <!-- Features Section -->
-    <div class="home_title_l">
-        <h1>The social network you've been waiting for</h1>
-        <span>Finally, a social network that respects your privacy and gives you full control.</span>
+    <!-- 1. DYNAMIC 3D ANIMATED BACKGROUND (Parallax) -->
+    <div class="fixed inset-0 z-[-1] bg-[#0e0918] overflow-hidden pointer-events-none">
+        <!-- Glowing Orbs -->
+        <div id="orb1" class="absolute top-[10%] left-[10%] w-[500px] h-[500px] rounded-full bg-[#6b21ef] opacity-[0.15] blur-huge will-change-transform"></div>
+        <div id="orb2" class="absolute top-[50%] right-[5%] w-[700px] h-[700px] rounded-full bg-[#fd8925] opacity-[0.12] blur-huge will-change-transform"></div>
+        <div id="orb3" class="absolute bottom-[-20%] left-[30%] w-[600px] h-[600px] rounded-full bg-[#6b21ef] opacity-[0.15] blur-huge will-change-transform"></div>
+        
+        <!-- Floating Anonymous & Project Background Elements -->
+        <div id="float1" class="absolute top-[15%] left-[85%] text-[15rem] opacity-[0.03] text-white font-bold rotate-12 select-none will-change-transform">🎭</div>
+        <div id="float2" class="absolute top-[60%] left-[5%] text-[12rem] opacity-[0.03] text-white font-bold -rotate-12 select-none will-change-transform">🕵️</div>
+        <div id="float3" class="absolute top-[75%] left-[70%] text-[10rem] opacity-[0.03] text-white font-bold rotate-45 select-none will-change-transform">🔒</div>
+        <div id="float4" class="absolute top-[30%] left-[25%] text-[8rem] opacity-[0.04] text-[#fd8925] font-mono -rotate-6 select-none will-change-transform">&lt;/&gt;</div>
+        <div id="float5" class="absolute top-[10%] left-[45%] text-[20rem] opacity-[0.02] text-white font-bold rotate-[30deg] select-none will-change-transform">V</div>
     </div>
 
     <!-- 2. STICKY TOP NAVIGATION BAR (60% Glass) -->
