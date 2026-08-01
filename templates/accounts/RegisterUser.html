@@ -1,370 +1,456 @@
-{% extends "base.html" %}
-{% block content %}
 {% load static %}
-<style>
-    .state-select {
-        outline: none;
-        border: none;
-        background-color: #636264;
-        height: 35px;
-        width: 398px;
-        padding-left: 10px;
-        color: white;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    .state-select option {
-        background-color: #636264;
-        color: white;
-    }
-    .city-select {
-        outline: none;
-        border: none;
-        background-color: #636264;
-        height: 35px;
-        width: 398px;
-        padding-left: 10px;
-        color: white;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    .city-select option {
-        background-color: #636264;
-        color: white;
-    }
-    .city-select:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    .college-input {
-    outline: none !important;
-    border: none !important;
-    background-color: #636264;
-    height: 35px !important;
-    padding-left: 10px !important;
-    color: white !important;
-    border-radius: 8px !important;
-    }
-    .college-input::placeholder {
-        color: #89888aeb !important;
-        font-size: medium !important;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vircle | Sign Up</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-void-base: #0e0918;
+            --gradient-ember-cta: linear-gradient(30deg, rgb(253, 137, 37), rgb(255, 12, 0));
+            --font-display: 'DM Sans', 'Inter', sans-serif; 
+        }
 
-    .college-input:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    .suggestions-list {
-        position: absolute;
-        background-color: #3a3a3c;
-        border-radius: 8px;
-        max-height: 200px;
-        overflow-y: auto;
-        width: 398px;
-        z-index: 1000;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-    .suggestions-list li {
-        padding: 10px;
-        cursor: pointer;
-        color: white;
-        list-style: none;
-    }
-    .suggestions-list li:hover {
-        background-color: #4a4a4c;
-    }
-</style>
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-display);
+            overflow-x: hidden;
+            color: #ffffff;
+        }
 
-<!-- Registration Hero Section -->
-<div class="registration-hero">
-    <div class="registration-hero-bg" style="background-image: url({% static 'img/cartoon-nature-landscape-night-time-260nw-2187999189.jpg' %});"></div>
-    <div class="registration-hero-overlay"></div>
-    <div class="registration-hero-content">
-        <h2>Vircle lets your true colors shine.</h2>
-        <h3>Speak your mind without a name tag.</h3>
-        <p>In our private social media platform, anonymity empowers you to express yourself freely. Share your thoughts, experiences, and opinions without fear of judgment. Connect authentically and engage in genuine interactions. Here, your voice matters, fostering a supportive and dynamic community where true personalities shine. Welcome to your anonymous haven.</p>
+        .glass-35 {
+            background: rgba(26, 22, 36, 0.35);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ember-cta {
+            background: var(--gradient-ember-cta);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        .ember-cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .blur-huge { filter: blur(120px); }
+
+        /* Form Inputs */
+        .glass-input {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            transition: all 0.2s ease;
+            width: 100%;
+            height: 48px;
+            border-radius: 10px;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            font-size: 0.875rem;
+        }
+        .glass-input:focus {
+            outline: none;
+            border-color: rgb(253, 137, 37);
+            background: rgba(255,255,255,0.06);
+        }
+        .glass-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .glass-input option {
+            background-color: #2c2834;
+            color: white;
+        }
+        
+        .glass-input::placeholder {
+            color: #89888a;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            background-color: #1a1624;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 1000;
+            margin-top: 4px;
+        }
+        .suggestions-list li {
+            padding: 10px;
+            cursor: pointer;
+            color: white;
+            list-style: none;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.875rem;
+        }
+        .suggestions-list li:hover {
+            background-color: rgba(253, 137, 37, 0.2);
+        }
+
+        .checkbox-custom {
+            accent-color: rgb(253, 137, 37);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+    <!-- Premium Preloader -->
+    <div id="vircle-preloader" style="transition-duration: 800ms;" class="fixed inset-0 z-[9999] bg-[#050505] flex items-center justify-center transition-opacity ease-in-out pointer-events-none">
+        <div class="relative w-20 h-20 flex items-center justify-center">
+            <div class="absolute inset-0 border-t-2 border-orange-500 rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-r-2 border-white/20 rounded-full animate-[spin_1.5s_reverse_infinite]"></div>
+            <div class="absolute inset-0 bg-orange-500/20 blur-xl rounded-full"></div>
+            <span class="text-orange-500 font-bold text-lg tracking-tighter animate-pulse">V.</span>
+        </div>
     </div>
-</div>
+    <script>
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('vircle-preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 800);
+            }
+        });
+    </script>
 
-<!-- Registration Form Section -->
-<div class="registration-form-section">
-    <form action="{%url 'RegisterUser'%}" method="post" enctype="multipart/form-data" class="registration-form">
-        {%csrf_token%}
+    <!-- DYNAMIC 3D ANIMATED BACKGROUND (Gray & Orange) -->
+    <div class="fixed inset-0 z-[-1] bg-[#0e0918] overflow-hidden pointer-events-none">
+        <div id="orb1" class="absolute top-[10%] left-[10%] w-[500px] h-[500px] rounded-full bg-[#4a4a4c] opacity-[0.25] blur-huge will-change-transform"></div>
+        <div id="orb2" class="absolute top-[50%] right-[5%] w-[700px] h-[700px] rounded-full bg-[#fd8925] opacity-[0.12] blur-huge will-change-transform"></div>
+        <div id="orb3" class="absolute bottom-[-20%] left-[30%] w-[600px] h-[600px] rounded-full bg-[#2c2834] opacity-[0.3] blur-huge will-change-transform"></div>
+        
+        <div id="float1" class="absolute top-[25%] left-[80%] text-[10rem] opacity-[0.03] text-white font-bold rotate-12 select-none will-change-transform">🎭</div>
+        <div id="float2" class="absolute top-[60%] left-[10%] text-[8rem] opacity-[0.03] text-[#fd8925] font-bold -rotate-12 select-none will-change-transform">⚡</div>
+    </div>
 
-        <div class="form-grid" style="gap: 50px;">
-            <div class="form-group">
-                <label>First Name</label>
-                <input type="text" name="first_name" placeholder="Enter your first name">
-            </div>
-            <div class="form-group">
-                <label>Last Name</label>
-                <input type="text" name="last_name" placeholder="Enter your last name">
-            </div>
+    <!-- STICKY TOP NAVIGATION BAR (35% Glass) -->
+    <nav class="fixed top-0 w-full z-50 h-[72px] bg-[#0e0918]/35 backdrop-blur-md border-b border-[rgba(255,255,255,0.05)] px-6 md:px-12 flex justify-between items-center transition-all duration-300 shadow-lg">
+        <a href="{% url 'home' %}" class="flex flex-col justify-center">
+            <span class="text-[22px] font-bold tracking-tight text-white leading-none mb-0.5">Vircle!</span>
+            <span class="text-[11px] text-[#9d9797] font-medium leading-none uppercase tracking-wider">Virtual Circle</span>
+        </a>
+        <div class="flex gap-4 items-center">
+            <span class="text-[#d1cece] text-sm hidden sm:block">Already joined?</span>
+            <a href="{% url 'login' %}" class="px-5 py-2 text-sm font-medium border border-[rgba(255,255,255,0.1)] rounded-[6px] text-white hover:bg-white hover:text-black transition bg-[rgba(255,255,255,0.05)] h-[40px] flex items-center">Log in</a>
         </div>
+    </nav>
 
-        <div class="form-grid"  style="gap: 50px;">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" placeholder="Enter your email">
-            </div>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" placeholder="Choose a username">
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-                <label>State/Union Territory</label>
-                <select name="state" id="id_state" class="state-select" style="padding: 13px;height: 48px;">
-                    <option value="" disabled selected>Select State / UT</option>
-                    {% for region in india_regions %}
-                    <option value="{{ region.0 }}">{{ region.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label>Gender</label>
-                <select name="gender">
-                    <option>Select your gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-                <label>City</label>
-                <select name="city" id="id_city" class="city-select" disabled style="padding: 13px;height: 48px;">
-                    <option value="" disabled selected>Select City</option>
-                </select>
-            </div>
-            <div class="form-group" style="flex: 1; position: relative;">
-                <label>College</label>
-                <input type="text" name="college_name" id="id_college_name" class="college-input" placeholder="Start typing your college name">
-                <input type="hidden" name="college_name_hidden" id="id_college_name_hidden">
-                <ul id="college-suggestions" class="suggestions-list" style="display: none;"></ul>
-            </div>
-        </div>
-
-        <div class="form-grid"  style="gap: 50px;">
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" id="passwordInput1" placeholder="Create a password">
-            </div>
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="conform_password" id="passwordInput" placeholder="Confirm your password">
-            </div>
-        </div>
-
-        <div class="form-options">
-            <label class="checkbox-label">
-                <input type="checkbox" name="show_password" onclick="togglePassword()">
-                <span class="checkbox-custom"></span>
-                Show Passwords
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" name="agree_to_terms" required>
-                <span class="checkbox-custom"></span>
-                <a href="{%url 'terms'%}" class="terms-link">Agree to terms and conditions</a>
-            </label>
-        </div>
-
-        <div class="errors_handle">
-            {% for field in form %}
-            {% if field.errors%}
-            {% for error in field.errors%}
-            <li style="color: #ff6b6b;">* {{error}}</li>
-            {%endfor%}
-            {%endif%}
-            {% endfor%}
-            <li style="color: #ff6b6b;">{{form.non_field_errors}}</li>
-        </div>
-
-        <div class="form-submit-btn">
-            <button type="submit">Create Account</button>
-        </div>
-
-        <div class="messages">
+    <!-- ALERTS -->
+    <div class="fixed top-[80px] w-full z-50 flex justify-center px-4 pointer-events-none">
+        <div class="pointer-events-auto w-full max-w-xl">
             {% include "includes/alerts.html" %}
         </div>
-    </form>
-</div>
+    </div>
 
-<script>
-    // Password toggle functionality
-    function togglePassword() {
-        var passwordInput = document.getElementById('passwordInput');
-        var passwordInput1 = document.getElementById('passwordInput1');
-        if (passwordInput.type === 'password' && passwordInput1.type === 'password') {
-            passwordInput.type = 'text';
-            passwordInput1.type = 'text';
-        } else {
-            passwordInput.type = 'password';
-            passwordInput1.type = 'password';
+    <!-- MAIN REGISTRATION LAYOUT -->
+    <main class="flex-grow flex items-center justify-center px-4 py-24 relative z-10 w-full max-w-[1200px] mx-auto gap-12 lg:gap-24 flex-col lg:flex-row">
+        
+        <!-- Left: Text content -->
+        <div class="flex-1 flex flex-col gap-6 max-w-lg lg:max-w-md w-full">
+            <h1 class="text-5xl md:text-6xl font-light text-white tracking-tight leading-tight">
+                Vircle lets your true colors shine.
+            </h1>
+            <h3 class="text-xl md:text-2xl font-light text-[#fd8925]">
+                Speak your mind without a name tag.
+            </h3>
+            <p class="text-[#9d9797] text-base leading-relaxed">
+                In our private social media platform, anonymity empowers you to express yourself freely. Share your thoughts, experiences, and opinions without fear of judgment. Connect authentically and engage in genuine interactions. Here, your voice matters, fostering a supportive and dynamic community where true personalities shine. Welcome to your anonymous haven.
+            </p>
+        </div>
+
+        <!-- Right: Registration Form -->
+        <div class="flex-1 w-full max-w-2xl">
+            <div class="glass-35 rounded-[24px] p-8 md:p-10 shadow-2xl relative overflow-hidden">
+                <!-- Subtle Top Glow -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[2px] bg-[rgb(253,137,37)] shadow-[0_0_20px_rgb(253,137,37)]"></div>
+                
+                <h2 class="text-2xl font-medium text-white mb-8">Create your Account</h2>
+
+                <form action="{% url 'RegisterUser' %}" method="post" enctype="multipart/form-data" class="flex flex-col gap-6">
+                    {% csrf_token %}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">First Name</label>
+                            <input type="text" name="first_name" placeholder="Enter your first name" class="glass-input">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">Last Name</label>
+                            <input type="text" name="last_name" placeholder="Enter your last name" class="glass-input">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">Email</label>
+                            <input type="email" name="email" placeholder="Enter your email" class="glass-input">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">Username</label>
+                            <input type="text" name="username" placeholder="Choose a username" class="glass-input">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">State/Union Territory</label>
+                            <select name="state" id="id_state" class="glass-input cursor-pointer">
+                                <option value="" disabled selected>Select State / UT</option>
+                                {% for region in india_regions %}
+                                <option value="{{ region.0 }}">{{ region.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">Gender</label>
+                            <select name="gender" class="glass-input cursor-pointer">
+                                <option value="" disabled selected>Select your gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">City</label>
+                            <select name="city" id="id_city" class="glass-input cursor-pointer" disabled>
+                                <option value="" disabled selected>Select City</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2 relative">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">College</label>
+                            <input type="text" name="college_name" id="id_college_name" class="glass-input" placeholder="Start typing..." disabled autocomplete="off">
+                            <input type="hidden" name="college_name_hidden" id="id_college_name_hidden">
+                            <ul id="college-suggestions" class="suggestions-list" style="display: none;"></ul>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2 relative">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">Password</label>
+                            <input type="password" name="password" id="passwordInput1" placeholder="Create a password" class="glass-input">
+                        </div>
+                        <div class="flex flex-col gap-2 relative">
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">Confirm Password</label>
+                            <input type="password" name="conform_password" id="passwordInput" placeholder="Confirm password" class="glass-input">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3 mt-2">
+                        <label class="flex items-center gap-2 cursor-pointer text-sm text-[#d1cece] hover:text-white transition">
+                            <input type="checkbox" name="show_password" onclick="togglePassword()" class="checkbox-custom">
+                            Show Passwords
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer text-sm text-[#d1cece]">
+                            <input type="checkbox" name="agree_to_terms" required class="checkbox-custom">
+                            <span>I agree to the <a href="{% url 'terms' %}" class="text-[#fd8925] hover:underline">terms and conditions</a></span>
+                        </label>
+                    </div>
+
+                    <!-- Django Form Errors -->
+                    <div class="text-[#ff6b6b] text-sm flex flex-col gap-1">
+                        {% for field in form %}
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        {{error}}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if form.non_field_errors %}
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                {{form.non_field_errors}}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="ember-cta w-full h-[48px] font-medium text-base mt-2 shadow-[0_4px_20px_rgba(253,137,37,0.3)]">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- JS FOR PASSWORD & DYNAMIC DROPDOWNS -->
+    <script>
+        function togglePassword() {
+            var p1 = document.getElementById('passwordInput');
+            var p2 = document.getElementById('passwordInput1');
+            if (p1.type === 'password' && p2.type === 'password') {
+                p1.type = 'text'; p2.type = 'text';
+            } else {
+                p1.type = 'password'; p2.type = 'password';
+            }
         }
-    }
 
-    // Cascading dropdown logic: State → City → College
-    document.addEventListener('DOMContentLoaded', function() {
-        const stateSelect = document.getElementById('id_state');
-        const citySelect = document.getElementById('id_city');
-        const collegeInput = document.getElementById('id_college_name');
-        const suggestionsList = document.getElementById('college-suggestions');
-        let debounceTimer = null;
+        // Cascading dropdown logic: State → City → College
+        document.addEventListener('DOMContentLoaded', function() {
+            const stateSelect = document.getElementById('id_state');
+            const citySelect = document.getElementById('id_city');
+            const collegeInput = document.getElementById('id_college_name');
+            const suggestionsList = document.getElementById('college-suggestions');
+            let debounceTimer = null;
 
-        // On state change: fetch cities
-        if (stateSelect) {
-            stateSelect.addEventListener('change', function() {
-                const state = this.value;
+            // On state change: fetch cities
+            if (stateSelect) {
+                stateSelect.addEventListener('change', function() {
+                    const state = this.value;
 
-                // Reset city and college
-                citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
-                citySelect.disabled = true;
-                collegeInput.disabled = true;
-                collegeInput.value = '';
-                suggestionsList.style.display = 'none';
-
-                if (state) {
-                    fetchCities(state);
-                }
-            });
-        }
-
-        function fetchCities(state) {
-            fetch(`/api/get_cities/?state=${encodeURIComponent(state)}`)
-                .then(response => response.json())
-                .then(cities => {
-                    if (cities && cities.length > 0) {
-                        cities.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city;
-                            option.textContent = city;
-                            citySelect.appendChild(option);
-                        });
-                        citySelect.disabled = false;
-                    } else {
-                        const option = document.createElement('option');
-                        option.value = '';
-                        option.textContent = 'City not listed - type manually';
-                        citySelect.appendChild(option);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching cities:', error);
-                });
-        }
-
-        // On city change: enable college input
-        if (citySelect) {
-            citySelect.addEventListener('change', function() {
-                const city = this.value;
-                if (city) {
-                    collegeInput.disabled = false;
-                    collegeInput.focus();
-                } else {
+                    // Reset city and college
+                    citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+                    citySelect.disabled = true;
                     collegeInput.disabled = true;
                     collegeInput.value = '';
                     suggestionsList.style.display = 'none';
-                }
-            });
-        }
 
-        // On college typing: fetch suggestions
-        if (collegeInput) {
-            collegeInput.addEventListener('input', function() {
-                const query = this.value.trim();
-                const state = stateSelect.value;
-                const city = citySelect.value;
+                    if (state) {
+                        fetchCities(state);
+                    }
+                });
+            }
 
-                document.getElementById('id_college_name_hidden').value = query;
-
-                clearTimeout(debounceTimer);
-
-                if (query.length < 2) {
-                    suggestionsList.style.display = 'none';
-                    return;
-                }
-
-                if (!state || !city) {
-                    suggestionsList.style.display = 'none';
-                    return;
-                }
-
-                debounceTimer = setTimeout(() => {
-                    fetchCollegeSuggestions(query, state, city);
-                }, 300);
-            });
-
-            collegeInput.addEventListener('blur', function() {
-                setTimeout(() => {
-                    suggestionsList.style.display = 'none';
-                }, 200);
-            });
-        }
-
-        function fetchCollegeSuggestions(query, state, city) {
-            fetch(`/api/search-colleges/?q=${encodeURIComponent(query)}&state=${encodeURIComponent(state)}&city=${encodeURIComponent(city)}`)
-                .then(response => response.json())
-                .then(colleges => {
-                    suggestionsList.innerHTML = '';
-
-                    if (colleges && colleges.length > 0) {
-                        colleges.forEach(college => {
-                            const li = document.createElement('li');
-                            li.textContent = college.name;
-                            li.addEventListener('click', function() {
-                                collegeInput.value = college.name;
-                                document.getElementById('id_college_name_hidden').value = college.name;
-                                suggestionsList.style.display = 'none';
+            function fetchCities(state) {
+                fetch(`/api/get_cities/?state=${encodeURIComponent(state)}`)
+                    .then(response => response.json())
+                    .then(cities => {
+                        if (cities && cities.length > 0) {
+                            cities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city;
+                                option.textContent = city;
+                                citySelect.appendChild(option);
                             });
-                            suggestionsList.appendChild(li);
-                        });
-                        suggestionsList.style.display = 'block';
+                            citySelect.disabled = false;
+                        } else {
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No cities available for this state.';
+                            citySelect.appendChild(option);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cities:', error);
+                    });
+            }
+
+            // On city change: enable college input
+            if (citySelect) {
+                citySelect.addEventListener('change', function() {
+                    if (this.value) {
+                        collegeInput.disabled = false;
+                    } else {
+                        collegeInput.disabled = true;
+                        collegeInput.value = '';
+                        suggestionsList.style.display = 'none';
+                    }
+                });
+            }
+
+            // College Autocomplete Logic
+            if (collegeInput) {
+                collegeInput.addEventListener('input', function() {
+                    const query = this.value;
+                    const state = stateSelect.value;
+                    const city = citySelect.value;
+
+                    clearTimeout(debounceTimer);
+
+                    if (query.length >= 2 && state && city) {
+                        debounceTimer = setTimeout(() => {
+                            fetch(`/api/search-colleges/?state=${encodeURIComponent(state)}&city=${encodeURIComponent(city)}&q=${encodeURIComponent(query)}`)
+                                .then(response => response.json())
+                                .then(colleges => {
+                                    suggestionsList.innerHTML = '';
+                                    if (colleges.length > 0) {
+                                        colleges.forEach(college => {
+                                            const li = document.createElement('li');
+                                            li.textContent = college.name;
+                                            li.addEventListener('click', function() {
+                                                collegeInput.value = college.name;
+                                                document.getElementById('id_college_name_hidden').value = college.name;
+                                                suggestionsList.style.display = 'none';
+                                            });
+                                            suggestionsList.appendChild(li);
+                                        });
+                                        suggestionsList.style.display = 'block';
+                                    } else {
+                                        suggestionsList.style.display = 'none';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching colleges:', error);
+                                });
+                        }, 300);
                     } else {
                         suggestionsList.style.display = 'none';
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching colleges:', error);
                 });
-        }
 
-        // Form validation
-        const form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                const state = stateSelect.value;
-                const city = citySelect.value;
-                const college = collegeInput.value.trim();
-
-                if (!state) {
-                    e.preventDefault();
-                    alert('Please select your state/union territory.');
-                    stateSelect.focus();
-                    return false;
+                // Hide suggestions when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!collegeInput.contains(event.target) && !suggestionsList.contains(event.target)) {
+                        suggestionsList.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Simple Parallax (Lazy Initialized)
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    initParallax();
+                    observer.disconnect();
                 }
+            }, { threshold: 0 });
+            
+            observer.observe(document.body);
 
-                if (!city) {
-                    e.preventDefault();
-                    alert('Please select your city.');
-                    citySelect.focus();
-                    return false;
-                }
-
-                if (!college) {
-                    e.preventDefault();
-                    alert('Please enter your college name.');
-                    collegeInput.focus();
-                    return false;
-                }
-
-                document.getElementById('id_college_name_hidden').value = college;
-            });
-        }
-    });
-</script>
-{% include "includes/alerts.html" %}
-{% endblock %}
+            function initParallax() {
+                const orb1 = document.getElementById('orb1');
+                const orb2 = document.getElementById('orb2');
+                const orb3 = document.getElementById('orb3');
+                const float1 = document.getElementById('float1');
+                const float2 = document.getElementById('float2');
+                
+                let ticking = false;
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            const scrolled = window.scrollY;
+                            if(orb1) orb1.style.transform = `translateY(${scrolled * -0.4}px)`;
+                            if(orb2) orb2.style.transform = `translateY(${scrolled * -0.6}px)`;
+                            if(orb3) orb3.style.transform = `translateY(${scrolled * -0.25}px)`;
+                            if(float1) float1.style.transform = `translateY(${scrolled * -0.8}px) rotate(12deg)`;
+                            if(float2) float2.style.transform = `translateY(${scrolled * -0.5}px) rotate(-12deg)`;
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

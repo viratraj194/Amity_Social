@@ -1,84 +1,417 @@
-{% extends "base.html" %}
-{% block content %}
 {% load static %}
-<body>
-    <div class="container">
-        <div class="quot">
-            <div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vircle | Campus Confessions</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-void-base: #0e0918;
+            --color-elevated-surface: #1a1624;
+            --color-deep-panel: #1b1728;
+            --color-muted-shell: #2c2834;
+            --color-border-smoke: rgba(62, 58, 70, 0.5); /* softer border for glass */
+            --color-ash-text: #d1cece;
+            --color-fog-text: #9d9797;
+            --color-cloud-white: #ffffff;
+            --gradient-ember-cta: linear-gradient(30deg, rgb(253, 137, 37), rgb(255, 12, 0));
+            --gradient-electric-current: linear-gradient(141deg, rgb(7, 122, 199), rgb(107, 33, 239));
+            --font-display: 'DM Sans', 'Inter', sans-serif; 
+        }
 
-                <h1>Your thoughts, your secrets</h1>
-                <h4>Vircle is a private and secure social network that respects your privacy. No ads. No algorithms. No tracking.
-                </h4>
-            </div>
-            <a href="{% url 'RegisterUser'%}">Sign up</a>
-        </div>
-        <div class="display_img">
-            <img src="{%static 'img/pexels-keenan-constance-545154-2865901.jpg'%}" alt="">
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-display);
+            overflow-x: hidden;
+            color: var(--color-cloud-white);
+        }
+
+        /* Typography Utilities */
+        .headline-display { font-weight: 300; line-height: 0.88; letter-spacing: -0.04em; }
+        .body-text { font-weight: 400; color: var(--color-ash-text); line-height: 1.6; }
+
+        .ghost-pill {
+            background: rgba(13,10,25,0.28);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--color-ash-text);
+            font-size: 0.875rem;
+        }
+
+        /* 60% Glassmorphism Base Class */
+        .glass-35 {
+            background: rgba(26, 22, 36, 0.60); /* #1a1624 at 60% */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-deep-35 {
+            background: rgba(27, 23, 40, 0.60); /* #1b1728 at 60% */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .inset-glowing-card {
+            background-color: rgba(26, 22, 36, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset, rgba(255, 142, 93, 0.3) 0px 1px 0px 0px inset;
+            border-radius: 16px;
+        }
+
+        .ember-cta {
+            background: var(--gradient-ember-cta);
+            color: var(--color-cloud-white);
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        .ember-cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        .electric-current-border { position: relative; }
+        .electric-current-border::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 4px;
+            background: var(--gradient-electric-current);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        /* 3D Tilt */
+        .tilt-wrapper { perspective: 1200px; }
+        .tilt-element {
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+            transform: rotateY(-15deg) rotateX(5deg);
+        }
+        .tilt-wrapper:hover .tilt-element {
+            transform: rotateY(0deg) rotateX(0deg);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Animations */
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        
+        @keyframes scan {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+            100% { transform: translateX(0); }
+        }
+
+        .blur-huge { filter: blur(120px); }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Premium Preloader -->
+    <div id="vircle-preloader" style="transition-duration: 800ms;" class="fixed inset-0 z-[9999] bg-[#050505] flex items-center justify-center transition-opacity ease-in-out pointer-events-none">
+        <div class="relative w-20 h-20 flex items-center justify-center">
+            <div class="absolute inset-0 border-t-2 border-orange-500 rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-r-2 border-white/20 rounded-full animate-[spin_1.5s_reverse_infinite]"></div>
+            <div class="absolute inset-0 bg-orange-500/20 blur-xl rounded-full"></div>
+            <span class="text-orange-500 font-bold text-lg tracking-tighter animate-pulse">V.</span>
         </div>
     </div>
+    <script>
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('vircle-preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 800);
+            }
+        });
+    </script>
 
-    <!-- Features Section -->
-    <div class="home_title_l">
-        <h1>The social network you've been waiting for</h1>
-        <span>Finally, a social network that respects your privacy and gives you full control.</span>
+    <!-- 1. DYNAMIC 3D ANIMATED BACKGROUND (Parallax) -->
+    <div class="fixed inset-0 z-[-1] bg-[#0e0918] overflow-hidden pointer-events-none">
+        <!-- Glowing Orbs -->
+        <div id="orb1" class="absolute top-[10%] left-[10%] w-[500px] h-[500px] rounded-full bg-[#6b21ef] opacity-[0.15] blur-huge will-change-transform"></div>
+        <div id="orb2" class="absolute top-[50%] right-[5%] w-[700px] h-[700px] rounded-full bg-[#fd8925] opacity-[0.12] blur-huge will-change-transform"></div>
+        <div id="orb3" class="absolute bottom-[-20%] left-[30%] w-[600px] h-[600px] rounded-full bg-[#6b21ef] opacity-[0.15] blur-huge will-change-transform"></div>
+        
+        <!-- Floating Anonymous & Project Background Elements -->
+        <div id="float1" class="absolute top-[15%] left-[85%] text-[15rem] opacity-[0.03] text-white font-bold rotate-12 select-none will-change-transform">🎭</div>
+        <div id="float2" class="absolute top-[60%] left-[5%] text-[12rem] opacity-[0.03] text-white font-bold -rotate-12 select-none will-change-transform">🕵️</div>
+        <div id="float3" class="absolute top-[75%] left-[70%] text-[10rem] opacity-[0.03] text-white font-bold rotate-45 select-none will-change-transform">🔒</div>
+        <div id="float4" class="absolute top-[30%] left-[25%] text-[8rem] opacity-[0.04] text-[#fd8925] font-mono -rotate-6 select-none will-change-transform">&lt;/&gt;</div>
+        <div id="float5" class="absolute top-[10%] left-[45%] text-[20rem] opacity-[0.02] text-white font-bold rotate-[30deg] select-none will-change-transform">V</div>
     </div>
-    <div class="features-container">
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="bi bi-eye-slash"></i>
+
+    <!-- 2. STICKY TOP NAVIGATION BAR (60% Glass) -->
+    <nav class="fixed top-0 w-full z-50 h-[72px] bg-[#0e0918]/60 backdrop-blur-md border-b border-[rgba(255,255,255,0.05)] px-6 md:px-12 flex justify-between items-center transition-all duration-300 shadow-lg">
+        <div class="flex flex-col justify-center">
+            <span class="text-[22px] font-bold tracking-tight text-white leading-none mb-0.5">Vircle!</span>
+            <span class="text-[11px] text-[#9d9797] font-medium leading-none uppercase tracking-wider">Virtual Circle</span>
+        </div>
+        <div class="flex gap-4 items-center">
+            <a href="{% url 'login' %}" class="px-5 py-2 text-sm font-medium border border-[#e5e7eb] rounded-[6px] text-white hover:bg-white hover:text-black transition bg-transparent h-[40px] flex items-center">Log in</a>
+            <a href="{% url 'RegisterUser' %}" class="ember-cta px-5 py-2 text-sm font-medium flex items-center justify-center rounded-[8px] h-[40px]">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="min-h-screen pt-[120px] pb-20 relative z-10 flex flex-col gap-32">
+        <!-- HERO SECTION -->
+        <section class="px-6 md:px-12 max-w-[1400px] mx-auto w-full flex flex-col lg:flex-row items-center gap-16 mt-10">
+            <div class="flex-1 flex flex-col items-start text-left gap-8 animate-fade">
+                <div class="ghost-pill px-4 py-2 inline-flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    ⚡ Live Campus WebSockets
                 </div>
-                <h2>No ads</h2>
-                <span>We don't sell your data to advertisers</span>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="bi bi-diagram-3"></i>
-                </div>
-                <h2>No algorithms</h2>
-                <span>We don't manipulate your feed with algorithms</span>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="bi bi-geo-slash"></i>
-                </div>
-                <h2>No tracking</h2>
-                <span>We don't track you location or you behaviours</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Community/Email Section -->
-    <div class="community-section">
-        <div class="community-container">
-            <div class="community-image">
-                <img src="{%static 'img/signup.jpeg'%}" alt="Join our community">
-            </div>
-            <div class="community-content">
-                <h1>Connect with Vircle friends, find some one of your like</h1>
-                <div class="email-form">
-                    <i class="bi bi-envelope"></i>
-                    <input type="email" name="" id="" placeholder="Enter you email for latest update">
-                    <button type="submit">Submit</button>
+                
+                <h1 class="text-6xl md:text-8xl headline-display">
+                    Your Campus.<br/>Your Confessions.<br/>Zero Gatekeepers.
+                </h1>
+                
+                <p class="text-xl body-text max-w-xl">
+                    Vircle gives your college its own private, isolated feed. Share secrets, drop thoughts, and chat with your campus in real-time.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+                    <a href="{% url 'RegisterUser' %}" class="ember-cta px-8 py-4 text-base font-medium flex items-center justify-center gap-2">
+                        Enter Campus Feed
+                    </a>
+                    <a href="#how-it-works" class="px-8 py-4 rounded-[6px] text-base font-medium border border-[#e5e7eb] text-white hover:bg-white hover:text-black transition flex items-center justify-center">
+                        See How It Works
+                    </a>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- CTA Section -->
-    <div class="cta-section">
-        <div class="cta-card">
-            <div class="cta-image">
-                <img src="{%static 'img/footer_img.png'%}" alt="Join Vircle">
+            
+            <!-- 3D UI (35% Glass) -->
+            <div class="flex-1 w-full max-w-2xl tilt-wrapper animate-fade delay-100">
+                <div class="tilt-element glass-deep-35 rounded-[24px] p-8 shadow-2xl relative">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex justify-between items-center mb-4 border-b border-[rgba(255,255,255,0.05)] pb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-[8px] glass-35 flex items-center justify-center font-bold text-sm">A</div>
+                                <div>
+                                    <h3 class="font-medium text-white text-sm">Your Collage Live Feed</h3>
+                                    <p class="text-xs text-[#9d9797]">248 Online</p>
+                                </div>
+                            </div>
+                            <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-35 rounded-[12px] p-4 flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-[#2c2834] flex items-center justify-center text-sm shrink-0">🕵️</div>
+                            <div>
+                                <p class="body-text text-sm mb-2 text-white">Anyone else completely lost in the Data Structures assignment? Arrays are breaking my brain right now.</p>
+                                <div class="text-[#9d9797] text-xs font-medium">Just now</div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-35 rounded-[12px] p-4 flex gap-4 items-start electric-current-border border-transparent">
+                            <div class="w-8 h-8 rounded-full bg-[#2c2834] flex items-center justify-center text-sm shrink-0">🎭</div>
+                            <div>
+                                <p class="body-text text-sm mb-2 text-white">To the guy playing guitar outside Block C at 2 AM... please don't stop. It's the only thing getting me through this.</p>
+                                <div class="flex gap-4 text-[#9d9797] text-xs font-medium mt-3">
+                                    <span>142 Likes</span>
+                                    <span>28 Comments</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="cta-content">
-                <h1>Jon the Vircle. Sign up today.</h1>
-                <p>Be part of the movement towards a more private internet.</p>
-            </div>
-            <a href="{% url 'RegisterUser' %}" class="cta-button">Sign up</a>
-        </div>
-    </div>
+        </section>
 
+        <!-- BEFORE VS AFTER (35% Glass) -->
+        <section id="how-it-works" class="px-6 md:px-12 max-w-[1200px] mx-auto w-full animate-fade delay-200">
+            <div class="glass-deep-35 rounded-[24px] p-2 flex flex-col md:flex-row items-stretch shadow-xl">
+                <!-- The Old Way -->
+                <div class="flex-1 p-10 md:border-r border-b md:border-b-0 border-[rgba(255,255,255,0.05)] flex flex-col justify-center">
+                    <div class="text-[#9d9797] font-medium mb-2 uppercase tracking-widest text-xs">The Old Way</div>
+                    <h3 class="text-2xl font-light text-[#d1cece] mb-6">Instagram Confession Pages</h3>
+                    <ul class="space-y-4 body-text text-sm">
+                        <li class="flex items-start gap-3"><span class="text-[#9d9797] mt-1">✗</span><span>Waiting for admins in long queues.</span></li>
+                        <li class="flex items-start gap-3"><span class="text-[#9d9797] mt-1">✗</span><span>DMs ignored or filtered by gatekeepers.</span></li>
+                        <li class="flex items-start gap-3"><span class="text-[#9d9797] mt-1">✗</span><span>Identity at risk via fake accounts.</span></li>
+                    </ul>
+                </div>
+                <!-- The Vircle Way -->
+                <div class="flex-1 p-10 inset-glowing-card m-2">
+                    <div class="text-[rgb(253,137,37)] font-medium mb-2 uppercase tracking-widest text-xs flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[rgb(253,137,37)] animate-pulse"></span> The Vircle Way
+                    </div>
+                    <h3 class="text-2xl font-light text-white mb-6">Instant & Private Platform</h3>
+                    <ul class="space-y-4 body-text text-sm text-white">
+                        <li class="flex items-start gap-3"><span class="text-[rgb(253,137,37)] mt-1">✓</span><span>Instant live posts. Zero moderation delay.</span></li>
+                        <li class="flex items-start gap-3"><span class="text-[rgb(253,137,37)] mt-1">✓</span><span>1-click anonymity. Total identity control.</span></li>
+                        <li class="flex items-start gap-3"><span class="text-[rgb(253,137,37)] mt-1">✓</span><span>Campus-isolated secure wall.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- BENTO GRID FEATURES (35% Glass) -->
+        <section class="px-6 md:px-12 max-w-[1200px] mx-auto w-full">
+            <h2 class="text-4xl md:text-5xl headline-display mb-12 text-center text-white">Engineered for Freedom</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-fr">
+                <div class="glass-35 rounded-[16px] p-8 shadow-lg flex flex-col justify-between min-h-[220px]">
+                    <div class="w-10 h-10 rounded-[8px] bg-[#2c2834] flex items-center justify-center mb-6 text-xl">🌍</div>
+                    <div>
+                        <h3 class="text-xl font-medium text-white mb-2">Hyper-Local Feed</h3>
+                        <p class="body-text text-sm text-[#d1cece]">Posts restricted to your specific campus boundaries. Safe, private, and relevant.</p>
+                    </div>
+                </div>
+                <div class="glass-35 rounded-[16px] p-8 shadow-lg flex flex-col justify-between min-h-[220px]">
+                    <div class="w-10 h-10 rounded-[8px] bg-[#2c2834] flex items-center justify-center mb-6 text-xl">🎭</div>
+                    <div>
+                        <h3 class="text-xl font-medium text-white mb-2">1-Click Anonymity</h3>
+                        <p class="body-text text-sm text-[#d1cece]">Toggle between your real profile and a stealth mask instantly before every post.</p>
+                    </div>
+                </div>
+                <div class="glass-35 rounded-[16px] p-8 shadow-lg flex flex-col justify-between min-h-[220px] relative overflow-hidden">
+                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[150px] h-[2px] bg-[rgba(255,255,255,0.05)]"></div>
+                    <div class="absolute right-10 top-1/2 -translate-y-1/2 w-[50px] h-[3px] rounded-full" style="background: var(--gradient-electric-current); animation: scan 2s linear infinite;"></div>
+                    <div class="w-10 h-10 rounded-[8px] bg-[#2c2834] flex items-center justify-center mb-6 relative z-10 text-xl">💬</div>
+                    <div class="relative z-10 w-2/3">
+                        <h3 class="text-xl font-medium text-white mb-2">Live Chat</h3>
+                        <p class="body-text text-sm text-[#d1cece]">Real-time active data flows. Instant direct messaging powered by WebSockets.</p>
+                    </div>
+                </div>
+                <div class="glass-35 rounded-[16px] p-8 shadow-lg flex flex-col justify-between min-h-[220px]">
+                    <div class="w-10 h-10 rounded-[8px] bg-[#2c2834] flex items-center justify-center mb-6 text-xl">⚡</div>
+                    <div>
+                        <h3 class="text-xl font-medium text-white mb-2">Zero Moderation Delay</h3>
+                        <p class="body-text text-sm text-[#d1cece]">Publish instantly to the campus wall. No more waiting hours for an admin to wake up.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE PREVIEW (35% Glass) -->
+        <section class="px-6 md:px-12 max-w-[1000px] mx-auto w-full flex flex-col items-center">
+            <h2 class="text-3xl font-light text-white mb-10">Live Node Preview</h2>
+            <div class="w-full glass-deep-35 rounded-[24px] p-8 flex flex-col gap-6 relative shadow-2xl">
+                <div class="absolute left-14 top-10 bottom-10 w-[2px] bg-[rgba(255,255,255,0.05)] z-0"></div>
+                <div class="glass-35 rounded-[12px] p-5 ml-10 relative z-10 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+                    <div class="absolute -left-[45px] top-6 w-3 h-3 rounded-full bg-[rgba(255,255,255,0.2)] border-[3px] border-transparent"></div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="text-sm font-medium text-white">Confession_Node_01</div>
+                        <div class="text-xs text-[#9d9797] font-mono">10:42 AM</div>
+                    </div>
+                    <p class="body-text text-sm text-white">Midterms are approaching and I haven't started studying. Engineering is breaking me.</p>
+                </div>
+                <div class="glass-35 rounded-[12px] p-5 ml-10 relative z-10 electric-current-border border-transparent shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
+                    <div class="absolute -left-[45px] top-6 w-3 h-3 rounded-full bg-[rgb(107,33,239)] border-[3px] border-transparent shadow-[0_0_10px_rgb(107,33,239)]"></div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="text-sm font-medium text-white">Confession_Node_02</div>
+                        <div class="text-xs text-[#9d9797] font-mono flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[rgb(7,122,199)] animate-pulse"></span> PROCESSING
+                        </div>
+                    </div>
+                    <p class="body-text text-sm text-white">Wait, who took my charger from the library? I left it there for exactly 2 minutes! 😤</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 3. THE MEGA-FOOTER -->
+    <footer class="w-full bg-[#0e0918]/80 backdrop-blur-md border-t border-[rgba(255,255,255,0.05)] pt-32 pb-16 relative z-10 overflow-hidden mt-20">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[radial-gradient(ellipse_at_top,rgba(253,137,37,0.08)_0%,transparent_70%)] pointer-events-none"></div>
+        <div class="max-w-[1200px] mx-auto px-6 md:px-12 w-full flex flex-col items-center relative z-10">
+            <h2 class="text-4xl md:text-5xl font-light text-center text-white mb-8 tracking-tight">
+                Ready to take back your campus feed?
+            </h2>
+            <a href="{% url 'RegisterUser' %}" class="ember-cta px-10 py-5 rounded-[8px] text-white text-lg font-medium shadow-[0_0_30px_rgba(253,137,37,0.3)] mb-24 inline-block">
+                Join Vircle Now
+            </a>
+            <div class="w-full border-t border-[rgba(255,255,255,0.05)] pt-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+                <div class="flex flex-col gap-4 items-center md:items-start">
+                    <h4 class="text-white font-medium text-lg mb-2">Legal</h4>
+                    <a href="#" class="text-[#9d9797] hover:text-white text-sm transition-colors duration-300">Privacy Policy</a>
+                    <a href="{% url 'terms' %}" class="text-[#9d9797] hover:text-white text-sm transition-colors duration-300">Terms of Service</a>
+                </div>
+                <div class="flex flex-col gap-4 items-center md:items-start">
+                    <h4 class="text-white font-medium text-lg mb-2">Community</h4>
+                    <a href="#" class="text-[#9d9797] hover:text-white text-sm transition-colors duration-300">Community Guidelines</a>
+                    <a href="#" class="text-[#9d9797] hover:text-white text-sm transition-colors duration-300">Campus Directory</a>
+                </div>
+                <div class="flex flex-col gap-4 items-center md:items-start">
+                    <h4 class="text-white font-medium text-lg mb-2">Connect</h4>
+                    <a href="#" class="text-[#9d9797] hover:text-white text-sm transition-colors duration-300">Contact Support</a>
+                    <a href="#" class="text-[#9d9797] hover:text-white text-sm transition-colors duration-300">Report an Issue</a>
+                </div>
+            </div>
+            <div class="w-full mt-16 pt-8 border-t border-[rgba(255,255,255,0.05)] flex flex-col md:flex-row items-center justify-between gap-4">
+                <span class="text-white font-bold text-xl tracking-tight">Vircle!</span>
+                <span class="text-[#9d9797] text-sm">&copy; 2026 Virtual Circle. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS FOR PARALLAX SCROLLING -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                initParallax();
+                observer.disconnect();
+            }
+        }, { threshold: 0 });
+        
+        observer.observe(document.body);
+
+        function initParallax() {
+            const orb1 = document.getElementById('orb1');
+            const orb2 = document.getElementById('orb2');
+            const orb3 = document.getElementById('orb3');
+            
+            const float1 = document.getElementById('float1');
+            const float2 = document.getElementById('float2');
+            const float3 = document.getElementById('float3');
+            const float4 = document.getElementById('float4');
+            const float5 = document.getElementById('float5');
+            
+            let ticking = false;
+            let lastKnownScrollPosition = 0;
+
+            function updateParallax(scrollPos) {
+                // Orbs (slowest)
+                if(orb1) orb1.style.transform = `translateY(${scrollPos * -0.4}px)`;
+                if(orb2) orb2.style.transform = `translateY(${scrollPos * -0.6}px)`;
+                if(orb3) orb3.style.transform = `translateY(${scrollPos * -0.25}px)`;
+                
+                // Floating icons (different speeds & rotations)
+                if(float1) float1.style.transform = `translateY(${scrollPos * -0.8}px) rotate(12deg)`;
+                if(float2) float2.style.transform = `translateY(${scrollPos * -0.5}px) rotate(-12deg)`;
+                if(float3) float3.style.transform = `translateY(${scrollPos * -0.65}px) rotate(45deg)`;
+                if(float4) float4.style.transform = `translateY(${scrollPos * -0.9}px) rotate(-6deg)`;
+                if(float5) float5.style.transform = `translateY(${scrollPos * -0.3}px) rotate(30deg)`;
+            }
+
+            window.addEventListener('scroll', () => {
+                lastKnownScrollPosition = window.scrollY;
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        updateParallax(lastKnownScrollPosition);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+    </script>
 </body>
-
-{% endblock %}
+</html>
