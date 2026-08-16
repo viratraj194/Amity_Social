@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect,HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.models import *
 from .forms import addPostsForm
-from .models import UserPosts,Like,Notification,Comment,UserSavedPosts
+from .models import UserPosts,Like,Notification,Comment,UserSavedPosts,PostReport
 from django.contrib import messages
 from django.template.defaultfilters import slugify
 from django.utils.html import strip_tags
@@ -18,6 +18,9 @@ from accounts.models import Message
 from django_ratelimit.decorators import ratelimit
 from django_ratelimit.exceptions import Ratelimited
 from django.template.response import TemplateResponse
+from django.views.decorators.http import require_POST
+from django.db.models import Count
+from django.core.mail import send_mail
 
 
 
@@ -504,6 +507,82 @@ def unread_message_count(request):
         unread_count = Message.objects.filter(receiver=request.user, status__lt=Message.STATUS_READ).count()
         return JsonResponse({"unread_count": unread_count})
     return JsonResponse({"unread_count": 0})
+
+
+@login_required(login_url='login')
+@require_POST
+def report_post(request, post_id):
+    try:
+        post = UserPosts.objects.get(id=post_id)
+    except UserPosts.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Post not found.'}, status=404)
+        
+    try:
+        data = json.loads(request.body)
+        reason = data.get('reason', '')
+        description = data.get('description', '')
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON data.'}, status=400)
+        
+    report, created = PostReport.objects.get_or_create(
+        reporter=request.user,
+        post=post,
+        defaults={'reason': reason, 'description': description}
+    )
+    
+    if not created:
+        return JsonResponse({'success': False, 'message': 'You have already reported this post.'}, status=400)
+        
+    return JsonResponse({'success': True, 'message': 'Post reported successfully.'}, status=200)
+
+
+@login_required(login_url='login')
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
+def admin_moderation_feed(request):
+    posts = UserPosts.objects.annotate(report_count=Count('reports')).filter(report_count__gte=2).prefetch_related('reports', 'user')
+    context = {'posts': posts}
+    return render(request, 'list_posts/admin_reports_page.html', context)
+
+
+@login_required(login_url='login')
+@require_POST
+@user_passes_test(lambda u: u.is_staff)
+def api_delete_flagged_post(request, post_id):
+    from django.conf import settings
+    from django.core.mail import send_mail
+    post = get_object_or_404(UserPosts, id=post_id)
+    
+    reasons = list(post.reports.values_list('reason', flat=True).distinct())
+    
+    reason_map = {
+        'nudity': 'Nudity or sexual activity',
+        'hate': 'Hate speech',
+        'bullying': 'Bullying or harassment',
+        'suicide': 'Suicide or self-injury',
+        'violence': 'Violence or dangerous organizations',
+        'spam': 'Spam'
+    }
+    
+    formatted_reasons = ", ".join([reason_map.get(r, str(r)) for r in reasons])
+    
+    subject = "Notice: Your post has been removed from Vircle"
+    message = f"Hello, your recent post has been removed by our moderation team because it received multiple user reports for the following reasons: {formatted_reasons}. Please adhere to our community guidelines."
+    
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@vircle.com')
+    
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=[post.user.email],
+            fail_silently=False,
+        )
+    except Exception as e:
+        pass
+    
+    post.delete()
+    return JsonResponse({'status': 'success'})
 
 
 

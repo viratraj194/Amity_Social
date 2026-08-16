@@ -23,6 +23,7 @@ urlpatterns = [
     path("api/unread-messages/", views.unread_message_count, name="unread_message_count"),
     # search users 
     path('search-user/', views.search_user, name='search_user'), 
-    
-    
+    path('post/<int:post_id>/report/', views.report_post, name='report_post'),
+    path('moderation/feed/', views.admin_moderation_feed, name='admin_moderation_feed'),
+    path('moderation/post/<int:post_id>/delete/', views.api_delete_flagged_post, name='api_delete_flagged_post'),
 ]
