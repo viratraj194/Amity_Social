@@ -122,3 +122,28 @@ class UserSavedPosts(models.Model):
 
     def __str__(self):
         return f"{self.user.email} saved {self.post.id}"
+
+
+class PostReport(models.Model):
+    REPORT_REASONS = [
+        ('nudity', 'Nudity'),
+        ('bullying', 'Bullying'),
+        ('suicide', 'Suicide'),
+        ('violence', 'Violence'),
+        ('hate', 'Hate'),
+        ('spam', 'Spam'),
+    ]
+    post = models.ForeignKey(UserPosts, on_delete=models.CASCADE, related_name='reports')
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_reports')
+    reason = models.CharField(max_length=20, choices=REPORT_REASONS)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('post', 'reporter')
+        verbose_name = 'Post Report'
+        verbose_name_plural = 'Post Reports'
+
+    def __str__(self):
+        return f"Report on {self.post.id} by {self.reporter.username}"
+

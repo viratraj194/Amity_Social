@@ -231,9 +231,9 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="flex flex-col gap-2">
-                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">City</label>
+                            <label class="text-xs text-[#d1cece] uppercase tracking-wider font-medium ml-1">District</label>
                             <select name="city" id="id_city" class="glass-input cursor-pointer" disabled>
-                                <option value="" disabled selected>Select City</option>
+                                <option value="" disabled selected>Select District</option>
                             </select>
                         </div>
                         <div class="flex flex-col gap-2 relative">
@@ -320,7 +320,7 @@
                     const state = this.value;
 
                     // Reset city and college
-                    citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+                    citySelect.innerHTML = '<option value="" disabled selected>Select District</option>';
                     citySelect.disabled = true;
                     collegeInput.disabled = true;
                     collegeInput.value = '';
@@ -347,7 +347,7 @@
                         } else {
                             const option = document.createElement('option');
                             option.value = '';
-                            option.textContent = 'No cities available for this state.';
+                            option.textContent = 'No districts available for this state.';
                             citySelect.appendChild(option);
                         }
                     })

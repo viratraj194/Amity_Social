@@ -296,6 +296,16 @@
                                 <span>Account</span>
                             </a>
                         </li>
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                        <li class="border-animation">
+                            <a href="{% url 'admin_moderation_feed' %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                                </svg>
+                                <span>Reports</span>
+                            </a>
+                        </li>
+                        {% endif %}
 
                     </ul>
                 </div>
@@ -627,6 +637,16 @@
                         <span>Account</span>
                     </a>
                 </li>
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <li class="border-animation">
+                    <a href="{% url 'admin_moderation_feed' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                {% endif %}
 
             </ul>
         </div>
@@ -1242,6 +1262,258 @@
     checkNotifications();
     setInterval(checkNotifications, 10000);
 </script>
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Report Post Modal (Dark-Themed Tailwind CSS) -->
+<div id="reportModal" class="hidden fixed inset-0 z-[10050] items-center justify-center bg-black/80 backdrop-blur-sm p-4" style="display: none;">
+    <div class="relative w-full max-w-md rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl p-6 text-white transform transition-all duration-200">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-zinc-100">Report Post</h3>
+                    <p class="text-xs text-zinc-400">Select a reason that best describes the issue</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeReportModal()" class="text-zinc-400 hover:text-zinc-200 p-1.5 rounded-lg hover:bg-zinc-800 transition-colors" aria-label="Close modal">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Form -->
+        <form id="reportPostForm" onsubmit="submitPostReport(event)" class="mt-4 space-y-4">
+            <input type="hidden" id="reportPostId" name="post_id" value="">
+
+            <!-- Reasons list -->
+            <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="nudity" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500" required>
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Nudity or sexual content</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="bullying" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Bullying or harassment</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="suicide" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Suicide or self-harm</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="violence" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Violence or threat</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="hate" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Hate speech</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="spam" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Spam or misleading</span>
+                </label>
+            </div>
+
+            <!-- Optional Details Textarea -->
+            <div>
+                <label for="reportDescription" class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Additional Details (Optional)</label>
+                <textarea id="reportDescription" name="description" rows="3" placeholder="Provide more context if necessary..." class="w-full px-3.5 py-2.5 bg-zinc-800/70 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors resize-none"></textarea>
+            </div>
+
+            <!-- Modal Actions -->
+            <div class="pt-2 flex items-center justify-end space-x-3 border-t border-zinc-800/80">
+                <button type="button" onclick="closeReportModal()" class="px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/60 rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" id="submitReportBtn" class="px-5 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-lg shadow-red-900/30">
+                    Submit Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Helper function to extract CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Function to open the Report Modal
+    function openReportModal(postId) {
+        const modal = document.getElementById('reportModal');
+        const postIdInput = document.getElementById('reportPostId');
+        const form = document.getElementById('reportPostForm');
+        
+        if (postIdInput) {
+            postIdInput.value = postId;
+        }
+        if (form) {
+            form.reset();
+        }
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+    }
+
+    // Function to close the Report Modal
+    function closeReportModal() {
+        const modal = document.getElementById('reportModal');
+        const form = document.getElementById('reportPostForm');
+        if (form) {
+            form.reset();
+        }
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+    }
+
+    // Function to submit post report via Fetch API
+    function submitPostReport(event) {
+        if (event) event.preventDefault();
+
+        const postId = document.getElementById('reportPostId')?.value;
+        const selectedRadio = document.querySelector('input[name="reportReason"]:checked') || document.querySelector('input[name="report_reason"]:checked');
+        const descriptionInput = document.getElementById('reportDescription');
+        const submitBtn = document.getElementById('submitReportBtn');
+
+        if (!postId) {
+            alert('Post ID is missing.');
+            return;
+        }
+
+        if (!selectedRadio) {
+            alert('Please select a reason for reporting this post.');
+            return;
+        }
+
+        const reason = selectedRadio.value;
+        const description = descriptionInput ? descriptionInput.value.trim() : '';
+        const csrftoken = getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+        }
+
+        fetch(`/post/${postId}/report/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                reason: reason,
+                description: description
+            })
+        })
+        .then(async response => {
+            const data = await response.json().catch(() => ({}));
+            closeReportModal();
+
+            if (response.ok && data.success) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Report Submitted',
+                        text: data.message || 'Post reported successfully.',
+                        background: '#1a1a1a',
+                        color: '#ffffff',
+                        confirmButtonColor: '#2b68ff',
+                        customClass: {
+                            popup: 'rounded-24 premium-swal-popup',
+                            title: 'premium-swal-title',
+                            htmlContainer: 'premium-swal-text',
+                            confirmButton: 'rounded-pill premium-swal-button'
+                        }
+                    });
+                } else {
+                    alert(data.message || 'Post reported successfully.');
+                }
+            } else {
+                const message = data.message || 'Failed to submit report.';
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Report Failed',
+                        text: message,
+                        background: '#1a1a1a',
+                        color: '#ffffff',
+                        confirmButtonColor: '#ff4d4d',
+                        customClass: {
+                            popup: 'rounded-24 premium-swal-popup',
+                            title: 'premium-swal-title',
+                            htmlContainer: 'premium-swal-text',
+                            confirmButton: 'rounded-pill premium-swal-button'
+                        }
+                    });
+                } else {
+                    alert(message);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting report:', error);
+            closeReportModal();
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while submitting your report. Please try again.',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                    confirmButtonColor: '#ff4d4d'
+                });
+            } else {
+                alert('An error occurred while submitting your report. Please try again.');
+            }
+        })
+        .finally(() => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Report';
+            }
+        });
+    }
+
+    // Close modal on click outside
+    document.addEventListener('DOMContentLoaded', function() {
+        const reportModal = document.getElementById('reportModal');
+        if (reportModal) {
+            reportModal.addEventListener('click', function(e) {
+                if (e.target === reportModal) {
+                    closeReportModal();
+                }
+            });
+        }
+    });
+</script>
+
 {% include "includes/alerts.html" %}
 
 {% endblock %}

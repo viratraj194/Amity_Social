@@ -59,8 +59,9 @@ class UserForm(forms.ModelForm):
             'id': 'id_state',
         })
     )
-    # City field - populated dynamically based on state selection
+    # District field - populated dynamically based on state selection
     city = forms.CharField(
+        label='District',
         required=True,
         widget=forms.Select(attrs={
             'class': 'city-select',
@@ -110,8 +111,9 @@ class userInfoForm(forms.ModelForm):
             'class': 'state-select',
         })
     )
-    # City field - populated dynamically based on state selection
+    # District field - populated dynamically based on state selection
     city = forms.CharField(
+        label='District',
         required=True,
         widget=forms.Select(attrs={
             'class': 'city-select',

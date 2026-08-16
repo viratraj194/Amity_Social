@@ -174,12 +174,12 @@
             </div>
             <div class="M-10_0">
                 <div class="flex space_between">
-                    <label>City</label>
+                    <label>District</label>
                     <select name="city" id="id_city" class="city-select" disabled>
-                        <option value="" disabled selected>Select City</option>
+                        <option value="" disabled selected>Select District</option>
                     </select>
                 </div>
-                <h6>Select your City</h6>
+                <h6>Select your District</h6>
             </div>
             <div class="M-10_0">
                 <div class="flex space_between">
@@ -241,7 +241,7 @@
                 const state = this.value;
 
                 // Reset city and college
-                citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+                citySelect.innerHTML = '<option value="" disabled selected>Select District</option>';
                 citySelect.disabled = true;
                 collegeInput.disabled = true;
                 collegeInput.value = '';
@@ -275,10 +275,10 @@
                             citySelect.value = cityToSelect;
                         }
                     } else {
-                        // No cities found
+                        // No districts found
                         const option = document.createElement('option');
                         option.value = '';
-                        option.textContent = 'No cities available';
+                        option.textContent = 'No districts available';
                         citySelect.appendChild(option);
                     }
                 })
@@ -390,7 +390,7 @@
 
                 if (!city) {
                     e.preventDefault();
-                    alert('Please select your city.');
+                    alert('Please select your district.');
                     citySelect.focus();
                     return false;
                 }
