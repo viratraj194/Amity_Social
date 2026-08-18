@@ -38,16 +38,56 @@ $(document).ready(function() {
             },
             success: function(response) {
                 // console.log("AJAX success response:", response);
-                if (response.status === 'accepted' || response.status === 'denied') {
+                if (response.status === 'accepted' || response.status === 'denied' || response.status === 'already_handled') {
                     // Remove the follow request item from the DOM
                     $('#follow-request-' + followRequestId).remove();
                 } else {
-                    alert('An error occurred');
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Notice',
+                            text: response.message || 'An error occurred',
+                            icon: 'info',
+                            iconColor: '#fd8925',
+                            background: '#0f0f0f',
+                            color: '#ffffff',
+                            backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                            confirmButtonText: 'OK',
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                                title: 'text-2xl font-bold',
+                                htmlContainer: 'text-[#9ca3af]',
+                                confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
+                            }
+                        });
+                    } else {
+                        alert('An error occurred');
+                    }
                 }
             },
             error: function(xhr, status, error) {
                 // console.error("AJAX error:", status, error);
-                alert('An error occurred');
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        iconColor: '#fd8925',
+                        background: '#0f0f0f',
+                        color: '#ffffff',
+                        backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                        confirmButtonText: 'OK',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                            title: 'text-2xl font-bold',
+                            htmlContainer: 'text-[#9ca3af]',
+                            confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
+                        }
+                    });
+                } else {
+                    alert('An error occurred');
+                }
             }
         });
     });

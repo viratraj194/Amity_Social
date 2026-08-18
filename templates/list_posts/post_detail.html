@@ -1,0 +1,1535 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<style>
+    @media only screen and (max-width: 768px) {
+        footer {
+            display: none;
+        }
+    }
+
+    .caption-text {
+        color: #bdb6b6;
+        font-size: small;
+    }
+
+    .caption-text-truncated {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .caption-text-expanded {
+        display: inline;
+    }
+
+    .view-more-btn {
+        background: none;
+        border: none;
+        color: #777b7b;
+        font-size: small;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 4px;
+    }
+
+    .view-more-btn:hover {
+        color: #fff;
+    }
+
+    /* Back to feed header styling */
+    .back-to-feed-container {
+        padding: 12px 4px 18px 4px;
+        display: flex;
+        align-items: center;
+    }
+
+    .back-to-feed-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        color: #e2e8f0;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-to-feed-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+        transform: translateX(-4px);
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .back-to-feed-btn:active {
+        transform: translateX(-2px) scale(0.98);
+    }
+
+    .back-icon {
+        width: 18px;
+        height: 18px;
+        transition: transform 0.25s ease;
+    }
+
+    .back-to-feed-btn:hover .back-icon {
+        transform: translateX(-3px);
+    }
+</style>
+
+{% comment %} hidden search modal {% endcomment %}
+<div class="searchUserHtml" style="display:none;">
+    {% include "list_posts/search_user.html" %}
+</div>
+
+<!-- post popup start -->
+<script src="{% static 'js/js_components_for_ajax.js' %}"></script>
+<div class="PostContainers">
+    <div class="post-modal-header">
+        <div class="close-button close" style="cursor: pointer;">
+            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+            <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+                style="width:20px;height:20px">
+            </lord-icon>
+        </div>
+        <!-- Segmented Control Toggle -->
+        <div class="mode-toggle">
+            <button type="button" class="toggle-btn active" data-mode="image" onclick="switchTab('image')">Image Post</button>
+            <button type="button" class="toggle-btn" data-mode="confession" onclick="switchTab('confession')">Confession</button>
+        </div>
+    </div>
+    <form action="{% url 'add_posts' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="PostContainer">
+            <!-- IMAGE POST VIEW -->
+            <div id="image-post-view">
+                <div class="postContainer-input-image flex">
+                    {% if user_profile.profile_picture %}
+                    <div class="postContainer-image">
+                        <img src="{{ user_profile.profile_picture.url }}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="postContainer-image">
+                        <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% endif %}
+                    <div class="PostContainer-postContent" style="display:none;">
+                        <textarea name="content" id="userInputImage" placeholder="Add a title..."></textarea>
+                    </div>
+                </div>
+                <!-- Empty State for Image -->
+                <div id="emptyImageState" class="empty-state-box" style="">
+                    <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                        colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:60px;height:60px">
+                    </lord-icon>
+                    <span>No image selected.<br>Click the button below to upload.</span>
+                </div>
+                <!-- Image Preview Area -->
+                <div class="image-preview-area" id="imagePreviewContainer" style="display:none;">
+                    <div class="image-preview-wrapper">
+                        <img src="" alt="" id="imagePreview">
+                        <button type="button" class="remove-image-btn" id="removeImageBtn" title="Remove image">
+                            <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover"
+                                colors="primary:#ff4444" style="width:16px;height:16px">
+                            </lord-icon>
+                        </button>
+                    </div>
+                </div>
+                <!-- Caption Input -->
+                <div class="PostContainer-caption">
+                    <input type="text" name="caption" class="caption-input" placeholder="Write a caption for this photo...">
+                </div>
+            </div>
+
+            <!-- CONFESSION POST VIEW -->
+            <div id="confession-post-view" style="display: none;">
+                <div class="postContainer-input-image flex">
+                    {% if user_profile.profile_picture %}
+                    <div class="postContainer-image">
+                        <img src="{{ user_profile.profile_picture.url }}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="postContainer-image">
+                        <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Large Confession Textarea -->
+                <div class="confession-textarea-container">
+                    <textarea name="content" id="userInputConfession" class="confession-textarea"
+                        placeholder="Write your secret confession here..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="PostContainer-footer flex space_between" style="align-items: center; margin-top: 15px;">
+            <div class="saySomething-attachment" style="width: auto; flex: 1;">
+                <input type="file" class="file-input" name="post_image" accept="image/*" id="imageInput" style="display:none;">
+                <label for="imageInput" class="file-input-label wide-upload-btn" id="imageLabel" style="cursor: pointer;">
+                    <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
+                        colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:25px;height:25px">
+                    </lord-icon>
+                    <span>📷 Upload Photo</span>
+                </label>
+            </div>
+
+            <!-- Progress circle -->
+            <div class="progress-container" id="confessionProgress" style="display: none; margin-right: 15px;">
+                <div class="progress-circle">
+                    <svg width="60" height="60">
+                        <circle class="bg" cx="30" cy="30" r="25"></circle>
+                        <circle class="progress" cx="30" cy="30" r="25" stroke-dasharray="157.1"
+                            stroke-dashoffset="157.1"></circle>
+                    </svg>
+                    <div class="text">0/60 words</div>
+                </div>
+            </div>
+
+            <div class="PostContainer-post-button">
+                <button class="postButton" type="submit">Post</button>
+            </div>
+        </div>
+    </form>
+    {% if messages %}
+    <ul class="messages" style="color: red;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+<!-- post popup ends -->
+
+<!-- POSTING PAGE STARTS -->
+<div class="postingPage flex">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="postingPageLeft">
+        <div class="sticky">
+            <div class="loggedInUserProfile">
+                <div class="UserCover_photo_profile_photo">
+                    {% if user_profile.cover_photo %}
+                    <div class="postingPage_cover_photo">
+                        <img src="{{ user_profile.cover_photo.url }}" alt="">
+                    </div>
+                    {% elif user.userprofile.cover_photo %}
+                    <div class="postingPage_cover_photo">
+                        <img src="{{ user.userprofile.cover_photo.url }}" alt="">
+                    </div>
+                    {% else %}
+                    <div class="postingPage_cover_photo">
+                        <img src="" alt="">
+                    </div>
+                    {% endif %}
+
+                    {% if user_profile.profile_picture %}
+                    <div class="postingPage_profile_photo">
+                        <img src="{{ user_profile.profile_picture.url }}" alt="">
+                    </div>
+                    {% elif user.userprofile.profile_picture %}
+                    <div class="postingPage_profile_photo">
+                        <img src="{{ user.userprofile.profile_picture.url }}" alt="">
+                    </div>
+                    {% else %}
+                    <div class="postingPage_profile_photo">
+                        <img src="{% static 'img/images.jpeg' %}" alt="">
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="postingPage-user-details">
+                    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                    <h4 style="color: rgb(169, 169, 169);">@{{ user.username }}</h4>
+                </div>
+                <div class="postingPage-user-profile-counts flex">
+                    <div class="postingPage-followers">
+                        <h4>{{ total_posts|default:user.userposts_set.count }}</h4>
+                        <h6>Posts</h6>
+                    </div>
+                    <div class="postingPage-followers">
+                        <h4>{{ total_followers|default:user.following.count }}</h4>
+                        <h6>Followers</h6>
+                    </div>
+                    <div class="postingPage-followers">
+                        <h4>{{ total_following|default:user.followers.count }}</h4>
+                        <h6>Following</h6>
+                    </div>
+                </div>
+            </div>
+
+            <!-- navigation links start -->
+            <div class="postingPageLinks postingPageLinks_phone">
+                <div class="linkLists">
+                    <ul>
+                        <li class="border-animation">
+                            <a href="{% url 'home' %}">
+                                <lord-icon src="https://cdn.lordicon.com/cnpvyndp.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="{% url 'friend_messages' %}">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Messages</span>
+                                <small id="notification-badge" style="display: none;">
+                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                    <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:20px;height:20px">
+                                    </lord-icon>
+                                </small>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a class="open" style="cursor: pointer;">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/mecwbjnp.json" trigger="hover"
+                                    colors="primary:#ffffff"
+                                    style="width:25px;height:25px">
+                                </lord-icon>
+                                <span>Post</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a class="searchUsersByUID">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/kkvxgpti.json"
+                                    trigger="hover"
+                                    colors="primary:#ffffff"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                                <span style="cursor: pointer;">Search</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="{% url 'allEvents' %}">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/abfverha.json"
+                                    trigger="hover"
+                                    colors="primary:#ffffff"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Events</span>
+                            </a>
+                        </li>
+                        <li class="border-animation">
+                            <a href="{% url 'account' %}">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
+                                    colors="primary:#ffffff" style="width:20px;height:20px">
+                                </lord-icon>
+                                <span>Account</span>
+                            </a>
+                        </li>
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                        <li class="border-animation">
+                            <a href="{% url 'admin_moderation_feed' %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                                </svg>
+                                <span>Reports</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MIDDLE COLUMN: Back to Feed & Single Post -->
+    <div class="postingPageMiddle">
+        <!-- Back to Feed link -->
+        <div class="back-to-feed-container">
+            <a href="{% url 'list_posts' %}" class="back-to-feed-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" class="back-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Feed</span>
+            </a>
+        </div>
+
+        <!-- Render single post component -->
+        {% include "list_posts/post.html" %}
+    </div>
+
+    <!-- RIGHT SIDEBAR: Notifications & Follow Requests -->
+    <div class="postingPageLast">
+        <div class="sticky">
+            <div class="allNotifications">
+                <span id="notification-close">
+                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                    <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
+                        style="width:20px;height:20px">
+                    </lord-icon>
+                </span>
+
+                <div class="flex">
+                    <h4>Notifications</h4>
+                    {% if notifications or follow_requests %}
+                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                    <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#e83a30"
+                        style="width:30px;height:30px">
+                    </lord-icon>
+                    {% endif %}
+                </div>
+
+                {% comment %} follow requests list {% endcomment %}
+                {% for request in follow_requests %}
+                <div class="postActivity flex" id="follow-request-{{ request.id }}">
+                    {% if request.from_user.userprofile.profile_picture %}
+                    <div class="postActivity-userProfile-image">
+                        <img src="{{ request.from_user.userprofile.profile_picture.url }}" style="object-fit: cover;" alt="">
+                    </div>
+                    {% else %}
+                    <div class="comment-posting-user">
+                        <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% endif %}
+                    <div class="postActivityDetails">
+                        <strong style="font-size: 13px;font-weight: 300;">@{{ request.from_user.users_id }}</strong>
+                        <span style="text-wrap: wrap;">Sent follow request:</span>
+                    </div>
+                    <div class="flex space_between">
+                        <div>
+                            <a href="#" class="follow-action" data-request-id="{{ request.id }}" data-url="{% url 'accept_follow_request' request.id %}" style="margin:auto 5px;">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/oqdmuxru.json"
+                                    trigger="hover"
+                                    colors="primary:#848484"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                            </a>
+                            <a href="#" class="follow-action" data-request-id="{{ request.id }}" data-url="{% url 'deny_follow_request' request.id %}" style="margin:auto 5px;">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/nqtddedc.json"
+                                    trigger="hover"
+                                    colors="primary:#f4a09c"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="allnotificatons_scrol" style="max-height: 400px; overflow-y: auto;">
+                    {% if notifications %}
+                    <div class="mark_all_as_read">
+                        <span style="font-size: small; font-weight: 400; color: #a4a1a1; cursor: pointer; border-bottom: 1px solid #a4a1a1;">
+                            Mark all as read
+                        </span>
+                    </div>
+                    {% for notification in notifications %}
+                    <div class="postActivity notification flex"
+                        data-url="{% url 'mark_notification_as_read' notification.id %}" data-id="{{ notification.id }}">
+                        {% if notification.actor.userprofile.profile_picture %}
+                        <div class="postActivity-userProfile-image">
+                            <img src="{{ notification.actor.userprofile.profile_picture.url }}" style="object-fit: cover;" alt="">
+                        </div>
+                        {% else %}
+                        <div class="comment-posting-user">
+                            <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
+                        </div>
+                        {% endif %}
+                        <div class="postActivityDetails">
+                            <strong style="font-size: 13px;font-weight: 300;">@{{ notification.actor.users_id }}</strong>
+                            <span style="text-wrap: wrap;">{{ notification.notification_msg }}: {{ notification.timestamp }}</span>
+                        </div>
+                        {% if notification.post.post_image %}
+                        <div class="postActivityImage_or_video">
+                            <img style="object-fit: cover;" src="{{ notification.post.post_image.url }}" alt="">
+                        </div>
+                        {% else %}
+                        <div class="comment-posting-user">
+                            <span style="width: 100%; height: 100%; display:block;">
+                                {{ notification.post.content }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <h4 style="color: #777b7b; text-align: center; margin: 5px;">No Notifications</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phone Bottom Navigation Bar -->
+    <div class="postingPageLinks postingPageLinks_phone-block">
+        <div class="linkLists">
+            <ul>
+                <li class="border-animation">
+                    <a href="{% url 'home' %}">
+                        <lord-icon src="https://cdn.lordicon.com/cnpvyndp.json" trigger="hover"
+                            colors="primary:#ffffff" style="width:20px;height:20px">
+                        </lord-icon>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="border-animation">
+                    <a href="{% url 'friend_messages' %}">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
+                            colors="primary:#ffffff" style="width:20px;height:20px">
+                        </lord-icon>
+                        <span>Messages</span>
+                        <small id="mobile-notification-badge" style="display: none;">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:10px;height:10px">
+                            </lord-icon>
+                        </small>
+                    </a>
+                </li>
+                <li class="border-animation">
+                    <a class="open" style="cursor: pointer;">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/mecwbjnp.json" trigger="hover"
+                            colors="primary:#ffffff,secondary:#ffffff"
+                            style="width:25px;height:25px">
+                        </lord-icon>
+                        <span>Post</span>
+                    </a>
+                </li>
+                <li class="border-animation">
+                    <a class="searchUsersByPhoneUID">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/kkvxgpti.json"
+                            trigger="hover"
+                            colors="primary:#ffffff"
+                            style="width:20px;height:20px">
+                        </lord-icon>
+                        <span>Search</span>
+                    </a>
+                </li>
+                <li class="border-animation">
+                    <a href="{% url 'account' %}">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
+                            colors="primary:#ffffff" style="width:20px;height:20px">
+                        </lord-icon>
+                        <span>Account</span>
+                    </a>
+                </li>
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <li class="border-animation">
+                    <a href="{% url 'admin_moderation_feed' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Swiper Carousel Initialization
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof Swiper !== 'undefined') {
+            new Swiper('.swiper-container', {
+                autoHeight: true,
+                slidesPerView: 1,
+                spaceBetween: 0,
+                grabCursor: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        }
+    });
+
+    // Toggle comment container visibility
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('Comment-onPost')) {
+                e.preventDefault();
+                const post_id = e.target.getAttribute('data-id');
+                const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+                if (targetDiv) {
+                    targetDiv.style.display = targetDiv.style.display === 'flex' ? 'none' : 'flex';
+                }
+            }
+        });
+
+        // Close comment container
+        document.addEventListener('click', function (e) {
+            const closeBtn = e.target.closest('.Comment-Close');
+            if (closeBtn) {
+                e.preventDefault();
+                const post_id = closeBtn.getAttribute('data-id') || closeBtn.querySelector('[data-id]')?.getAttribute('data-id');
+                if (post_id) {
+                    const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+                    if (targetDiv) {
+                        targetDiv.style.display = 'none';
+                    }
+                }
+            }
+        });
+    });
+
+    // Tab switching for Post Creation Modal
+    function switchTab(mode) {
+        const imageTab = document.getElementById('image-post-view');
+        const confessionTab = document.getElementById('confession-post-view');
+        const imageLabel = document.getElementById('imageLabel');
+        const progressContainer = document.getElementById('confessionProgress');
+        const emptyImageState = document.getElementById('emptyImageState');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const buttons = document.querySelectorAll('.toggle-btn');
+
+        buttons.forEach(btn => {
+            if (btn.getAttribute('data-mode') === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        if (mode === 'image') {
+            if (imageTab) imageTab.style.display = 'block';
+            if (confessionTab) confessionTab.style.display = 'none';
+            if (imageLabel) imageLabel.style.display = 'flex';
+            if (progressContainer) progressContainer.style.display = 'none';
+            
+            if (imageInput && !imageInput.files.length) {
+                if (emptyImageState) emptyImageState.style.display = 'flex';
+                if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+            } else if (imageInput && imageInput.files.length) {
+                if (emptyImageState) emptyImageState.style.display = 'none';
+                if (imagePreviewContainer) imagePreviewContainer.style.display = 'block';
+            }
+        } else {
+            if (imageTab) imageTab.style.display = 'none';
+            if (confessionTab) confessionTab.style.display = 'block';
+            if (imageLabel) imageLabel.style.display = 'none';
+            if (progressContainer) progressContainer.style.display = 'flex';
+            if (emptyImageState) emptyImageState.style.display = 'none';
+        }
+    }
+
+    // Modal popup listeners & word count
+    document.addEventListener('DOMContentLoaded', function () {
+        const openButtons = document.querySelectorAll('.open');
+        const postDiv = document.querySelector('.PostContainers');
+        const closeButton = postDiv ? postDiv.querySelector('.close') : null;
+
+        openButtons.forEach(function (openButton) {
+            openButton.addEventListener('click', function () {
+                if (postDiv) {
+                    postDiv.style.display = 'flex';
+                    const activeTab = document.querySelector('.toggle-btn.active');
+                    if (activeTab) {
+                        switchTab(activeTab.getAttribute('data-mode'));
+                    }
+                }
+            });
+        });
+
+        if (closeButton && postDiv) {
+            closeButton.addEventListener('click', function () {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Discard Post',
+                        text: 'Are you sure you want to discard this post?',
+                        icon: 'warning',
+                        iconColor: '#fd8925',
+                        background: '#0f0f0f',
+                        color: '#ffffff',
+                        backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                            title: 'text-2xl font-bold',
+                            htmlContainer: 'text-[#9ca3af]',
+                            confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4',
+                            cancelButton: 'bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 ml-3 mt-4'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const textarea = postDiv.querySelector('textarea');
+                            const inputs = postDiv.querySelectorAll('input');
+                            if (textarea) textarea.value = '';
+                            inputs.forEach(input => input.value = '');
+                            
+                            const imagePreview = document.getElementById('imagePreview');
+                            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                            const emptyImageState = document.getElementById('emptyImageState');
+                            if (imagePreview) imagePreview.src = '';
+                            if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+                            if (emptyImageState) emptyImageState.style.display = 'flex';
+                            
+                            postDiv.style.display = 'none';
+                        }
+                    });
+                } else {
+                    postDiv.style.display = 'none';
+                }
+            });
+        }
+
+        // Image preview functionality
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const emptyImageState = document.getElementById('emptyImageState');
+
+        if (imageInput && imagePreviewContainer && imagePreview) {
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        imagePreview.src = event.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                        imagePreviewContainer.classList.add('has-image');
+                        if (emptyImageState) emptyImageState.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (removeImageBtn && imageInput && imagePreviewContainer && imagePreview) {
+            removeImageBtn.addEventListener('click', function () {
+                imageInput.value = '';
+                imagePreview.src = '';
+                imagePreviewContainer.style.display = 'none';
+                imagePreviewContainer.classList.remove('has-image');
+                if (emptyImageState) emptyImageState.style.display = 'flex';
+            });
+        }
+
+        // Word counter for Confession mode (60 word limit)
+        const userInput = document.getElementById('userInputConfession');
+        const progressCircle = document.querySelector('.progress-container .progress');
+        const progressText = document.querySelector('.progress-container .text');
+        const postButton = document.querySelector('.postButton');
+
+        if (userInput && progressCircle && progressText) {
+            userInput.addEventListener('input', function () {
+                const text = userInput.value.trim();
+                const words = text.split(/\s+/).filter(word => word.length > 0);
+                const wordCount = words.length;
+                const maxWords = 60;
+                const progress = Math.min((wordCount / maxWords) * 100, 100);
+                const dashOffset = 157.1 - (157.1 * progress / 100);
+
+                progressCircle.style.strokeDashoffset = dashOffset;
+                progressText.textContent = wordCount + '/' + maxWords + ' words';
+
+                if (wordCount >= maxWords) {
+                    progressCircle.style.stroke = '#ff4444';
+                } else if (wordCount >= maxWords * 0.8) {
+                    progressCircle.style.stroke = '#ffaa00';
+                } else {
+                    progressCircle.style.stroke = '#2b68ff';
+                }
+
+                if (postButton) {
+                    postButton.disabled = wordCount > maxWords;
+                }
+            });
+        }
+    });
+
+    // jQuery AJAX Actions (Likes, Bookmarks, Comments, Follows, Notifications)
+    $(document).ready(function () {
+        // Like post
+        $(document).on('click', '.like_post', function (e) {
+            e.preventDefault();
+            const postId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const csrfToken = getCookie('csrftoken');
+    
+            const data = {
+                post_id: postId
+            };
+    
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    const iconDiv = $(`.like_post[data-id="${postId}"] .post_icon`);
+                    if (response.liked) {
+                        iconDiv.removeClass('postUnliked_icon').addClass('postLiked_icon');
+                        iconDiv.html(`<lord-icon
+                                        src="https://cdn.lordicon.com/aydxrkfl.json"
+                                        trigger="in"
+                                        stroke="regular"
+                                        state="morph-slider"
+                                        colors="primary:#e83a30,secondary:#b4b4b4"
+                                        style="width:30px;height:30px">
+                                    </lord-icon>`);
+                    } else {
+                        iconDiv.removeClass('postLiked_icon').addClass('postUnliked_icon');
+                        iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
+                        colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error liking post:', error);
+                }
+            });
+        });
+
+        // Save post (Bookmark)
+        $(document).on('click', '.posts-save', function (e) {
+            e.preventDefault();
+            const postId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const csrfToken = getCookie('csrftoken');
+    
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify({ post_id: postId }),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        const postIcon = $(`.posts-save[data-id="${postId}"] .save_post_icon`);
+                        if (response.post_saved) {
+                            postIcon.attr('src', 'https://cdn.lordicon.com/oiiqgosg.json');
+                        } else {
+                            postIcon.attr('src', 'https://cdn.lordicon.com/prjooket.json');
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error saving post:', error);
+                }
+            });
+        });
+
+        // Notifications auto-mark on hover
+        $(document).one('mouseenter', '.notification', function () {
+            const $notification = $(this);
+            const url = $notification.attr('data-url');
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.status === 'success' || response.status === 'already_handled') {
+                        $notification.fadeOut('slow', function () {
+                            $(this).remove();
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error marking notification:', error);
+                }
+            });
+        });
+
+        // Follow request actions (Accept/Deny)
+        $(document).on('click', '.follow-action', function (e) {
+            e.preventDefault();
+            const url = $(this).attr('data-url');
+            const csrfToken = getCookie('csrftoken');
+            const $followRequestElement = $(this).closest('#follow-request-' + $(this).attr('data-request-id'));
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function (response) {
+                    if (response.status === 'accepted' || response.status === 'denied' || response.status === 'already_handled') {
+                        $followRequestElement.fadeOut('slow', function () {
+                            $(this).remove();
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error handling follow request:', error);
+                }
+            });
+        });
+
+        // Mark all as read
+        $('.mark_all_as_read').on('click', function () {
+            $.ajax({
+                url: "/mark_all_as_read/",
+                type: "POST",
+                headers: { "X-CSRFToken": getCSRFToken() },
+                success: function (response) {
+                    $('.notification').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                    $('.mark_all_as_read').fadeOut('slow');
+                    $('#notification-badge').hide();
+                    $('#mobile-notification-badge').hide();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+
+        // Add Comment
+        $(document).off('click', '.add_comments').on('click', '.add_comments', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const postId = $(this).attr('data-id');
+            const url = $(this).attr('data-url');
+            const commentText = $(this).closest('.PostComments-Input').find('.textareamain').val().trim();
+            const csrfToken = getCookie('csrftoken');
+
+            if (!commentText) {
+                return;
+            }
+
+            const parentId = $(this).attr('data-parent-id');
+
+            const data = {
+                comment: commentText,
+                post_id: postId,
+                parent_id: parentId || ""
+            };
+            
+            const $btn = $(e.currentTarget);
+            const originalText = $btn.text();
+            const isReply = !!parentId;
+            $btn.prop('disabled', true).text(isReply ? 'Replying...' : 'Posting...');
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.success) {
+                        const $textarea = $btn.closest('.PostComments-Input').find('.textareamain');
+                        $textarea.val('');
+                        $btn.removeAttr('data-parent-id');
+                        $btn.text('Post');
+
+                        if (response.comment.parent_id) {
+                            const replyHtml = `
+                                <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="${response.comment.profile_picture}" alt="${response.comment.user}">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>${response.comment.user}</strong> <span>${response.comment.comment}</span></small>
+                                        </div>
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">${response.comment.created_at}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            var $repliesContainer = $btn.closest('.PostComments-forPosts').find(`#replies-container-${response.comment.parent_id}`);
+                            if ($repliesContainer.length) {
+                                $repliesContainer.append(replyHtml);
+                                $repliesContainer.show();
+                                var $viewBtn = $btn.closest('.PostComments-forPosts').find(`.view-replies-btn[data-comment-id="${response.comment.parent_id}"]`);
+                                if ($viewBtn.length) {
+                                    $viewBtn.text($viewBtn.text().replace('View', 'Hide'));
+                                }
+                            }
+                        } else {
+                            const newCommentHtml = `
+                                <div class="ListComments-All flex">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="${response.comment.profile_picture}" alt="${response.comment.user}">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>${response.comment.user}</strong> <span>${response.comment.comment}</span></small>
+                                        </div>
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">${response.comment.created_at}</span>
+                                            <span style="margin: 0px 10px; cursor: pointer;" class="reply-link" data-comment-id="${response.comment.id}" data-post-id="${postId}">Reply</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="replies-container-${response.comment.id}" class="replies-container" style="display: none;"></div>
+                            `;
+                            $btn.closest('.PostComments-forPosts').find('.comments-container').append(newCommentHtml);
+                        }
+                    } else {
+                        console.error('Failed to post comment:', response.message);
+                        alert(response.message);
+                    }
+                }.bind(this),
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
+                    if ($btn.text() === 'Posting...' || $btn.text() === 'Replying...') {
+                        $btn.text(originalText);
+                    }
+                }
+            });
+        });
+
+        // Show comments
+        $(document).on('click', '.show-comments-btn', function (e) {
+            e.preventDefault();
+
+            var $btn = $(this);
+            var postId = $btn.data('post-id');
+            var url = $btn.data('url');
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function (response) {
+                    var comments = response.comments;
+                    var commentsHtml = '';
+
+                    comments.forEach(function (comment) {
+                        var repliesHtml = '';
+                        if (comment.replies && comment.replies.length > 0) {
+                            comment.replies.forEach(function (reply) {
+                                repliesHtml += `
+                                    <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
+                                        <div class="ListComments-UserProfile">
+                                            <img src="${reply.profile_picture}" alt="${reply.user}">
+                                        </div>
+                                        <div class="Comments_contents">
+                                            <div>
+                                                <small><strong>${reply.user}</strong> <span>${reply.comment}</span></small>
+                                            </div>
+                                            <div class="Comment_details-time flex">
+                                                <span style="margin: 0px 10px;">${reply.created_at}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+
+                        var viewRepliesBtn = '';
+                        if (comment.replies && comment.replies.length > 0) {
+                            viewRepliesBtn = `<span style="margin: 0px 10px; cursor: pointer; color: #555;" class="view-replies-btn" data-comment-id="${comment.id}">View replies (${comment.replies.length})</span>`;
+                        }
+
+                        commentsHtml += `
+                            <div class="comment-wrapper" data-comment-id="${comment.id}">
+                                <div class="ListComments-All flex">
+                                    <div class="ListComments-UserProfile">
+                                        <img src="${comment.profile_picture}" alt="${comment.user}">
+                                    </div>
+                                    <div class="Comments_contents">
+                                        <div>
+                                            <small><strong>${comment.user}</strong> <span>${comment.comment}</span></small>
+                                        </div>
+                                        <div class="Comment_details-time flex">
+                                            <span style="margin: 0px 10px;">${comment.created_at}</span>
+                                            <span style="margin: 0px 10px; cursor: pointer;" class="reply-link" data-comment-id="${comment.id}" data-post-id="${postId}">Reply</span>
+                                            ${viewRepliesBtn}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="replies-container-${comment.id}" class="replies-container" style="display: none;">
+                                    ${repliesHtml}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    var viewMoreBtn = '';
+                    if (response.has_more) {
+                        viewMoreBtn = `<div class="load-more-comments" style="text-align: center; margin: 10px 0; cursor: pointer; color: #747475; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" data-post-id="${postId}" data-current-page="${response.current_page}" data-url="${url}">View More Comments (${response.current_page} of ${response.total_pages})</div>`;
+                    }
+
+                    var $container = $btn.closest('.postContainer, .premium-post-card, .allPostLists').find('.comments-container').first();
+                    if (comments.length === 0) {
+                        $container.html('<p class="no-comments-message" style="text-align: center; color: #848484; padding: 20px;">Be the first one to comment</p>');
+                    } else {
+                        $container.html('<div class="comments-list">' + commentsHtml + '</div>' + viewMoreBtn);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching comments:', error);
+                }
+            });
+
+            // Load more comments
+            $(document).off('click', '.load-more-comments').on('click', '.load-more-comments', function(e) {
+                e.preventDefault();
+                var $loadBtn = $(this);
+                var postId = $loadBtn.data('post-id');
+                var currentPage = $loadBtn.data('current-page');
+                var baseUrl = $loadBtn.data('url');
+
+                $.ajax({
+                    url: baseUrl + '?page=' + (currentPage + 1),
+                    method: 'GET',
+                    success: function(response) {
+                        var comments = response.comments;
+                        var commentsHtml = '';
+
+                        comments.forEach(function (comment) {
+                            var repliesHtml = '';
+                            if (comment.replies && comment.replies.length > 0) {
+                                comment.replies.forEach(function (reply) {
+                                    repliesHtml += `
+                                        <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
+                                            <div class="ListComments-UserProfile">
+                                                <img src="${reply.profile_picture}" alt="${reply.user}">
+                                            </div>
+                                            <div class="Comments_contents">
+                                                <div>
+                                                    <small><strong>${reply.user}</strong> <span>${reply.comment}</span></small>
+                                                </div>
+                                                <div class="Comment_details-time flex">
+                                                    <span style="margin: 0px 10px;">${reply.created_at}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            }
+
+                            var viewRepliesBtn = '';
+                            if (comment.replies && comment.replies.length > 0) {
+                                viewRepliesBtn = `<span style="margin: 0px 10px; cursor: pointer; color: #555;" class="view-replies-btn" data-comment-id="${comment.id}">View replies (${comment.replies.length})</span>`;
+                            }
+
+                            commentsHtml += `
+                                <div class="comment-wrapper" data-comment-id="${comment.id}">
+                                    <div class="ListComments-All flex">
+                                        <div class="ListComments-UserProfile">
+                                            <img src="${comment.profile_picture}" alt="${comment.user}">
+                                        </div>
+                                        <div class="Comments_contents">
+                                            <div>
+                                                <small><strong>${comment.user}</strong> <span>${comment.comment}</span></small>
+                                            </div>
+                                            <div class="Comment_details-time flex">
+                                                <span style="margin: 0px 10px;">${comment.created_at}</span>
+                                                <span style="margin: 0px 10px; cursor: pointer;" class="reply-link" data-comment-id="${comment.id}" data-post-id="${postId}">Reply</span>
+                                                ${viewRepliesBtn}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="replies-container-${comment.id}" class="replies-container" style="display: none;">
+                                        ${repliesHtml}
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        var $commentsContainer = $loadBtn.closest('.comments-container');
+                        $commentsContainer.find('.comments-list').append(commentsHtml);
+
+                        if (response.has_more) {
+                            $loadBtn.data('current-page', response.current_page);
+                        } else {
+                            $loadBtn.remove();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading more comments:', error);
+                    }
+                });
+            });
+        });
+
+        // Toggle replies
+        $(document).on('click', '.view-replies-btn', function (e) {
+            e.stopPropagation();
+            var commentId = $(this).data('comment-id');
+            var $repliesContainer = $('#replies-container-' + commentId);
+            var $btn = $(this);
+
+            if ($repliesContainer.is(':visible')) {
+                $repliesContainer.hide();
+                $btn.text($btn.text().replace('Hide', 'View'));
+            } else {
+                $repliesContainer.show();
+                $btn.text($btn.text().replace('View', 'Hide'));
+            }
+        });
+
+        // Reply link handler
+        $(document).on('click', '.reply-link', function (e) {
+            e.stopPropagation();
+            var commentId = $(this).data('comment-id');
+            var postId = $(this).data('post-id');
+
+            var $inputSection = $(this).closest('.PostComments-forPosts').find('.PostComments-Input');
+            if ($inputSection.length === 0) {
+                $inputSection = $(this).closest('.postContainer, .premium-post-card, .allPostLists').find('.PostComments-forPosts, .PostComments-Input').last();
+            }
+
+            var $commentButton = $inputSection.find('.add_comments');
+            $commentButton.attr('data-parent-id', commentId);
+
+            var $textarea = $inputSection.find('.textareamain');
+            var username = $(this).closest('.Comments_contents').find('small strong').first().text();
+            if (username) {
+                $textarea.val('@' + username + ' ').focus();
+            } else {
+                $textarea.focus();
+            }
+
+            $commentButton.text('Reply');
+        });
+
+        function getCSRFToken() {
+            let csrfToken = null;
+            document.cookie.split(";").forEach(function (cookie) {
+                let parts = cookie.split("=");
+                if (parts[0].trim() === "csrftoken") {
+                    csrfToken = parts[1];
+                }
+            });
+            return csrfToken;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+
+    // Unread message count badge poller
+    function checkNotifications() {
+        fetch("{% url 'unread_message_count' %}")
+            .then(res => res.json())
+            .then(data => {
+                const desktopBadge = document.getElementById("notification-badge");
+                if (desktopBadge) {
+                    desktopBadge.style.display = data.unread_count > 0 ? "inline-block" : "none";
+                }
+                const mobileBadge = document.getElementById("mobile-notification-badge");
+                if (mobileBadge) {
+                    mobileBadge.style.display = data.unread_count > 0 ? "inline-block" : "none";
+                }
+            })
+            .catch(err => console.error("Failed to fetch notifications:", err));
+    }
+
+    checkNotifications();
+    setInterval(checkNotifications, 10000);
+</script>
+
+<!-- Tailwind CSS CDN for Modal -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Report Post Modal (Dark-Themed Tailwind CSS) -->
+<div id="reportModal" class="hidden fixed inset-0 z-[10050] items-center justify-center bg-black/80 backdrop-blur-sm p-4" style="display: none;">
+    <div class="relative w-full max-w-md rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl p-6 text-white transform transition-all duration-200">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-zinc-100">Report Post</h3>
+                    <p class="text-xs text-zinc-400">Select a reason that best describes the issue</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeReportModal()" class="text-zinc-400 hover:text-zinc-200 p-1.5 rounded-lg hover:bg-zinc-800 transition-colors" aria-label="Close modal">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Form -->
+        <form id="reportPostForm" onsubmit="submitPostReport(event)" class="mt-4 space-y-4">
+            <input type="hidden" id="reportPostId" name="post_id" value="">
+
+            <!-- Reasons list -->
+            <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="nudity" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500" required>
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Nudity or sexual content</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="bullying" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Bullying or harassment</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="suicide" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Suicide or self-harm</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="violence" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Violence or threat</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="hate" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Hate speech</span>
+                </label>
+
+                <label class="flex items-center p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/40 cursor-pointer transition-all">
+                    <input type="radio" name="reportReason" value="spam" class="w-4 h-4 text-red-600 bg-zinc-900 border-zinc-600 focus:ring-red-500">
+                    <span class="ml-3 text-sm font-medium text-zinc-200">Spam or misleading</span>
+                </label>
+            </div>
+
+            <!-- Optional Details Textarea -->
+            <div>
+                <label for="reportDescription" class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Additional Details (Optional)</label>
+                <textarea id="reportDescription" name="description" rows="3" placeholder="Provide more context if necessary..." class="w-full px-3.5 py-2.5 bg-zinc-800/70 border border-zinc-700/60 rounded-xl text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors resize-none"></textarea>
+            </div>
+
+            <!-- Modal Actions -->
+            <div class="pt-2 flex items-center justify-end space-x-3 border-t border-zinc-800/80">
+                <button type="button" onclick="closeReportModal()" class="px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/60 rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" id="submitReportBtn" class="px-5 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-lg shadow-red-900/30">
+                    Submit Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openReportModal(postId) {
+        const modal = document.getElementById('reportModal');
+        const postIdInput = document.getElementById('reportPostId');
+        const form = document.getElementById('reportPostForm');
+        
+        if (postIdInput) {
+            postIdInput.value = postId;
+        }
+        if (form) {
+            form.reset();
+        }
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+    }
+
+    function closeReportModal() {
+        const modal = document.getElementById('reportModal');
+        const form = document.getElementById('reportPostForm');
+        if (form) {
+            form.reset();
+        }
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+    }
+
+    function submitPostReport(event) {
+        if (event) event.preventDefault();
+
+        const postId = document.getElementById('reportPostId')?.value;
+        const selectedRadio = document.querySelector('input[name="reportReason"]:checked') || document.querySelector('input[name="report_reason"]:checked');
+        const descriptionInput = document.getElementById('reportDescription');
+        const submitBtn = document.getElementById('submitReportBtn');
+
+        if (!postId) {
+            alert('Post ID is missing.');
+            return;
+        }
+
+        if (!selectedRadio) {
+            alert('Please select a reason for reporting this post.');
+            return;
+        }
+
+        const reason = selectedRadio.value;
+        const description = descriptionInput ? descriptionInput.value.trim() : '';
+        const csrftoken = (function(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        })('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+        }
+
+        fetch(`/post/${postId}/report/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                reason: reason,
+                description: description
+            })
+        })
+        .then(async response => {
+            const data = await response.json().catch(() => ({}));
+            closeReportModal();
+
+            if (response.ok && data.success) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Report Submitted',
+                        text: data.message || 'Post reported successfully.',
+                        iconColor: '#fd8925',
+                        background: '#0f0f0f',
+                        color: '#ffffff',
+                        backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                        confirmButtonText: 'Continue',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                            title: 'text-2xl font-bold',
+                            htmlContainer: 'text-[#9ca3af]',
+                            confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
+                        }
+                    });
+                } else {
+                    alert(data.message || 'Post reported successfully.');
+                }
+            } else {
+                const message = data.message || 'Failed to submit report.';
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Report Failed',
+                        text: message,
+                        iconColor: '#fd8925',
+                        background: '#0f0f0f',
+                        color: '#ffffff',
+                        backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                        confirmButtonText: 'Continue',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                            title: 'text-2xl font-bold',
+                            htmlContainer: 'text-[#9ca3af]',
+                            confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
+                        }
+                    });
+                } else {
+                    alert(message);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting report:', error);
+            closeReportModal();
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while submitting your report. Please try again.',
+                    iconColor: '#fd8925',
+                    background: '#0f0f0f',
+                    color: '#ffffff',
+                    backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                    confirmButtonText: 'Continue',
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                        title: 'text-2xl font-bold',
+                        htmlContainer: 'text-[#9ca3af]',
+                        confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
+                    }
+                });
+            } else {
+                alert('An error occurred while submitting your report. Please try again.');
+            }
+        })
+        .finally(() => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Report';
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const reportModal = document.getElementById('reportModal');
+        if (reportModal) {
+            reportModal.addEventListener('click', function(e) {
+                if (e.target === reportModal) {
+                    closeReportModal();
+                }
+            });
+        }
+    });
+</script>
+
+{% include "includes/alerts.html" %}
+
+{% endblock %}

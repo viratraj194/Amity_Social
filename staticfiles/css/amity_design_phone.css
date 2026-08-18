@@ -87,17 +87,23 @@
     }
 
     .PostContainers {
-        background-color: rgb(35, 35, 35);
-        width: 95%;
+        background-color: #1a1d23 !important;
+        width: 95vw !important;
+        max-width: none;
         display: none;
-        transform: translate(1%, 2%);
-        padding: 10px;
-        position: fixed;
-        top: 25px;
-        max-height: 600px;
-        overflow: hidden;
-        z-index: 1000;
+        transform: translate(-50%, -50%) !important;
+        top: 50% !important;
+        left: 50% !important;
+        padding: 15px;
+        position: fixed !important;
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 9999 !important;
         border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(12px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
     }
 
     .PostContainer-postContent textarea {
@@ -233,7 +239,7 @@
     .user_profiles {
         width: 95%;
     }
-
+   
     .following_follow_posts {
         width: 95%;
     }
@@ -334,22 +340,6 @@
         width: 110px !important;
     }
 
-    .PostComments-All,
-    .PostComments-forPosts {
-        width: 100%;
-        margin-left:17px ;
-
-    }
-
-    .ListComments-All .Comments_contents {
-        width: 234px !important;
-    }
-
-    .ListsComments-All {
-        width: 100%;
-        margin: auto;
-    }
-
     .userPostContent,
     .post_content {
         width: 100px;
@@ -437,7 +427,7 @@
         z-index: 2;
         background-color: #222222f6;
         width: 90%;
-        height: 509px;
+        height: 555px;
         padding: 5px;
         overflow: hidden;
     }
@@ -721,17 +711,71 @@
     }
 
     .PostContainers {
-        background-color: rgb(35, 35, 35);
-        width: 100%;
+        background-color: #1a1d23 !important;
+        width: 95vw !important;
+        max-width: none;
         display: none;
-        transform: translate(1%, 2%);
-        padding: 20px;
-        position: fixed;
-        top: 25px;
-        max-height: 600px;
-        overflow: hidden;
-        z-index: 1000;
+        transform: translate(-50%, -50%) !important;
+        top: 50% !important;
+        left: 50% !important;
+        padding: 15px;
+        position: fixed !important;
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 9999 !important;
         border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(12px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+    }
+
+    .post-modal-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .mode-toggle {
+        display: flex;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 25px;
+        padding: 4px;
+        gap: 4px;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .toggle-btn {
+        flex: 1;
+        padding: 10px 15px;
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .toggle-btn.active {
+        background: linear-gradient(89deg, #303030 0%, #1f1f1f 100%);
+        color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .PostContainer {
+        max-height: calc(90vh - 180px);
     }
 
     .PostContainer-postContent textarea {
@@ -1057,7 +1101,7 @@
         z-index: 2;
         background-color: #222222f6;
         width: 90%;
-        height: 509px;
+        height: 555px;
         padding: 5px;
         overflow: hidden;
     }
@@ -1246,4 +1290,211 @@
     }
 
     /* Styles for large desktops */
+}
+/* Premium Post Card Mobile Adjustments */
+@media (max-width: 480px) {
+    .premium-post-card {
+        max-width: 95vw;
+        margin: 1rem auto;
+        border-radius: 16px;
+    }
+
+    .premium-card-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .premium-avatar-wrapper {
+        width: 36px;
+        height: 36px;
+    }
+
+
+    .premium-card-media {
+        padding: 0 5px; /* Less nesting on mobile */
+    }
+
+    .premium-media-container {
+        border-radius: 12px;
+    }
+
+    .premium-media-container img {
+        max-height: 400px; /* Shorter images for mobile screens */
+    }
+
+    .premium-confession-content {
+        padding: 2.5rem 1rem;
+        min-height: 180px;
+    }
+
+    .premium-confession-text {
+        font-size: 0.95rem;
+    }
+
+    .premium-action-bar {
+        padding: 0.5rem 1rem;
+    }
+
+    .premium-likes-count {
+        font-size: 0.8rem;
+    }
+
+    .premium-card-engagement {
+        padding: 0.75rem 1rem 1rem;
+    }
+
+    /* Modal Mobile Adjustments */
+    .modal-dialog {
+        width: 90vw;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+    }
+
+    .modal-body p {
+        font-size: 0.9rem;
+    }
+
+    .cancel-btn, .deactivate-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Ensure SweetAlert2 appears above the post creation modal */
+.swal2-container {
+    z-index: 10000 !important;
+}
+
+/* Refined Premium SweetAlert2 Sizes */
+.premium-swal-popup {
+    padding: 1.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.premium-swal-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.premium-swal-text {
+    font-size: 0.95rem !important;
+    color: #d1d1d1 !important;
+    margin-bottom: 1rem !important;
+}
+
+.premium-swal-button {
+    font-size: 0.9rem !important;
+    padding: 8px 24px !important;
+}
+
+/* Comment Modal Layout Fixes */
+.premium-comments-section {
+    background: #0a0a0a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 1.5rem 1.5rem 20px 1.5rem !important;
+    display: flex;
+    flex-direction: column !important;
+    height: 600px !important;
+    max-height: 85vh !important;
+    position: fixed !important;
+    bottom: 30px !important;
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10001 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
+    width: 440px !important;
+}
+
+.premium-comments-list {
+    flex-grow: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 1rem !important;
+}
+
+.premium-comment-input-area {
+    margin-top: auto !important;
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.premium-comment-field-wrapper {
+    flex: 1 !important;
+    display: flex !important;
+    background: #1a1a1a !important;
+    border-radius: 50px !important;
+    padding: 10px 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    transition: border-color 0.2s !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+.premium-comment-input {
+    flex: 1 !important;
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-size: 0.9rem !important;
+    outline: none !important;
+    resize: none !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.premium-comment-post-btn {
+    background: none !important;
+    border: none !important;
+    color: #0095f6 !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    padding: 0 4px !important;
+    transition: opacity 0.2s !important;
+}
+
+.premium-comment-post-btn:hover {
+    opacity: 0.8 !important;
+}
+
+/* Responsive Comment Modal */
+@media (max-width: 480px) {
+    .premium-comments-section {
+        width: 96vw !important;
+        height: 75vh !important;
+        max-height: 75vh !important;
+        bottom: 20px !important;
+        padding: 1rem 1rem 15px 1rem !important;
+        margin: 0 !important;
+    }
+    
+    .premium-comment-input-area {
+        padding-top: 0.75rem !important;
+        gap: 8px !important;
+    }
+
+    .premium-comment-field-wrapper {
+        padding: 8px 16px !important;
+        border-radius: 50px !important;
+        gap: 8px !important;
+    }
+
+    .premium-comment-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .premium-comment-input {
+        font-size: 0.85rem !important;
+    }
 }

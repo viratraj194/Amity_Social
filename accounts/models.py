@@ -136,12 +136,12 @@ class User(AbstractBaseUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True,width_field='image_width',height_field='image_height')
+    profile_picture = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True)
     # profile picture  width and height
     image_width = models.PositiveIntegerField(null=True, blank=True, editable=False)
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False)
     userBio = models.TextField(blank=True, null=True)
-    cover_photo = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True,width_field='cover_width',height_field='cover_height')
+    cover_photo = models.ImageField(upload_to=secure_hash_filename, blank=True, null=True)
     # cover photo width and height
     # user is privet 
     is_privet = models.BooleanField(default=False, db_index=True)

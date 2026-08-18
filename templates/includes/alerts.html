@@ -1,6 +1,7 @@
 {% if messages %}
-<!-- SweetAlert2 CDN (Ensure it's loaded if not already in base.html) -->
+<!-- SweetAlert2 & Tailwind CSS CDN (Ensure it's loaded if not already in base.html) -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
     /* Custom styles matching the specific UI requirements */
@@ -78,20 +79,17 @@
                 title: swalTitle,
                 text: msg.text,
                 icon: swalIcon,
-                background: '#1e1e1e',
+                iconColor: '#fd8925',
+                background: '#0f0f0f',
                 color: '#ffffff',
-                confirmButtonColor: btnColor,
+                backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
                 confirmButtonText: 'OK',
-                // Show cancel button only if we want to emulate the Yes/No look exactly, 
-                // but for standard messages, usually one button is enough.
-                // showCancelButton: true, 
-                // cancelButtonText: 'No',
+                buttonsStyling: false,
                 customClass: {
-                    popup: 'custom-swal-popup',
-                    title: 'custom-swal-title',
-                    htmlContainer: 'custom-swal-text',
-                    confirmButton: 'custom-swal-confirm-btn',
-                    cancelButton: 'custom-swal-cancel-btn'
+                    popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                    title: 'text-2xl font-bold',
+                    htmlContainer: 'text-[#9ca3af]',
+                    confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
                 }
             });
         }

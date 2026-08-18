@@ -26,4 +26,5 @@ urlpatterns = [
     path('post/<int:post_id>/report/', views.report_post, name='report_post'),
     path('moderation/feed/', views.admin_moderation_feed, name='admin_moderation_feed'),
     path('moderation/post/<int:post_id>/delete/', views.api_delete_flagged_post, name='api_delete_flagged_post'),
+    path('post/<int:post_id>/', views.post_detail, name='post_detail'),
 ]
