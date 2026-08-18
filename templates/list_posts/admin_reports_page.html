@@ -745,12 +745,17 @@
                                 title: 'Deleted & Notified',
                                 text: data.message || 'Post #' + postId + ' was deleted and author was notified.',
                                 icon: 'success',
-                                background: '#18181b',
+                                iconColor: '#fd8925',
+                                background: '#0f0f0f',
                                 color: '#ffffff',
-                                confirmButtonColor: '#2563eb',
+                                backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                                confirmButtonText: 'Continue',
+                                buttonsStyling: false,
                                 customClass: {
-                                    popup: 'rounded-2xl border border-zinc-800',
-                                    confirmButton: 'rounded-xl font-semibold'
+                                    popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                                    title: 'text-2xl font-bold',
+                                    htmlContainer: 'text-[#9ca3af]',
+                                    confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
                                 }
                             });
                         } else {
@@ -763,12 +768,17 @@
                                 title: 'Error',
                                 text: errorMsg,
                                 icon: 'error',
-                                background: '#18181b',
+                                iconColor: '#fd8925',
+                                background: '#0f0f0f',
                                 color: '#ffffff',
-                                confirmButtonColor: '#dc2626',
+                                backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                                confirmButtonText: 'Continue',
+                                buttonsStyling: false,
                                 customClass: {
-                                    popup: 'rounded-2xl border border-zinc-800',
-                                    confirmButton: 'rounded-xl font-semibold'
+                                    popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                                    title: 'text-2xl font-bold',
+                                    htmlContainer: 'text-[#9ca3af]',
+                                    confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
                                 }
                             });
                         } else {
@@ -783,12 +793,17 @@
                             title: 'Error',
                             text: 'An error occurred while deleting the post. Please try again.',
                             icon: 'error',
-                            background: '#18181b',
+                            iconColor: '#fd8925',
+                            background: '#0f0f0f',
                             color: '#ffffff',
-                            confirmButtonColor: '#dc2626',
+                            backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                            confirmButtonText: 'Continue',
+                            buttonsStyling: false,
                             customClass: {
-                                popup: 'rounded-2xl border border-zinc-800',
-                                confirmButton: 'rounded-xl font-semibold'
+                                popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                                title: 'text-2xl font-bold',
+                                htmlContainer: 'text-[#9ca3af]',
+                                confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4'
                             }
                         });
                     } else {
@@ -802,17 +817,20 @@
                     title: 'Delete Flagged Post?',
                     text: 'Are you sure you want to delete post #' + postId + ' and notify the author via email?',
                     icon: 'warning',
+                    iconColor: '#fd8925',
+                    background: '#0f0f0f',
+                    color: '#ffffff',
+                    backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
                     showCancelButton: true,
-                    confirmButtonColor: '#dc2626',
-                    cancelButtonColor: '#27272a',
                     confirmButtonText: 'Yes, delete & notify',
                     cancelButtonText: 'Cancel',
-                    background: '#18181b',
-                    color: '#ffffff',
+                    buttonsStyling: false,
                     customClass: {
-                        popup: 'rounded-2xl border border-zinc-800',
-                        confirmButton: 'rounded-xl font-semibold',
-                        cancelButton: 'rounded-xl'
+                        popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                        title: 'text-2xl font-bold',
+                        htmlContainer: 'text-[#9ca3af]',
+                        confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4',
+                        cancelButton: 'bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 ml-3 mt-4'
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {

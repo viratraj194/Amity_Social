@@ -116,20 +116,20 @@ document.addEventListener('DOMContentLoaded', function () {
             title: 'Discard Post',
             text: 'Are you sure you want to discard this post?',
             icon: 'warning',
-            width: '320px',
-            background: '#1a1a1a',
+            iconColor: '#fd8925',
+            background: '#0f0f0f',
             color: '#ffffff',
+            backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
             showCancelButton: true,
-            confirmButtonColor: '#ff4d4d',
-            cancelButtonColor: '#333333',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No',
+            buttonsStyling: false,
             customClass: {
-                popup: 'rounded-24 premium-swal-popup',
-                title: 'premium-swal-title',
-                htmlContainer: 'premium-swal-text',
-                confirmButton: 'rounded-pill premium-swal-button',
-                cancelButton: 'rounded-pill premium-swal-button'
+                popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                title: 'text-2xl font-bold',
+                htmlContainer: 'text-[#9ca3af]',
+                confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4',
+                cancelButton: 'bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 ml-3 mt-4'
             }
         }).then((result) => {
             if (result.isConfirmed) {

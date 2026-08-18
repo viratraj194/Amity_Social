@@ -250,51 +250,55 @@ def userProfileSettings(request):
         user_info_form = userInfoForm(request.POST, instance=request.user)
 
         if user_profile_form.is_valid() and user_info_form.is_valid():
-            # Save profile form first
-            user_profile_form.save()
+            try:
+                with transaction.atomic():
+                    # Save profile form first
+                    user_profile_form.save()
 
-            # Store old college_id for cache invalidation
-            old_college_id = user.college.id if user.college else None
+                    # Store old college_id for cache invalidation
+                    old_college_id = user.college.id if user.college else None
 
-            # Handle state and city from form
-            state = user_info_form.cleaned_data.get('state')
-            city = user_info_form.cleaned_data.get('city')
-            # Get college_name from visible input or hidden backup field
-            college_name = request.POST.get('college_name', '').strip() or request.POST.get('college_name_hidden', '').strip()
+                    # Handle state and city from form
+                    state = user_info_form.cleaned_data.get('state')
+                    city = user_info_form.cleaned_data.get('city')
+                    # Get college_name from visible input or hidden backup field
+                    college_name = request.POST.get('college_name', '').strip() or request.POST.get('college_name_hidden', '').strip()
 
-            if state:
-                user.state = state
-            if city:
-                user.city = city
+                    if state:
+                        user.state = state
+                    if city:
+                        user.city = city
 
-            # Handle college: get or create based on name, city, state
-            new_college_id = None
-            if college_name and state and city:
-                college = get_or_create_college(college_name, city=city, state=state)
-                if college:
-                    user.college = college
-                    new_college_id = college.id
-                else:
-                    # Fallback: try to find college by exact name match
-                    college = College.objects.filter(name__iexact=college_name.strip()).first()
-                    if college:
-                        user.college = college
-                        new_college_id = college.id
+                    # Handle college: get or create based on name, city, state
+                    new_college_id = None
+                    if college_name and state and city:
+                        college = get_or_create_college(college_name, city=city, state=state)
+                        if college:
+                            user.college = college
+                            new_college_id = college.id
+                        else:
+                            # Fallback: try to find college by exact name match
+                            college = College.objects.filter(name__iexact=college_name.strip()).first()
+                            if college:
+                                user.college = college
+                                new_college_id = college.id
 
-            # Save other user fields
-            user.first_name = user_info_form.cleaned_data['first_name']
-            user.last_name = user_info_form.cleaned_data['last_name']
-            user.username = user_info_form.cleaned_data['username']
-            user.phone_number = user_info_form.cleaned_data['phone_number']
-            user.save()
+                    # Save other user fields
+                    user.first_name = user_info_form.cleaned_data['first_name']
+                    user.last_name = user_info_form.cleaned_data['last_name']
+                    user.username = user_info_form.cleaned_data['username']
+                    user.phone_number = user_info_form.cleaned_data['phone_number']
+                    user.save()
 
-            # Invalidate cache for old and new college feed
-            if old_college_id is not None:
-                cache.delete(f'posts_list_{request.user.id}_{old_college_id}_page_1')
-            if new_college_id is not None:
-                cache.delete(f'posts_list_{request.user.id}_{new_college_id}_page_1')
+                # Invalidate cache for old and new college feed
+                if old_college_id is not None:
+                    cache.delete(f'posts_list_{request.user.id}_{old_college_id}_page_1')
+                if new_college_id is not None:
+                    cache.delete(f'posts_list_{request.user.id}_{new_college_id}_page_1')
 
-            messages.success(request, 'Profile updated successfully.')
+                messages.success(request, 'Profile updated successfully.')
+            except Exception:
+                messages.error(request, 'An error occurred while updating your profile. Please try again.')
         else:
             messages.error(request, 'Form is invalid')
             print("Profile form errors:", user_profile_form.errors)

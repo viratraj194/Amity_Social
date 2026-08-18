@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.text import slugify
 from .models import User,UserProfile,FollowRequest,College
+from amity_social_main.validators import validate_image_field
 
 
 # Indian States and Union Territories
@@ -86,8 +87,8 @@ class UserForm(forms.ModelForm):
 
 
 class userProfileForm(forms.ModelForm):
-    profile_picture = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
-    cover_photo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}))
+    profile_picture = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}), required=False, validators=[validate_image_field])
+    cover_photo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}), required=False, validators=[validate_image_field])
     # userBio = forms.Textarea(widget=forms.Textarea(attrs={'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-transparent border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring'}))
     class Meta:
         model = UserProfile

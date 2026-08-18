@@ -2852,9 +2852,9 @@ swiper-slide {
 }
 
 .premium-username {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #ffffff;
+    font-weight: 500;
+    font-size: small;
+    color: #919191;
     letter-spacing: -0.01em;
 }
 
@@ -2973,8 +2973,9 @@ swiper-slide {
 }
 
 .premium-handle {
-    font-weight: 700;
-    color: #ffffff;
+    font-weight: 400;
+    color: #919191;
+    font-size: smaller;
     margin-right: 6px;
     text-decoration: none;
 }

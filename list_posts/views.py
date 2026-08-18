@@ -114,19 +114,23 @@ def add_posts(request):
             if not post.content and not post.caption and not post.post_image:
                 messages.error(request, "You cannot post an empty post. Please provide content, caption, or an image.")
                 return redirect('list_posts')
-            post.save()
+            try:
+                post.save()
 
-            # Set post_slug based on user's name and post id
-            user = request.user
-            user_name = f'{user.first_name}{user.last_name}'
-            post.post_slug = slugify(user_name) + '_' + str(post.id)
-            post.save()
+                # Set post_slug based on user's name and post id
+                user = request.user
+                user_name = f'{user.first_name}{user.last_name}'
+                post.post_slug = slugify(user_name) + '_' + str(post.id)
+                post.save()
 
-            # Invalidate cache for the user's college feed
-            college_id = request.user.college.id if request.user.college else None
-            cache.delete(f'posts_list_{request.user.id}_{college_id}_page_1')
-            messages.success(request, 'New post is added.')
-            return redirect('list_posts')
+                # Invalidate cache for the user's college feed
+                college_id = request.user.college.id if request.user.college else None
+                cache.delete(f'posts_list_{request.user.id}_{college_id}_page_1')
+                messages.success(request, 'New post is added.')
+                return redirect('list_posts')
+            except Exception:
+                messages.error(request, 'Failed to upload image. Please try again later.')
+                return redirect('list_posts')
         else:
 
             messages.error(request,'Post caption is to big or corrupted image')
@@ -585,4 +589,35 @@ def api_delete_flagged_post(request, post_id):
     return JsonResponse({'status': 'success'})
 
 
+@login_required(login_url='login')
+def post_detail(request, post_id):
+    post = get_object_or_404(UserPosts.objects.select_related('user__userprofile'), id=post_id)
+    user = request.user
+    post.liked_by_user = Like.objects.filter(user=user, post=post).exists()
+    post.saved_by_user = UserSavedPosts.objects.filter(user=user, post=post).exists()
+    post.is_following = Follower.objects.filter(follower=user, following=post.user).exists()
+    post.is_portrait = post.image_height > post.image_width if post.image_height and post.image_width else False
+
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+    except UserProfile.DoesNotExist:
+        user_profile = None
+
+    notifications = Notification.objects.filter(user=user, read=False).order_by('-timestamp')
+    follow_requests = FollowRequest.objects.filter(to_user=user, is_accepted=False)
+    total_posts = UserPosts.objects.filter(user=user).count()
+    total_followers = Follower.objects.filter(following=user).count()
+    total_following = Follower.objects.filter(follower=user).count()
+
+    context = {
+        'post': post,
+        'user_profile': user_profile,
+        'user': user,
+        'notifications': notifications,
+        'follow_requests': follow_requests,
+        'total_posts': total_posts,
+        'total_followers': total_followers,
+        'total_following': total_following,
+    }
+    return render(request, 'list_posts/post_detail.html', context)
 

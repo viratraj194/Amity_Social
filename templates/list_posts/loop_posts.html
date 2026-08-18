@@ -1,7 +1,19 @@
     <!-- listing post one by one here starts  -->
     {% for post in posts %}
-
     {% include "list_posts/post.html" %}
+    {% empty %}
+    <div class="bg-[#0f0f0f] backdrop-blur-xl border border-white/10 rounded-2xl p-8 text-center my-6" style="background: #0f0f0f; margin: 20px 0;">
+        <div class="bg-[#fd8925]/20 text-[#fd8925] p-4 rounded-full mx-auto mb-4 ring-1 ring-[#fd8925]/40 flex justify-center items-center" style="width: 80px; height: 80px; margin: 0 auto 16px auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 40px; height: 40px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">It's quiet in here... too quiet. 🤫</h3>
+        <p class="text-[#9ca3af] text-sm max-w-md mx-auto mb-6">No posts on your campus feed yet. Share a confession, ask a question, or drop the first tea anonymously!</p>
+        <button type="button" class="bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white font-semibold px-6 py-3 rounded-full hover:scale-105 transition-all shadow-lg shadow-[#fd8925]/20 open" onclick="document.querySelector('.saySomethinInputSpan.open').click()">
+            Drop the First Post 🚀
+        </button>
+    </div>
     {% endfor %}
     <div hx-get="{% url 'list_posts' %}?page={{ page|add:1 }}"
     hx-trigger="revealed"

@@ -2976,9 +2976,9 @@ swiper-slide {
 }
 
 .premium-username {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #ffffff;
+    font-weight: 500;
+    font-size: small;
+    color: #919191;
     letter-spacing: -0.01em;
 }
 
@@ -3097,8 +3097,9 @@ swiper-slide {
 }
 
 .premium-handle {
-    font-weight: 700;
-    color: #ffffff;
+    font-weight: 400;
+    color: #919191;
+    font-size: smaller;
     margin-right: 6px;
     text-decoration: none;
 }
@@ -3346,26 +3347,47 @@ swiper-slide {
 }
 
 /* Refined Premium SweetAlert2 Sizes */
-.premium-swal-popup {
+.premium-swal-popup,
+.swal2-popup {
     padding: 1.5rem !important;
+    background-color: #0f0f0f !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 1.5rem !important;
 }
 
-.premium-swal-title {
-    font-size: 1.25rem !important;
+.premium-swal-title,
+.swal2-title {
+    font-size: 1.5rem !important;
     font-weight: 700 !important;
+    color: #ffffff !important;
     margin-bottom: 0.5rem !important;
 }
 
-.premium-swal-text {
+.premium-swal-text,
+.swal2-html-container {
     font-size: 0.95rem !important;
-    color: #d1d1d1 !important;
+    color: #9ca3af !important;
     margin-bottom: 1rem !important;
 }
 
-.premium-swal-button {
-    font-size: 0.9rem !important;
-    padding: 8px 24px !important;
+.premium-swal-button,
+.swal2-confirm {
+    background: linear-gradient(to right, #fd8925, #ff0c00) !important;
+    color: #ffffff !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    padding: 12px 32px !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 10px 15px -3px rgba(253, 137, 37, 0.2) !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer !important;
+    transition: transform 0.3s ease !important;
+    margin-top: 1rem !important;
+}
+
+.swal2-confirm:hover {
+    transform: scale(1.05) !important;
 }
 
 /* ============================================

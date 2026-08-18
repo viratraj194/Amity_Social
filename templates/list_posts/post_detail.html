@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-{% comment %} js starts here  {% endcomment %}
 
 <style>
     @media only screen and (max-width: 768px) {
-        footer{
-            display:none;
+        footer {
+            display: none;
         }
     }
 
@@ -39,16 +38,64 @@
     .view-more-btn:hover {
         color: #fff;
     }
+
+    /* Back to feed header styling */
+    .back-to-feed-container {
+        padding: 12px 4px 18px 4px;
+        display: flex;
+        align-items: center;
+    }
+
+    .back-to-feed-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        color: #e2e8f0;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-to-feed-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+        transform: translateX(-4px);
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .back-to-feed-btn:active {
+        transform: translateX(-2px) scale(0.98);
+    }
+
+    .back-icon {
+        width: 18px;
+        height: 18px;
+        transition: transform 0.25s ease;
+    }
+
+    .back-to-feed-btn:hover .back-icon {
+        transform: translateX(-3px);
+    }
 </style>
 
-{% comment %} hidden search  {% endcomment %}
+{% comment %} hidden search modal {% endcomment %}
 <div class="searchUserHtml" style="display:none;">
     {% include "list_posts/search_user.html" %}
 </div>
-{% comment %} hidden search  {% endcomment %}
 
-<!-- post popup start  -->
-<script src="{% static 'js/js_components_for_ajax.js'%}"></script>
+<!-- post popup start -->
+<script src="{% static 'js/js_components_for_ajax.js' %}"></script>
 <div class="PostContainers">
     <div class="post-modal-header">
         <div class="close-button close" style="cursor: pointer;">
@@ -63,8 +110,8 @@
             <button type="button" class="toggle-btn" data-mode="confession" onclick="switchTab('confession')">Confession</button>
         </div>
     </div>
-    <form action="{%url 'add_posts'%}" method="post" enctype="multipart/form-data">
-        {%csrf_token%}
+    <form action="{% url 'add_posts' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
         <div class="PostContainer">
             <!-- IMAGE POST VIEW -->
@@ -72,13 +119,13 @@
                 <div class="postContainer-input-image flex">
                     {% if user_profile.profile_picture %}
                     <div class="postContainer-image">
-                        <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
+                        <img src="{{ user_profile.profile_picture.url }}" alt="" style="object-fit: cover;">
                     </div>
                     {% else %}
                     <div class="postContainer-image">
-                        <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                        <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
                     </div>
-                    {%endif%}
+                    {% endif %}
                     <div class="PostContainer-postContent" style="display:none;">
                         <textarea name="content" id="userInputImage" placeholder="Add a title..."></textarea>
                     </div>
@@ -112,13 +159,13 @@
                 <div class="postContainer-input-image flex">
                     {% if user_profile.profile_picture %}
                     <div class="postContainer-image">
-                        <img src="{{user_profile.profile_picture.url}}" alt="" style="object-fit: cover;">
+                        <img src="{{ user_profile.profile_picture.url }}" alt="" style="object-fit: cover;">
                     </div>
                     {% else %}
                     <div class="postContainer-image">
-                        <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                        <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
                     </div>
-                    {%endif%}
+                    {% endif %}
                 </div>
                 <!-- Large Confession Textarea -->
                 <div class="confession-textarea-container">
@@ -166,90 +213,88 @@
 </div>
 <!-- post popup ends -->
 
-
-
-
-
 <!-- POSTING PAGE STARTS -->
-<div class="postingPage flex "> <!-- posting page main container-->
+<div class="postingPage flex">
 
+    <!-- LEFT SIDEBAR -->
     <div class="postingPageLeft">
         <div class="sticky">
             <div class="loggedInUserProfile">
                 <div class="UserCover_photo_profile_photo">
                     {% if user_profile.cover_photo %}
                     <div class="postingPage_cover_photo">
-                        <img src="{{user_profile.cover_photo.url}}" alt="">
+                        <img src="{{ user_profile.cover_photo.url }}" alt="">
+                    </div>
+                    {% elif user.userprofile.cover_photo %}
+                    <div class="postingPage_cover_photo">
+                        <img src="{{ user.userprofile.cover_photo.url }}" alt="">
                     </div>
                     {% else %}
                     <div class="postingPage_cover_photo">
                         <img src="" alt="">
                     </div>
-                    
                     {% endif %}
+
                     {% if user_profile.profile_picture %}
                     <div class="postingPage_profile_photo">
-                        <img src="{{user_profile.profile_picture.url}}" alt="">
+                        <img src="{{ user_profile.profile_picture.url }}" alt="">
                     </div>
-
-
+                    {% elif user.userprofile.profile_picture %}
+                    <div class="postingPage_profile_photo">
+                        <img src="{{ user.userprofile.profile_picture.url }}" alt="">
+                    </div>
                     {% else %}
                     <div class="postingPage_profile_photo">
-                        <img src="{%static 'img/images.jpeg'%}" alt="">
+                        <img src="{% static 'img/images.jpeg' %}" alt="">
                     </div>
                     {% endif %}
                 </div>
                 <div class="postingPage-user-details">
-                    <h3>{{user.first_name}} {{user.last_name}}</h3>
-                    <h4 style="color: rgb(169, 169, 169);">@{{user.username}}</h4>
+                    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                    <h4 style="color: rgb(169, 169, 169);">@{{ user.username }}</h4>
                 </div>
-                <div class="postingPage-user-profile-counts  flex">
+                <div class="postingPage-user-profile-counts flex">
                     <div class="postingPage-followers">
-                        <h4>{{total_posts}}</h4>
+                        <h4>{{ total_posts|default:user.userposts_set.count }}</h4>
                         <h6>Posts</h6>
                     </div>
                     <div class="postingPage-followers">
-                        <h4>{{total_followers}}</h4>
-                        <h6>followers</h6>
+                        <h4>{{ total_followers|default:user.following.count }}</h4>
+                        <h6>Followers</h6>
                     </div>
                     <div class="postingPage-followers">
-                        <h4>{{total_following}}</h4>
+                        <h4>{{ total_following|default:user.followers.count }}</h4>
                         <h6>Following</h6>
                     </div>
                 </div>
             </div>
-            <!-- posting page links start  -->
+
+            <!-- navigation links start -->
             <div class="postingPageLinks postingPageLinks_phone">
                 <div class="linkLists">
                     <ul>
                         <li class="border-animation">
-
-
-                            <a href="{% url 'home'%}">
+                            <a href="{% url 'home' %}">
                                 <lord-icon src="https://cdn.lordicon.com/cnpvyndp.json" trigger="hover"
                                     colors="primary:#ffffff" style="width:20px;height:20px">
                                 </lord-icon>
-                                <span>Home</span></a>
+                                <span>Home</span>
+                            </a>
                         </li>
                         <li class="border-animation">
-                            <a href="{% url 'friend_messages'%}" >
+                            <a href="{% url 'friend_messages' %}">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                 <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
                                     colors="primary:#ffffff" style="width:20px;height:20px">
                                 </lord-icon>
                                 <span>Messages</span>
-                                
                                 <small id="notification-badge" style="display: none;">
                                     <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                     <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#16c72e" style="width:20px;height:20px">
                                     </lord-icon>
                                 </small>
-                                
                             </a>
                         </li>
-
-
-                        
                         <li class="border-animation">
                             <a class="open" style="cursor: pointer;">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -261,7 +306,7 @@
                             </a>
                         </li>
                         <li class="border-animation">
-                            <a class="searchUsersByUID" >
+                            <a class="searchUsersByUID">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                 <lord-icon
                                     src="https://cdn.lordicon.com/kkvxgpti.json"
@@ -272,9 +317,6 @@
                                 <span style="cursor: pointer;">Search</span>
                             </a>
                         </li>
-                        
-
-                        
                         <li class="border-animation">
                             <a href="{% url 'allEvents' %}">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -288,7 +330,7 @@
                             </a>
                         </li>
                         <li class="border-animation">
-                            <a href="{% url 'account'%}">
+                            <a href="{% url 'account' %}">
                                 <script src="https://cdn.lordicon.com/lordicon.js"></script>
                                 <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
                                     colors="primary:#ffffff" style="width:20px;height:20px">
@@ -306,295 +348,148 @@
                             </a>
                         </li>
                         {% endif %}
-
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- MIDDLE COLUMN: Back to Feed & Single Post -->
     <div class="postingPageMiddle">
-        <div class="saySomething">
-            <div class=" saySomething-submain  ">
-                {% if user_profile.profile_picture %}
-
-                <div class="saySomethingImage">
-                    <img style="object-fit:cover;" src="{{user_profile.profile_picture.url}}" alt="">
-                </div>
-                {% else %}
-                <div class="saySomethingImage">
-                    <img src="{%static 'img/images.jpeg'%}" alt="">
-                </div>
-                <!-- if user not updated profile  -->
-                <div class="UpdateProfilePoopUp" style="position: absolute; margin:auto; width: 300px;">
-                    
-                    <div id="deactivateModal" class="modal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <div class="warning-icon">⚠️</div>
-                                    <h5 class="modal-title">Update Profile</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <p>You need to update your profile to post comments and all other features.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn cancel-btn">Cancel</button>
-                                    <a href="{% url 'userProfileSettings' %}">
-                                        <button type="button" class="btn deactivate-btn">Update</button>
-                
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <script>
-
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const modal = document.getElementById("deactivateModal");
-                        const cancelBtn = document.querySelector(".cancel-btn");
-                    
-                        // Check if modal and cancelBtn exist before attaching event listeners
-                        if (modal && cancelBtn) {
-                            function closeModal() {
-                                modal.style.display = "none";
-                            }
-                    
-                            cancelBtn.addEventListener("click", closeModal);
-                    
-                            window.addEventListener("click", function (event) {
-                                if (event.target === modal) {
-                                    closeModal();
-                                }
-                            });
-                        } else {
-                            console.error("Modal or Cancel button not found in the DOM.");
-                        }
-                    });
-                     
-                </script>
-                {% endif %}
-                <div class="saySomething-input  flex">
-                    <div class="saySomething-icon1">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon class="lord-icon" src="https://cdn.lordicon.com/mecwbjnp.json" trigger="hover"
-                            colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
-                        </lord-icon>
-                    </div>
-                    <span class="saySomethinInputSpan open">Is there is something?..........</span>
-                    <!-- <input type="text" class="open" placeholder="Is there is something in your mind?.........."> -->
-
-                    <div class="saySomething-icon2">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/ercyvufy.json" trigger="hover" colors="primary:#777b7b"
-                            style="width:20px;height:20px">
-                        </lord-icon>
-                        
-                    </div>
-                </div>
-            </div>
-            <!-- Posting input on the top of the posting page  -->
-            <div class="saySomething-attachments">
-                <div class="saySomething-attachment-left">
-                    <!-- <div class="saySomething-attachment">
-                        <input type="file" class="file-input" src="" accept="image/*" alt="" id="imageInput">
-                        <label for="imageInput" class="file-input-label">
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon src="https://cdn.lordicon.com/rehjpyyh.json" trigger="hover"
-                                colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
-                            </lord-icon>
-                            <span>Image</span>
-                        </label>
-                    </div> -->
-                    <!-- <div class="saySomething-attachment">
-                        <input type="file" class="file-input" accept="video/*" id="videoInput">
-                        <label for="videoInput" class="file-input-label">
-                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                            <lord-icon src="https://cdn.lordicon.com/sdrxeanh.json" trigger="hover"
-                                colors="primary:#b4b4b4,secondary:#e4e4e4" style="width:20px;height:20px">
-                            </lord-icon>
-                            <span>Video</span>
-                        </label>
-                    </div> -->
-                </div>
-                <!-- <div class="saySomething-Post">
-                    <button type="submit">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon src="https://cdn.lordicon.com/mqwitsmv.json" trigger="hover"
-                            colors="primary:#ffffff,secondary:#b4b4b4" style="width:20px;height:20px">
-                        </lord-icon>
-                        <span>Post</span>
-                    </button>
-                </div> -->
-
-            </div>
-        </div>
-        <!-- listing post one by one here starts  -->
-        {% for post in posts %}
-        {% include "list_posts/post.html" %}
-        {% empty %}
-        <div class="bg-[#0f0f0f] backdrop-blur-xl border border-white/10 rounded-2xl p-8 text-center my-6" style="background: #0f0f0f; margin: 20px 0;">
-            <div class="bg-[#fd8925]/20 text-[#fd8925] p-4 rounded-full mx-auto mb-4 ring-1 ring-[#fd8925]/40 flex justify-center items-center" style="width: 80px; height: 80px; margin: 0 auto 16px auto;">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 40px; height: 40px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <!-- Back to Feed link -->
+        <div class="back-to-feed-container">
+            <a href="{% url 'list_posts' %}" class="back-to-feed-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" class="back-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">It's quiet in here... too quiet. 🤫</h3>
-            <p class="text-[#9ca3af] text-sm max-w-md mx-auto mb-6">No posts on your campus feed yet. Share a confession, ask a question, or drop the first tea anonymously!</p>
-            <button type="button" class="bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white font-semibold px-6 py-3 rounded-full hover:scale-105 transition-all shadow-lg shadow-[#fd8925]/20 open" onclick="document.querySelector('.saySomethinInputSpan.open').click()">
-                Drop the First Post 🚀
-            </button>
+                <span>Back to Feed</span>
+            </a>
         </div>
-        {% endfor %}
-        <div hx-get="{% url 'list_posts' %}?page={{ page|add:1 }}"
-            hx-trigger="revealed"
-            hx-target="this"
-            hx-swap="outerHTML">
-            {% comment %} /* From Uiverse.io by Leoodaviid */  {% endcomment %}
-            <div class="loader-container">
-            <div class="loader"></div>
-            </div>
-        </div>
-        <!-- listing post one by one here ends  -->
 
-    
-        
+        <!-- Render single post component -->
+        {% include "list_posts/post.html" %}
     </div>
-    
+
+    <!-- RIGHT SIDEBAR: Notifications & Follow Requests -->
     <div class="postingPageLast">
         <div class="sticky">
-            
             <div class="allNotifications">
-                <span id="notification-close" >
+                <span id="notification-close">
                     <script src="https://cdn.lordicon.com/lordicon.js"></script>
                     <lord-icon src="https://cdn.lordicon.com/nqtddedc.json" trigger="hover" colors="primary:#848484"
-                        style="width:20px;height:20px"></lord-icon>
+                        style="width:20px;height:20px">
                     </lord-icon>
                 </span>
-                
+
                 <div class="flex">
                     <h4>Notifications</h4>
-                    
-                    {%if notifications or follow_requests%}
+                    {% if notifications or follow_requests %}
                     <script src="https://cdn.lordicon.com/lordicon.js"></script>
                     <lord-icon src="https://cdn.lordicon.com/vspbqszr.json" trigger="hover" colors="primary:#e83a30"
                         style="width:30px;height:30px">
                     </lord-icon>
-                    {%endif%}
+                    {% endif %}
                 </div>
-                {% comment %} start request {% endcomment %}
-                {% for request  in follow_requests %}
-                <div class="postActivity  flex" id="follow-request-{{ request.id }}">
-                    {%if request.from_user.userprofile.profile_picture %}
-                    <div class="postActivity-userProfile-image">
-                        <img src="{{request.from_user.userprofile.profile_picture.url}}" style="object-fit: cover;"
-                            alt="">
-                    </div>
-                    {%else%}
-                    <div class="comment-posting-user">
-                        <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
-                    </div>
-                    {%endif%}
-                    <div class="postActivityDetails">
-                        <strong style="font-size: 13px;font-weight: 300;">@{{request.from_user.users_id}}</strong>
-                        <span style="text-wrap: wrap;">Sent follow request:
-                            </span>
 
+                {% comment %} follow requests list {% endcomment %}
+                {% for request in follow_requests %}
+                <div class="postActivity flex" id="follow-request-{{ request.id }}">
+                    {% if request.from_user.userprofile.profile_picture %}
+                    <div class="postActivity-userProfile-image">
+                        <img src="{{ request.from_user.userprofile.profile_picture.url }}" style="object-fit: cover;" alt="">
+                    </div>
+                    {% else %}
+                    <div class="comment-posting-user">
+                        <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% endif %}
+                    <div class="postActivityDetails">
+                        <strong style="font-size: 13px;font-weight: 300;">@{{ request.from_user.users_id }}</strong>
+                        <span style="text-wrap: wrap;">Sent follow request:</span>
                     </div>
                     <div class="flex space_between">
-                            <div >
-                                <a href="#" class="follow-action" data-request-id="{{ request.id }}" data-url="{% url 'accept_follow_request' request.id %}" style="margin:auto 5px;">
-                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                    <lord-icon
-                                        src="https://cdn.lordicon.com/oqdmuxru.json"
-                                        trigger="hover"
-                                        colors="primary:#848484"
-                                        style="width:20px;height:20px">
-                                    </lord-icon>
-                                </a>
-                                <a href="#" class="follow-action" data-request-id="{{ request.id }}" data-url="{% url 'deny_follow_request' request.id %}" style="margin:auto 5px;">
-                                    <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                                    <lord-icon
-                                        src="https://cdn.lordicon.com/nqtddedc.json"
-                                        trigger="hover"
-                                        colors="primary:#f4a09c"
-                                        style="width:20px;height:20px">
-                                    </lord-icon>
-                                </a>
-                            </div>
+                        <div>
+                            <a href="#" class="follow-action" data-request-id="{{ request.id }}" data-url="{% url 'accept_follow_request' request.id %}" style="margin:auto 5px;">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/oqdmuxru.json"
+                                    trigger="hover"
+                                    colors="primary:#848484"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                            </a>
+                            <a href="#" class="follow-action" data-request-id="{{ request.id }}" data-url="{% url 'deny_follow_request' request.id %}" style="margin:auto 5px;">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/nqtddedc.json"
+                                    trigger="hover"
+                                    colors="primary:#f4a09c"
+                                    style="width:20px;height:20px">
+                                </lord-icon>
+                            </a>
+                        </div>
                     </div>
                 </div>
-
-                {% comment %} end request  {% endcomment %}
                 {% endfor %}
+
                 <div class="allnotificatons_scrol" style="max-height: 400px; overflow-y: auto;">
-                    {%if notifications %}
+                    {% if notifications %}
                     <div class="mark_all_as_read">
-                        <span style="font-size: small;
-                        font-weight: 400;
-                        color: #a4a1a1;
-                        cursor: pointer;
-                        border-bottom: 1px solid #a4a1a1;
-                        ">Mark all as read</span>
+                        <span style="font-size: small; font-weight: 400; color: #a4a1a1; cursor: pointer; border-bottom: 1px solid #a4a1a1;">
+                            Mark all as read
+                        </span>
                     </div>
                     {% for notification in notifications %}
-                    <div class="postActivity notification  flex"
-                        data-url="{%url 'mark_notification_as_read' notification.id%}" data-id="{{ notification.id }}">
-                        {%if notification.actor.userprofile.profile_picture %}
+                    <div class="postActivity notification flex"
+                        data-url="{% url 'mark_notification_as_read' notification.id %}" data-id="{{ notification.id }}">
+                        {% if notification.actor.userprofile.profile_picture %}
                         <div class="postActivity-userProfile-image">
-                            <img src="{{notification.actor.userprofile.profile_picture.url}}" style="object-fit: cover;"
-                                alt="">
+                            <img src="{{ notification.actor.userprofile.profile_picture.url }}" style="object-fit: cover;" alt="">
                         </div>
-                        {%else%}
+                        {% else %}
                         <div class="comment-posting-user">
-                            <img src="{%static 'img/images.jpeg'%}" alt="" style="object-fit: cover;">
+                            <img src="{% static 'img/images.jpeg' %}" alt="" style="object-fit: cover;">
                         </div>
-                        {%endif%}
+                        {% endif %}
                         <div class="postActivityDetails">
-                            <strong style="font-size: 13px;font-weight: 300;">@{{notification.actor.users_id}}</strong>
-                            <span style="text-wrap: wrap;">{{notification.notification_msg}}:
-                                {{notification.timestamp}}</span>
-
+                            <strong style="font-size: 13px;font-weight: 300;">@{{ notification.actor.users_id }}</strong>
+                            <span style="text-wrap: wrap;">{{ notification.notification_msg }}: {{ notification.timestamp }}</span>
                         </div>
-                        {%if notification.post.post_image %}
+                        {% if notification.post.post_image %}
                         <div class="postActivityImage_or_video">
-                            <img style="object-fit: cover;" src="{{notification.post.post_image.url}}" alt="">
+                            <img style="object-fit: cover;" src="{{ notification.post.post_image.url }}" alt="">
                         </div>
-                        
-                        {%else%}
+                        {% else %}
                         <div class="comment-posting-user">
                             <span style="width: 100%; height: 100%; display:block;">
-                                {{notification.post.content}}
+                                {{ notification.post.content }}
                             </span>
                         </div>
-                        {%endif%}
+                        {% endif %}
                     </div>
                     {% endfor %}
-                    {%else%}
+                    {% else %}
                     <h4 style="color: #777b7b; text-align: center; margin: 5px;">No Notifications</h4>
-                    {%endif%}
+                    {% endif %}
                 </div>
-
             </div>
-
         </div>
     </div>
-      <!-- posting apge links start  -->
-      <div class="postingPageLinks postingPageLinks_phone-block">
+
+    <!-- Phone Bottom Navigation Bar -->
+    <div class="postingPageLinks postingPageLinks_phone-block">
         <div class="linkLists">
             <ul>
                 <li class="border-animation">
-
-
-                    <a href="{% url 'home'%}">
+                    <a href="{% url 'home' %}">
                         <lord-icon src="https://cdn.lordicon.com/cnpvyndp.json" trigger="hover"
                             colors="primary:#ffffff" style="width:20px;height:20px">
                         </lord-icon>
-                        <span>Home</span></a>
+                        <span>Home</span>
+                    </a>
                 </li>
                 <li class="border-animation">
-                    <a href="{% url 'friend_messages'%}">
+                    <a href="{% url 'friend_messages' %}">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon src="https://cdn.lordicon.com/fdxqrdfe.json" trigger="hover"
                             colors="primary:#ffffff" style="width:20px;height:20px">
@@ -618,7 +513,7 @@
                     </a>
                 </li>
                 <li class="border-animation">
-                    <a class="searchUsersByPhoneUID" >
+                    <a class="searchUsersByPhoneUID">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon
                             src="https://cdn.lordicon.com/kkvxgpti.json"
@@ -629,20 +524,8 @@
                         <span>Search</span>
                     </a>
                 </li>
-                <!-- <li class="border-animation">
-                    <a href="{% url "allEvents" %}">
-                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
-                        <lord-icon
-                            src="https://cdn.lordicon.com/abfverha.json"
-                            trigger="hover"
-                            colors="primary:#ffffff"
-                            style="width:20px;height:20px">
-                        </lord-icon>
-                        <span>Events</span>
-                    </a>
-                </li> -->
                 <li class="border-animation">
-                    <a href="{% url 'account'%}">
+                    <a href="{% url 'account' %}">
                         <script src="https://cdn.lordicon.com/lordicon.js"></script>
                         <lord-icon src="https://cdn.lordicon.com/kthelypq.json" trigger="hover"
                             colors="primary:#ffffff" style="width:20px;height:20px">
@@ -660,20 +543,233 @@
                     </a>
                 </li>
                 {% endif %}
-
             </ul>
         </div>
     </div>
 </div>
 
-
-
-
-
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+    // Swiper Carousel Initialization
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof Swiper !== 'undefined') {
+            new Swiper('.swiper-container', {
+                autoHeight: true,
+                slidesPerView: 1,
+                spaceBetween: 0,
+                grabCursor: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        }
+    });
+
+    // Toggle comment container visibility
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('Comment-onPost')) {
+                e.preventDefault();
+                const post_id = e.target.getAttribute('data-id');
+                const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+                if (targetDiv) {
+                    targetDiv.style.display = targetDiv.style.display === 'flex' ? 'none' : 'flex';
+                }
+            }
+        });
+
+        // Close comment container
+        document.addEventListener('click', function (e) {
+            const closeBtn = e.target.closest('.Comment-Close');
+            if (closeBtn) {
+                e.preventDefault();
+                const post_id = closeBtn.getAttribute('data-id') || closeBtn.querySelector('[data-id]')?.getAttribute('data-id');
+                if (post_id) {
+                    const targetDiv = document.querySelector(`.PostComments-forPosts[data-id="${post_id}"]`);
+                    if (targetDiv) {
+                        targetDiv.style.display = 'none';
+                    }
+                }
+            }
+        });
+    });
+
+    // Tab switching for Post Creation Modal
+    function switchTab(mode) {
+        const imageTab = document.getElementById('image-post-view');
+        const confessionTab = document.getElementById('confession-post-view');
+        const imageLabel = document.getElementById('imageLabel');
+        const progressContainer = document.getElementById('confessionProgress');
+        const emptyImageState = document.getElementById('emptyImageState');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const buttons = document.querySelectorAll('.toggle-btn');
+
+        buttons.forEach(btn => {
+            if (btn.getAttribute('data-mode') === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        if (mode === 'image') {
+            if (imageTab) imageTab.style.display = 'block';
+            if (confessionTab) confessionTab.style.display = 'none';
+            if (imageLabel) imageLabel.style.display = 'flex';
+            if (progressContainer) progressContainer.style.display = 'none';
+            
+            if (imageInput && !imageInput.files.length) {
+                if (emptyImageState) emptyImageState.style.display = 'flex';
+                if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+            } else if (imageInput && imageInput.files.length) {
+                if (emptyImageState) emptyImageState.style.display = 'none';
+                if (imagePreviewContainer) imagePreviewContainer.style.display = 'block';
+            }
+        } else {
+            if (imageTab) imageTab.style.display = 'none';
+            if (confessionTab) confessionTab.style.display = 'block';
+            if (imageLabel) imageLabel.style.display = 'none';
+            if (progressContainer) progressContainer.style.display = 'flex';
+            if (emptyImageState) emptyImageState.style.display = 'none';
+        }
+    }
+
+    // Modal popup listeners & word count
+    document.addEventListener('DOMContentLoaded', function () {
+        const openButtons = document.querySelectorAll('.open');
+        const postDiv = document.querySelector('.PostContainers');
+        const closeButton = postDiv ? postDiv.querySelector('.close') : null;
+
+        openButtons.forEach(function (openButton) {
+            openButton.addEventListener('click', function () {
+                if (postDiv) {
+                    postDiv.style.display = 'flex';
+                    const activeTab = document.querySelector('.toggle-btn.active');
+                    if (activeTab) {
+                        switchTab(activeTab.getAttribute('data-mode'));
+                    }
+                }
+            });
+        });
+
+        if (closeButton && postDiv) {
+            closeButton.addEventListener('click', function () {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Discard Post',
+                        text: 'Are you sure you want to discard this post?',
+                        icon: 'warning',
+                        iconColor: '#fd8925',
+                        background: '#0f0f0f',
+                        color: '#ffffff',
+                        backdrop: `rgba(9, 6, 17, 0.85) backdrop-filter backdrop-blur-sm`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'border border-white/10 rounded-3xl shadow-2xl',
+                            title: 'text-2xl font-bold',
+                            htmlContainer: 'text-[#9ca3af]',
+                            confirmButton: 'bg-gradient-to-r from-[#fd8925] to-[#ff0c00] text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg shadow-[#fd8925]/20 mt-4',
+                            cancelButton: 'bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform duration-300 ml-3 mt-4'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const textarea = postDiv.querySelector('textarea');
+                            const inputs = postDiv.querySelectorAll('input');
+                            if (textarea) textarea.value = '';
+                            inputs.forEach(input => input.value = '');
+                            
+                            const imagePreview = document.getElementById('imagePreview');
+                            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                            const emptyImageState = document.getElementById('emptyImageState');
+                            if (imagePreview) imagePreview.src = '';
+                            if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+                            if (emptyImageState) emptyImageState.style.display = 'flex';
+                            
+                            postDiv.style.display = 'none';
+                        }
+                    });
+                } else {
+                    postDiv.style.display = 'none';
+                }
+            });
+        }
+
+        // Image preview functionality
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const emptyImageState = document.getElementById('emptyImageState');
+
+        if (imageInput && imagePreviewContainer && imagePreview) {
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        imagePreview.src = event.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                        imagePreviewContainer.classList.add('has-image');
+                        if (emptyImageState) emptyImageState.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (removeImageBtn && imageInput && imagePreviewContainer && imagePreview) {
+            removeImageBtn.addEventListener('click', function () {
+                imageInput.value = '';
+                imagePreview.src = '';
+                imagePreviewContainer.style.display = 'none';
+                imagePreviewContainer.classList.remove('has-image');
+                if (emptyImageState) emptyImageState.style.display = 'flex';
+            });
+        }
+
+        // Word counter for Confession mode (60 word limit)
+        const userInput = document.getElementById('userInputConfession');
+        const progressCircle = document.querySelector('.progress-container .progress');
+        const progressText = document.querySelector('.progress-container .text');
+        const postButton = document.querySelector('.postButton');
+
+        if (userInput && progressCircle && progressText) {
+            userInput.addEventListener('input', function () {
+                const text = userInput.value.trim();
+                const words = text.split(/\s+/).filter(word => word.length > 0);
+                const wordCount = words.length;
+                const maxWords = 60;
+                const progress = Math.min((wordCount / maxWords) * 100, 100);
+                const dashOffset = 157.1 - (157.1 * progress / 100);
+
+                progressCircle.style.strokeDashoffset = dashOffset;
+                progressText.textContent = wordCount + '/' + maxWords + ' words';
+
+                if (wordCount >= maxWords) {
+                    progressCircle.style.stroke = '#ff4444';
+                } else if (wordCount >= maxWords * 0.8) {
+                    progressCircle.style.stroke = '#ffaa00';
+                } else {
+                    progressCircle.style.stroke = '#2b68ff';
+                }
+
+                if (postButton) {
+                    postButton.disabled = wordCount > maxWords;
+                }
+            });
+        }
+    });
+
+    // jQuery AJAX Actions (Likes, Bookmarks, Comments, Follows, Notifications)
     $(document).ready(function () {
-        // Use event delegation to handle the click event
+        // Like post
         $(document).on('click', '.like_post', function (e) {
             e.preventDefault();
             const postId = $(this).attr('data-id');
@@ -693,12 +789,7 @@
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
-                    // console.log(response);
-
-                    // Select the icon div and like count span
                     const iconDiv = $(`.like_post[data-id="${postId}"] .post_icon`);
-    
-                    // Toggle icon based on liked status
                     if (response.liked) {
                         iconDiv.removeClass('postUnliked_icon').addClass('postLiked_icon');
                         iconDiv.html(`<lord-icon
@@ -714,36 +805,14 @@
                         iconDiv.html(`<lord-icon src="https://cdn.lordicon.com/xyboiuok.json" trigger="hover"
                         colors="primary:#848484" style="width:30px;height:30px"></lord-icon>`);
                     }
-    
-                    // Update the likes count (if needed)
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error:', error);
+                    console.error('Error liking post:', error);
                 }
             });
         });
-    
-        // Function to get CSRF token
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        };
-    });
-    
-</script>
-<script>
-    $(document).ready(function () {
-        // Use event delegation to handle the click event
+
+        // Save post (Bookmark)
         $(document).on('click', '.posts-save', function (e) {
             e.preventDefault();
             const postId = $(this).attr('data-id');
@@ -766,41 +835,15 @@
                         } else {
                             postIcon.attr('src', 'https://cdn.lordicon.com/prjooket.json');
                         }
-                    } else {
-                        // console.error('Failed to save post');
                     }
                 },
                 error: function (xhr, status, error) {
-                    // console.error('Error:', error);
+                    console.error('Error saving post:', error);
                 }
             });
         });
-    
-        // Function to get CSRF token
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    });
-    
-</script>
-<!-- POSTING PAGE ENDS -->
 
-<!-- notification -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Use .one() to ensure only one request per notification
+        // Notifications auto-mark on hover
         $(document).one('mouseenter', '.notification', function () {
             const $notification = $(this);
             const url = $notification.attr('data-url');
@@ -812,7 +855,6 @@
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
                 success: function (response) {
-                    // Remove notification from DOM on success
                     if (response.status === 'success' || response.status === 'already_handled') {
                         $notification.fadeOut('slow', function () {
                             $(this).remove();
@@ -820,12 +862,12 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error:', error);
+                    console.error('Error marking notification:', error);
                 }
             });
         });
 
-        // Handle follow request accept/deny actions
+        // Follow request actions (Accept/Deny)
         $(document).on('click', '.follow-action', function (e) {
             e.preventDefault();
             const url = $(this).attr('data-url');
@@ -840,57 +882,38 @@
                 },
                 success: function (response) {
                     if (response.status === 'accepted' || response.status === 'denied' || response.status === 'already_handled') {
-                        // Remove the follow request notification from DOM
                         $followRequestElement.fadeOut('slow', function () {
                             $(this).remove();
                         });
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error:', error);
+                    console.error('Error handling follow request:', error);
                 }
             });
         });
-    });
-    $(document).ready(function () {
-        $('.mark_all_as_read').on('click',function(){
+
+        // Mark all as read
+        $('.mark_all_as_read').on('click', function () {
             $.ajax({
-            url: "/mark_all_as_read/",
-            type: "POST",
-            headers: { "X-CSRFToken": getCSRFToken() },
-            success: function(response) {
-                // Hide all notifications and the "mark all as read" button
-                $('.notification').fadeOut('slow', function () {
-                    $(this).remove();
-                });
-                $('.mark_all_as_read').fadeOut('slow');
-
-                // Hide notification badges
-                $('#notification-badge').hide();
-                $('#mobile-notification-badge').hide();
-            },
-            error: function(xhr, status, error) {
-                console.log("Error:", error);
-            }
-        });
-        });
-
-        // Function to get CSRF token from cookies
-        function getCSRFToken() {
-            let csrfToken = null;
-            document.cookie.split(";").forEach(function(cookie) {
-                let parts = cookie.split("=");
-                if (parts[0].trim() === "csrftoken") {
-                    csrfToken = parts[1];
+                url: "/mark_all_as_read/",
+                type: "POST",
+                headers: { "X-CSRFToken": getCSRFToken() },
+                success: function (response) {
+                    $('.notification').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                    $('.mark_all_as_read').fadeOut('slow');
+                    $('#notification-badge').hide();
+                    $('#mobile-notification-badge').hide();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
                 }
             });
-            return csrfToken;
-        }
-    })
+        });
 
-    // Adding the comment using event delegation
-    $(document).ready(function () {
-        // Use event delegation to handle the click event
+        // Add Comment
         $(document).off('click', '.add_comments').on('click', '.add_comments', function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -901,7 +924,6 @@
             const csrfToken = getCookie('csrftoken');
 
             if (!commentText) {
-                // console.log('Comment text is empty.');
                 return;
             }
 
@@ -927,19 +949,13 @@
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
-                    // console.log(response);
-
                     if (response.success) {
-                        // Clear the textarea and reset reply mode
                         const $textarea = $btn.closest('.PostComments-Input').find('.textareamain');
                         $textarea.val('');
-                        // Remove parent-id attribute to reset reply mode
                         $btn.removeAttr('data-parent-id');
                         $btn.text('Post');
 
-                        // Determine if this is a reply or a new comment
                         if (response.comment.parent_id) {
-                            // It's a reply - append to the parent's reply container
                             const replyHtml = `
                                 <div class="ListComments-All flex reply-item" style="margin-left: 30px;">
                                     <div class="ListComments-UserProfile">
@@ -965,7 +981,6 @@
                                 }
                             }
                         } else {
-                            // It's a new top-level comment
                             const newCommentHtml = `
                                 <div class="ListComments-All flex">
                                     <div class="ListComments-UserProfile">
@@ -1002,30 +1017,7 @@
             });
         });
 
-        // Function to get CSRF token
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    });
-
-</script>
-
-<!-- showing comments  -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Use event delegation for dynamically loaded posts
+        // Show comments
         $(document).on('click', '.show-comments-btn', function (e) {
             e.preventDefault();
 
@@ -1041,7 +1033,6 @@
                     var commentsHtml = '';
 
                     comments.forEach(function (comment) {
-                        // Build replies HTML (hidden by default)
                         var repliesHtml = '';
                         if (comment.replies && comment.replies.length > 0) {
                             comment.replies.forEach(function (reply) {
@@ -1063,7 +1054,6 @@
                             });
                         }
 
-                        // View replies button (only if there are replies)
                         var viewRepliesBtn = '';
                         if (comment.replies && comment.replies.length > 0) {
                             viewRepliesBtn = `<span style="margin: 0px 10px; cursor: pointer; color: #555;" class="view-replies-btn" data-comment-id="${comment.id}">View replies (${comment.replies.length})</span>`;
@@ -1093,13 +1083,11 @@
                         `;
                     });
 
-                    // Add "View More" button if there are more comments
                     var viewMoreBtn = '';
                     if (response.has_more) {
                         viewMoreBtn = `<div class="load-more-comments" style="text-align: center; margin: 10px 0; cursor: pointer; color: #747475; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" data-post-id="${postId}" data-current-page="${response.current_page}" data-url="${url}">View More Comments (${response.current_page} of ${response.total_pages})</div>`;
                     }
 
-                    // Update the specific comments container for the current post
                     var $container = $btn.closest('.postContainer, .premium-post-card, .allPostLists').find('.comments-container').first();
                     if (comments.length === 0) {
                         $container.html('<p class="no-comments-message" style="text-align: center; color: #848484; padding: 20px;">Be the first one to comment</p>');
@@ -1112,7 +1100,7 @@
                 }
             });
 
-            // Add click handler for loading more comments
+            // Load more comments
             $(document).off('click', '.load-more-comments').on('click', '.load-more-comments', function(e) {
                 e.preventDefault();
                 var $loadBtn = $(this);
@@ -1178,11 +1166,9 @@
                             `;
                         });
 
-                        // Append new comments
                         var $commentsContainer = $loadBtn.closest('.comments-container');
                         $commentsContainer.find('.comments-list').append(commentsHtml);
 
-                        // Update or remove load more button
                         if (response.has_more) {
                             $loadBtn.data('current-page', response.current_page);
                         } else {
@@ -1196,7 +1182,7 @@
             });
         });
 
-        // Toggle replies visibility
+        // Toggle replies
         $(document).on('click', '.view-replies-btn', function (e) {
             e.stopPropagation();
             var commentId = $(this).data('comment-id');
@@ -1212,23 +1198,20 @@
             }
         });
 
-        // Handle reply link click - set up reply mode
+        // Reply link handler
         $(document).on('click', '.reply-link', function (e) {
             e.stopPropagation();
             var commentId = $(this).data('comment-id');
             var postId = $(this).data('post-id');
 
-            // Find the input section for this specific post strictly via closest relative paths
             var $inputSection = $(this).closest('.PostComments-forPosts').find('.PostComments-Input');
             if ($inputSection.length === 0) {
                 $inputSection = $(this).closest('.postContainer, .premium-post-card, .allPostLists').find('.PostComments-forPosts, .PostComments-Input').last();
             }
 
-            // Set the parent-id on the button
             var $commentButton = $inputSection.find('.add_comments');
             $commentButton.attr('data-parent-id', commentId);
 
-            // Focus the textarea
             var $textarea = $inputSection.find('.textareamain');
             var username = $(this).closest('.Comments_contents').find('small strong').first().text();
             if (username) {
@@ -1237,46 +1220,58 @@
                 $textarea.focus();
             }
 
-            // Change button text to indicate reply mode
             $commentButton.text('Reply');
         });
+
+        function getCSRFToken() {
+            let csrfToken = null;
+            document.cookie.split(";").forEach(function (cookie) {
+                let parts = cookie.split("=");
+                if (parts[0].trim() === "csrftoken") {
+                    csrfToken = parts[1];
+                }
+            });
+            return csrfToken;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     });
-</script>
 
-
-<script>
+    // Unread message count badge poller
     function checkNotifications() {
         fetch("{% url 'unread_message_count' %}")
             .then(res => res.json())
             .then(data => {
-                // Update desktop notification badge
                 const desktopBadge = document.getElementById("notification-badge");
                 if (desktopBadge) {
-                    if (data.unread_count > 0) {
-                        desktopBadge.style.display = "inline-block";
-                    } else {
-                        desktopBadge.style.display = "none";
-                    }
+                    desktopBadge.style.display = data.unread_count > 0 ? "inline-block" : "none";
                 }
-                // Update mobile notification badge
                 const mobileBadge = document.getElementById("mobile-notification-badge");
                 if (mobileBadge) {
-                    if (data.unread_count > 0) {
-                        mobileBadge.style.display = "inline-block";
-                    } else {
-                        mobileBadge.style.display = "none";
-                    }
+                    mobileBadge.style.display = data.unread_count > 0 ? "inline-block" : "none";
                 }
             })
             .catch(err => console.error("Failed to fetch notifications:", err));
     }
 
-    // Run once and then every 10s
     checkNotifications();
     setInterval(checkNotifications, 10000);
 </script>
 
-<!-- Tailwind CSS CDN -->
+<!-- Tailwind CSS CDN for Modal -->
 <script src="https://cdn.tailwindcss.com"></script>
 
 <!-- Report Post Modal (Dark-Themed Tailwind CSS) -->
@@ -1359,23 +1354,6 @@
 </div>
 
 <script>
-    // Helper function to extract CSRF token from cookies
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // Function to open the Report Modal
     function openReportModal(postId) {
         const modal = document.getElementById('reportModal');
         const postIdInput = document.getElementById('reportPostId');
@@ -1393,7 +1371,6 @@
         }
     }
 
-    // Function to close the Report Modal
     function closeReportModal() {
         const modal = document.getElementById('reportModal');
         const form = document.getElementById('reportPostForm');
@@ -1406,7 +1383,6 @@
         }
     }
 
-    // Function to submit post report via Fetch API
     function submitPostReport(event) {
         if (event) event.preventDefault();
 
@@ -1427,7 +1403,20 @@
 
         const reason = selectedRadio.value;
         const description = descriptionInput ? descriptionInput.value.trim() : '';
-        const csrftoken = getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+        const csrftoken = (function(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        })('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 
         if (submitBtn) {
             submitBtn.disabled = true;
@@ -1529,7 +1518,6 @@
         });
     }
 
-    // Close modal on click outside
     document.addEventListener('DOMContentLoaded', function() {
         const reportModal = document.getElementById('reportModal');
         if (reportModal) {
