@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic --noinput && python manage.py compress --force && daphne -b 0.0.0.0 -p $PORT amity_social_main.asgi:application
+web: bash start.sh
